@@ -1,0 +1,31 @@
+<p-pickList class="" (onMoveToTarget)="store()" filterBy="name" (onMoveToSource)="store()"
+            [responsive]="true"
+            sourceHeader="Beschikbare opties" targetHeader="Aan het product toegekende opties"
+            [source]="source" [target]="target"
+            [targetStyle]="{'height':'30vh'}"
+            [sourceStyle]="{'height':'30vh'}"
+            [style]="{}"
+            #pickList
+>
+  <ng-template let-option pTemplate="item" class="">
+    <div class="grid" style="">
+      <div class="col-9 m-0 grid d-flex flex-column justify-content-center" style="">
+        <div style="overflow-x: auto;" class="col-12 p-0">{{option.name}}</div>
+      </div>
+      <div class="col-9 m-0 grid d-flex flex-column justify-content-center" style="">
+        <div style="overflow-x: auto;" class="col-12 p-0">{{option.price}}</div>
+      </div>
+      <div class="col-3 m-0 grid d-flex flex-column justify-content-center" style="">
+               <span class="p-buttonset" style="">
+                 <button (click)="editOption(option._id)" pButton type="button"
+                         class="p-button-warning mr-1"
+                         icon="pi pi-pencil">
+                 </button>
+                 <button (click)="deleteOption(option._id)" pButton type="button" class="p-button-danger "
+                         icon="pi pi-trash">
+                 </button>
+               </span>
+      </div>
+    </div>
+  </ng-template>
+</p-pickList>

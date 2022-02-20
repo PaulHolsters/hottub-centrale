@@ -1,0 +1,32 @@
+<p-toast></p-toast>
+
+<div class="card">
+  <p-table [value]="quotations" responsiveLayout="scroll">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Klant</th>
+        <th>Product</th>
+        <th>Korting</th>
+        <th>Totaalprijs (excl. BTW)</th>
+        <th>Acties</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-quotation>
+      <tr>
+        <td>{{quotation.customerInfo.firstName}} {{quotation.customerInfo.lastName}} </td>
+        <td>{{quotation.quotationValues.productName}}</td>
+        <td>{{quotation['discount']}} %</td>
+        <td>{{totalPrice(quotation._id) | currency:'EUR'}}</td>
+        <td>
+          <i *ngIf="isIcon(quotation._id)" style="cursor:pointer" class="pi pi-ellipsis-h" (click)="showMenu(quotation._id)"></i>
+          <p-menu (click)="handleClick($event,quotation._id)"
+                  *ngIf="isMenu(quotation._id)" [model]="items" (mouseleave)="hideMenu(quotation._id)"
+          #menu>
+          </p-menu>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+

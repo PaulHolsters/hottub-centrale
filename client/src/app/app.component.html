@@ -1,0 +1,22 @@
+<div class="col-12 grid m-auto p-0" style="border:1px solid red; height:100%;width:100%; overflow:auto;">
+  <div class="col-12 m-auto p-0 mt-0" id="header" style="height: 7%;">
+    <div   style="border:1px solid #dee2e6;height:100%">
+      <div>
+        <img src="assets/vistaline.PNG" alt="logo Vistaline"  (click)="homepage()">
+      </div>
+    </div>
+  </div>
+  <div id="content" class="col-12 grid m-auto p-0 mt-0" style=" height: 88%;">
+    <div  class="col-fixed p-0" style="width:15rem; height: 100%">
+      <p-menu [style]="{'height':'100%','width':'100%'}" [model]="items"></p-menu>
+    </div>
+    <div id="main" class="col" style="border:1px solid #dee2e6;height:100%">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+  <div id="footer" class="col-12 m-auto p-0 mt-0" style="height: 5%">
+    <div style="border:1px solid #dee2e6;height: 100%">
+
+    </div>
+  </div>
+</div>

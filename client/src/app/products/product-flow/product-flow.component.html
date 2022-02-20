@@ -1,0 +1,11 @@
+<div style="height:100%;" class="grid pt-1 pl-3 pr-3 pb-3 m-0">
+  <div class="col-12 m-0" >
+    <p-steps *ngIf="items" [model]="items" [activeIndex]="index"></p-steps>
+  </div>
+  <div  style="height:90%;" class="m-0 col-12 grid flex-column justify-content-center">
+    <app-product-info *ngIf="step==='info'"></app-product-info>
+    <app-product-specifications *ngIf="step==='specifications'"></app-product-specifications>
+    <app-product-options *ngIf="step==='options'"></app-product-options>
+    <app-product-summary *ngIf="step==='summary'"></app-product-summary>
+  </div>
+</div>

@@ -1,0 +1,5 @@
+ul{list-style-type: none}
+
+p-toast ::ng-deep .p-toast-message-icon{
+  display: none;
+}

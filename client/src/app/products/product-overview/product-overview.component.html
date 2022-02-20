@@ -1,0 +1,26 @@
+<p-toast></p-toast>
+<div class="card">
+  <p-table [value]="products" responsiveLayout="scroll">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Product</th>
+        <th>Type</th>
+        <th>Prijs zonder opties (excl. BTW)</th>
+        <th>Prijs met opties (excl. BTW)</th>
+        <th>Acties</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-product>
+      <tr>
+        <td><button (click)="productDetails(product._id)" pButton type="button" label="{{product.name}}" class="p-button-link"></button></td>
+        <td>{{product.cat}}</td>
+        <td>{{product['price'] | currency:'EUR'}}</td>
+        <td>{{priceWithOptions(product._id) | currency:'EUR'}}</td>
+        <td>
+          <i *ngIf="isIcon(product._id)" style="cursor:pointer" class="pi pi-ellipsis-h" (click)="showMenu(product._id)"></i>
+          <p-menu (click)="deleteProduct(product._id)" *ngIf="isMenu(product._id)" [model]="items" (mouseleave)="hideMenu(product._id)"></p-menu>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

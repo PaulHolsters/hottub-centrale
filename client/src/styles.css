@@ -1,0 +1,24 @@
+body{
+height:100vh;
+  margin:0;
+  padding:0;
+  width:100vw;
+}
+.label{
+  color:#662138;
+  /*color: #495057;*/
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+
+}
+label{
+  color:#424242;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+.formField{
+    margin-bottom: 5px;
+}
+.disabled{
+  cursor: not-allowed;
+}
+

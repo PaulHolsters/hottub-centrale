@@ -1,0 +1,7 @@
+p-pickList ::ng-deep ul.p-picklist-target button{
+  display:none;
+}
+
+p-pickList ::ng-deep div.p-picklist-list-wrapper{
+  width: 30vw;
+}

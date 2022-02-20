@@ -1,0 +1,54 @@
+<form class="grid" >
+
+  <!-- todo when screen smaller => adjust col-number -->
+
+  <div class="formField col-10 col-offset-1 grid">
+    <div class="col-fixed" style="width: 10rem;">
+      <label for="productName" class="label">Productnaam</label>
+    </div>
+    <div class="col">
+      <input id="productName" name="productName" type="text" pInputText [(ngModel)]="product.name" #name>
+    </div>
+  </div>
+  <div class="formField col-10 grid   col-offset-1 ">
+    <div class="col-fixed" style="width: 10rem;">
+      <label class="label" for="productType">Producttype</label>
+    </div>
+    <div id="productType" class="col">
+      <div class="field-radiobutton">
+        <p-radioButton name="type" value="hottub" label="Hottub" [(ngModel)]="product.cat"></p-radioButton>
+      </div>
+      <div class="field-radiobutton">
+        <p-radioButton name="type" value="sauna" label="Sauna" [(ngModel)]="product.cat"></p-radioButton>
+      </div>
+      <div class="field-radiobutton">
+        <p-radioButton name="type" value="tiny house" label="Tiny House" [(ngModel)]="product.cat"></p-radioButton>
+      </div>
+    </div>
+  </div>
+  <div class="formField col-10 grid  col-offset-1 ">
+    <div class="col-fixed" style="width: 10rem;">
+      <label class="label">Basisprijs product</label>
+    </div>
+    <div>
+      <div class="p-inputgroup col">
+        <input pInputText id="price" type="number" min="2"
+               [(ngModel)]="product.price" name="price" #price>
+        <span class="p-inputgroup-addon">&euro;</span>
+      </div>
+    </div>
+  </div>
+</form>
+<p-divider class="col-12 grid p-0 mt-2 mb-2"></p-divider>
+<div class="col-12 grid p-0 d-flex justify-content-end">
+    <span class="p-buttonset m-0">
+        <!--<button pButton type="button" label="Vorige" class="p-button-secondary" icon="pi pi-arrow-left"></button>-->
+        <button (click)="cancel()" pButton type="button" label="Annuleren" class="p-button-outlined"
+                icon="pi pi-times"></button>
+        <button (click)="reset()" pButton type="button" label="Leegmaken" class="p-button-warning"
+                icon="pi pi-trash"></button>
+        <button (click)="next()" pButton type="button" label="Volgende" class=""
+                icon="pi pi-arrow-right" iconPos="right"></button>
+    </span>
+</div>
+

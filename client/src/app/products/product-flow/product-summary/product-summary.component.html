@@ -1,0 +1,94 @@
+<p-toast key="errorMsg"></p-toast>
+<p-toast key="successMsg"></p-toast>
+<div class="grid m-0" style="overflow-y: auto; max-height: 55vh;">
+  <p-card class="col-12">
+    <ul>
+      <li class="grid m-0">
+        <div class="grid m-0 col-12">
+          <div class="col-2">
+            <label class="label">Naam</label>
+          </div>
+          <div *ngIf="product.name" class="col">
+            {{product.name}}
+          </div>
+          <div *ngIf="!product.name" style="color:red" class="col">Product heeft nog geen naam!</div>
+        </div>
+      </li>
+      <li class="grid m-0">
+        <div *ngIf="product.cat" class="grid m-0 col-12">
+          <div class="col-2">
+            <label class="label">Type</label>
+          </div>
+          <div class="col">{{product.cat}}</div>
+        </div>
+      </li>
+      <li class="grid m-0">
+        <div class="grid m-0 col-12">
+          <div class="col-2">
+            <label class="label">Prijs</label>
+          </div>
+          <div *ngIf="product.price" class="col">{{product.price}}</div>
+          <div *ngIf="!product.price" style="color:orangered" class="col">Product heeft nog geen prijs!</div>
+        </div>
+      </li>
+    </ul>
+  </p-card>
+  <p-card class="col-12">
+    <ul *ngIf="product.specifications.length>0">
+      <li class="grid m-0">
+        <div class="grid m-0 col-12">
+          <div class="col-2">
+            <label class="label">Specificaties</label>
+          </div>
+        </div>
+      </li>
+      <li class="grid m-0" *ngFor="let spec of product.specifications">
+        <div class="grid m-0 col-12">
+          <div>
+            <span style="padding-left: 1.3rem">{{spec.name}}</span>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div *ngIf="product.specifications.length===0" style="color:orangered" class="col">Product heeft nog geen
+      specificaties!
+    </div>
+  </p-card>
+  <p-card class="col-12">
+    <ul *ngIf="product.options.length > 0">
+      <li class="grid m-0">
+        <div class="grid m-0 col-12">
+          <div class="col-2">
+            <label class="label">Opties</label>
+          </div>
+        </div>
+      </li>
+      <li class="grid m-0" *ngFor="let opt of product.options">
+        <div class="grid m-0 col-12">
+          <div>
+            <span style="padding-left: 1.3rem">{{opt.name}}</span><span
+            style="padding-left: 1.3rem">{{opt.price}}</span>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div *ngIf="product.options.length === 0" style="color:dodgerblue" class="col">Product heeft geen opties.</div>
+  </p-card>
+</div>
+<p-divider class="col-12 grid p-0 mt-2 mb-2"></p-divider>
+<div class="col-12 grid p-0 d-flex justify-content-end">
+    <span class="p-buttonset m-0">
+        <button (click)="previous()" pButton type="button" label="Vorige" class="p-button-secondary"
+                icon="pi pi-arrow-left"></button>
+              <button (click)="cancel()" pButton type="button" label="Annuleren" class="p-button-outlined"
+                      icon="pi pi-times"></button>
+                <button *ngIf="isDisabled()" [style]="{'cursor':'not-allowed'}" [disabled]="true"
+                        (click)="save()" iconPos="left" icon="pi pi-check" label="Bewaar" pButton type="button"
+                        class="p-button-success"
+                ></button>
+                      <button *ngIf="!isDisabled()"
+                              (click)="save()" iconPos="left" icon="pi pi-check" label="Bewaar" pButton type="button"
+                              class="p-button-success"
+                      ></button>
+    </span>
+</div>

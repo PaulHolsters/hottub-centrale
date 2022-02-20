@@ -1,0 +1,32 @@
+<p-pickList class="" (onMoveToTarget)="store()" filterBy="name" (onMoveToSource)="store()"
+            [responsive]="true"
+            sourceHeader="Beschikbare extra diensten" targetHeader="Aan het product toegekende extra diensten"
+            [source]="source" [target]="target"
+            [targetStyle]="{'height':'30vh'}"
+            [sourceStyle]="{'height':'30vh'}"
+            [style]="{}"
+            #pickList
+>
+  <ng-template let-quotspec pTemplate="item" class="">
+    <div class="grid" style="">
+      <div class="col-9 m-0 grid d-flex flex-column justify-content-center" style="">
+        <div style="overflow-x: auto;" class="col-12 p-0">{{quotspec.name}}</div>
+      </div>
+      <div class="col-9 m-0 grid d-flex flex-column justify-content-center" style="">
+        <div style="overflow-x: auto;" class="col-12 p-0">{{quotspec.price}}</div>
+      </div>
+      <div class="col-3 m-0 grid d-flex flex-column justify-content-center" style="">
+               <span class="p-buttonset" style="">
+                 <button (click)="editOption(quotspec._id)" pButton type="button"
+                         class="p-button-warning mr-1"
+                         icon="pi pi-pencil">
+                 </button>
+                 <button (click)="deleteOption(quotspec._id)" pButton type="button" class="p-button-danger "
+                         icon="pi pi-trash">
+                 </button>
+               </span>
+      </div>
+    </div>
+  </ng-template>
+</p-pickList>
+

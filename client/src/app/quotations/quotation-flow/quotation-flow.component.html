@@ -1,0 +1,12 @@
+<div style="height:100%;" class="grid pt-1 pl-3 pr-3 pb-3 m-0">
+  <div class="col-12 m-0" >
+    <p-steps *ngIf="items" [model]="items" [activeIndex]="index"></p-steps>
+  </div>
+  <div  style="height:90%;" class="m-0 col-12 grid flex-column justify-content-center">
+    <app-quotation-customer *ngIf="step==='customer'"></app-quotation-customer>
+    <app-quotation-product *ngIf="step==='product'"></app-quotation-product>
+    <app-quotation-specifications *ngIf="step==='specifications'"></app-quotation-specifications>
+    <app-quotation-options *ngIf="step==='options'"></app-quotation-options>
+    <app-quotation-summary *ngIf="step==='summary'"></app-quotation-summary>
+  </div>
+</div>

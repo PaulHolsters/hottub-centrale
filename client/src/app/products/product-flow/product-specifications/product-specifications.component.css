@@ -1,0 +1,9 @@
+input{
+  width: 100%;
+}
+
+.formField:first-of-type{
+  margin-bottom: 20px;
+}
+
+

@@ -1,0 +1,57 @@
+<form class="grid m-0">
+  <div class="formField col-12 grid m-0 p-0">
+    <div id="specification" class="col-12 m-0 p-0">
+      <app-option-picklist
+        [source]="availableOptions"
+        [target]="product.options"
+        *ngIf="!loading"
+        (listChanged)="reload($event)"
+        (store)="store($event)"
+      >
+      </app-option-picklist>
+      <div *ngIf="loading">Loading list...</div>
+    </div>
+  </div>
+  <div class="formField col-12 grid m-0 p-0 mt-5 ml-2">
+    <div class="col-12 grid">
+      <div class="col-fixed" style="width:max-content">
+        <label for="newOptionName" class="label">Naam optie</label>
+      </div>
+      <div class="col-7">
+        <input id="newOptionName" name="newOptionName" type="text" pInputText [(ngModel)]="newOptionName">
+      </div>
+    </div>
+    <div class="col-12 grid">
+      <div class="col-fixed" style="width:max-content">
+        <label for="newOptionPrice" class="label">Prijs optie</label>
+      </div>
+      <div class="col-7">
+        <div class="p-inputgroup">
+          <input pInputText id="newOptionPrice" type="number" min="2"
+                 [(ngModel)]="newOptionPrice" name="newOptionPrice">
+          <span class="p-inputgroup-addon">&euro;</span>
+        </div>
+      </div>
+      <div class="col">
+        <button (click)="addOption()" pButton type="button" label="Toevoegen" class=""
+                icon="pi pi-plus"></button>
+      </div>
+    </div>
+  </div>
+</form>
+<p-divider class="col-12 grid p-0 mt-2 mb-2"></p-divider>
+<div class="col-12 grid p-0 d-flex justify-content-end">
+    <span class="p-buttonset m-0">
+        <button (click)="previous()" pButton type="button" label="Vorige" class="p-button-secondary"
+                icon="pi pi-arrow-left"></button>
+        <button (click)="cancel()" pButton type="button" label="Annuleren" class="p-button-outlined"
+                icon="pi pi-times"></button>
+        <button (click)="reset()" pButton type="button" label="Leegmaken" class="p-button-warning"
+                icon="pi pi-trash"></button>
+        <button [disabled]="false"
+                [ngClass]="{disabled:false}"
+                (click)="next()" pButton type="button" label="Volgende" class=""
+                icon="pi pi-arrow-right" iconPos="right"></button>
+    </span>
+</div>
+
