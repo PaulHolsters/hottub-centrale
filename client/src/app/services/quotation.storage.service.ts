@@ -14,21 +14,21 @@ export class QuotationStorageService {
   message:string|undefined
   step:string|undefined
   stepChange:EventEmitter<string|undefined>
-  quotationFetched:EventEmitter<QuotationGetModel>
+  quotationFetched:EventEmitter<QuotationModel>
   quotation:QuotationModel
+  quotationGet:QuotationGetModel|undefined
   availableQuotationSpecifications:QuotationSpecificationModel[]|undefined
   private newQuotationSpecificationName:string|undefined
   private newQuotationSpecificationPrice:number|undefined
   constructor(private dataService: DataService) {
     this.step = 'customer'
     this.stepChange = new EventEmitter<string|undefined>()
-    this.quotationFetched = new EventEmitter<QuotationGetModel>()
+    this.quotationFetched = new EventEmitter<QuotationModel>()
     this.quotation = new QuotationModel(1, undefined, [], [], {
       firstName: undefined,
       lastName: undefined,
       email: undefined
     }, 21, 0, undefined)
-
   }
 
   getStep() {
@@ -65,8 +65,19 @@ export class QuotationStorageService {
     return quotationCopy
   }
 
+  getQuotationGet():QuotationGetModel|undefined{
+    if(this.quotationGet){
+      return {...this.quotationGet}
+    }
+    return this.quotationGet
+  }
+
   setQuotation(quotation:QuotationModel){
     this.quotation = quotation
+  }
+
+  setQuotationGet(quotation:QuotationGetModel){
+    this.quotationGet = quotation
   }
 
   resetQuotation(){

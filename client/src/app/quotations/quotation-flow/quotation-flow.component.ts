@@ -3,6 +3,8 @@ import {MenuItem} from "primeng/api";
 import {QuotationStorageService} from "../../services/quotation.storage.service";
 import {ActivatedRoute} from "@angular/router";
 import {DataService} from "../../services/data.service";
+import {QuotationModel} from "../../models/quotation/quotation.model";
+import {ProductModel} from "../../models/product/product.model";
 
 @Component({
   selector: 'app-quotation-flow',
@@ -33,7 +35,12 @@ export class QuotationFlowComponent implements OnInit {
     const id = this.route.snapshot.params['id']
     if(id){
       this.dataService.getQuotation(id).subscribe(res=>{
-        this.storage.quotationFetched.emit(res)
+        this.storage.setQuotationGet(res)
+        const product = new ProductModel(res.quotationValues.productName,res.quotationValues.productCat,res.quotationValues.productPrice,
+            res.quotationValues.productSpecifications,res.quotationValues.optionValues,res.productId)
+        const prefilledQuotation = new QuotationModel(res.version,product,res.selectedOptions,res.quotationValues.quotationSpecificationValues,
+            res.customerInfo,res.VAT,res.discount,res._id)
+        this.storage.quotationFetched.emit(prefilledQuotation)
         this.storage.getAvailableQuotationSpecifications().subscribe(quotSpecs=>{
           res.selectedQuotationSpecifications.forEach(specId=>{
             quotSpecs.splice(quotSpecs.findIndex(specQuot=>{
@@ -42,7 +49,6 @@ export class QuotationFlowComponent implements OnInit {
           })
           this.storage.setAvailableQuotationSpecifications(quotSpecs)
         })
-        // todo options!
       })
     }
   }

@@ -12,7 +12,7 @@ import {QuotationGetModel} from "../../../models/quotation/quotation.get.model";
   styleUrls: ['./quotation-customer.component.css']
 })
 export class QuotationCustomerComponent implements OnInit {
-  quotation: QuotationGetModel
+  quotation: QuotationModel
   disabled: boolean
   nextClicked: boolean
   constructor(private storage:QuotationStorageService, private router: Router) {

@@ -26,7 +26,6 @@ export class QuotationSummaryComponent implements OnInit {
     this.selectedOptions = this.quotation.product?.options.filter(opt=>{
       return (opt._id) && this.quotation.options.includes(opt._id)
     })
-    console.log(this.selectedOptions)
   }
 
   ngOnInit(): void {
