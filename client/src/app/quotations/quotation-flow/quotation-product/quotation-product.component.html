@@ -4,8 +4,8 @@
       <label class="label">Product</label>
     </div>
     <div class="col">
-      <p-dropdown [options]="products" [(ngModel)]="quotation.product" optionLabel="name"
-                  [ngModelOptions]="{standalone: true}"></p-dropdown>
+      <p-dropdown [options]="products" [(ngModel)]="quotation.product" optionLabel="name" [placeholder]="quotation?.product?.name||'Selecteer een product'"
+                  name="selectedProduct"></p-dropdown>
     </div>
   </div>
   <div class="formField col-10 grid  col-offset-1 ">

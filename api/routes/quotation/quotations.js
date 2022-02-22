@@ -51,7 +51,9 @@ router.put('/:groupId/:previous', check('customerInfo.email').isEmail() ,async (
         discount: req.body.discount
     })
     newQuotation.save().then(result => {
-        res.status(201).json()
+        res.status(201).json(
+            {quotation:result}
+        )
     }).catch(err => {
         res.status(500).json({
             error: err

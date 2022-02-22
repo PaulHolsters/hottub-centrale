@@ -20,11 +20,13 @@ export class QuotationProductComponent implements OnInit {
   constructor(private storage:QuotationStorageService, private router: Router,private dataService:DataService) {
     this.previousClicked = false
     this.quotation = this.storage.getQuotation()
+    console.log(this.quotation.product)
     this.products = []
     this.dataService.getProducts().subscribe(res=>{
       this.products = res
     })
     this.storage.quotationFetched.subscribe(res=>{
+      console.log('fetched')
       this.quotation = res
     })
     this.disabled = false

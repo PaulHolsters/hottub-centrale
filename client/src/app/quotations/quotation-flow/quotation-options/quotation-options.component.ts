@@ -18,6 +18,7 @@ export class QuotationOptionsComponent implements OnInit {
   constructor(private storage:QuotationStorageService, private router: Router,private dataService:DataService) {
     this.previousClicked = false
     this.quotation = this.storage.getQuotation()
+    console.log(this.quotation.product?.options)
     this.storage.quotationFetched.subscribe(res=>{
       this.quotation = res
     })

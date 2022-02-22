@@ -81,6 +81,14 @@ export class DataService {
     }))
   }
 
+  editQuotation(quotation:QuotationGetModel):Observable<any>{
+    return this.http.put('http://localhost:3000/quotations/'+quotation.groupId+'/'+quotation.previousVersionId,quotation)
+        .pipe(map((err,res)=>{
+      console.log(err,res)
+      return res
+    }))
+  }
+
   downloadQuotation(id:string):Observable<any>{
     return this.http.get('http://localhost:3000/quotations/action/'+id+'?action=pdf',{
 responseType:"blob"
