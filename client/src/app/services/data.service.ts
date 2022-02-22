@@ -82,6 +82,7 @@ export class DataService {
   }
 
   editQuotation(quotation:QuotationGetModel):Observable<any>{
+    console.log(quotation)
     return this.http.put('http://localhost:3000/quotations/'+quotation.groupId+'/'+quotation.previousVersionId,quotation)
         .pipe(map((err,res)=>{
       console.log(err,res)

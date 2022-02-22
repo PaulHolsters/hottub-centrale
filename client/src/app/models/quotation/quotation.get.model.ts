@@ -5,7 +5,7 @@ import {SpecificationModel} from "../product/specification.model";
 export class QuotationGetModel {
   constructor(
       public groupId: string,
-      public previousVersionId:string,
+      public previousVersionId:string|undefined,
       public version: number,
               public VAT: number,
               public discount: number,

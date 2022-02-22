@@ -198,8 +198,9 @@ quotationSchema.pre('save',async function (next) {
         // an extra check has to be performed first namely - since quotations cannot be deleted -
         // check that the quotationId given has the correct groupId and version number ( the last version number for the given groupId )
         // since only the last version of a quotation is allowed to be updated with a new version
-        const quotation = await quotationModel.findById({id:this.previousVersionId}, {__v: 0}).exec()
-        if(quotation && quotation.version && quotation.groupId===this.groupId){
+        const prevId = this.previousVersionId
+        const quotation = await quotationModel.findById({_id:prevId.toString()}, {__v: 0}).exec()
+        if(quotation && quotation.version!==undefined && quotation.groupId.toString()===this.groupId.toString()){
             const quots = await quotationModel.find({},{version:1}).where({groupId:this.groupId}).exec()
             quots.forEach(quot=>{
                 if(quot.version > quotation.version) next(Error)

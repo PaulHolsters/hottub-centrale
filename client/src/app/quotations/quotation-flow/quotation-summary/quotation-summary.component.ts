@@ -34,7 +34,6 @@ export class QuotationSummaryComponent implements OnInit {
   save(){
     if(this.route.snapshot.params['id']){
       const previousQuotation = this.storage.getQuotationGet()
-      console.log(previousQuotation?.previousVersionId)
       if(previousQuotation){
         if(this.quotation.product && this.quotation.product._id) previousQuotation.productId = this.quotation.product._id
         if(this.quotation.options) previousQuotation.selectedOptions = [...this.quotation.options]
@@ -46,6 +45,7 @@ export class QuotationSummaryComponent implements OnInit {
         previousQuotation.customerInfo.email = this.quotation.customerInfo.email || ''
         previousQuotation.VAT = this.quotation.VAT
         previousQuotation.discount = this.quotation.discount
+        previousQuotation.previousVersionId = previousQuotation._id
       }
     if(previousQuotation)
       this.dataService.editQuotation(previousQuotation).subscribe(res=>{

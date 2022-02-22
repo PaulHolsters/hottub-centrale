@@ -36,7 +36,7 @@ export class QuotationFlowComponent implements OnInit {
     if(id){
       this.dataService.getQuotation(id).subscribe(res=>{
         // todo previousVersionId is undefined!
-        console.log(res)
+        console.log('versionid',res)
         this.storage.setQuotationGet(res)
         const product = new ProductModel(res.quotationValues.productName,res.quotationValues.productCat,res.quotationValues.productPrice,
             res.quotationValues.productSpecifications,res.quotationValues.optionValues,res.productId)
