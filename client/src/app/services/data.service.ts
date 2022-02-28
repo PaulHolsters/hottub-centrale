@@ -82,12 +82,36 @@ export class DataService {
   }
 
   editQuotation(quotation:QuotationGetModel):Observable<any>{
-    console.log(quotation)
     return this.http.put('http://localhost:3000/quotations/'+quotation.groupId+'/'+quotation.previousVersionId,quotation)
         .pipe(map((err,res)=>{
       console.log(err,res)
       return res
-    }))
+    },catchError(err=>{
+      console.log(err)
+      return new Observable(err)
+        })))
+  }
+
+  editStatusQuotation(id:string,status:string):Observable<any>{
+    switch (status){
+      case 'approved':
+        status = 'goedgekeurd'
+        break
+      case 'to be altered':
+        status = 'aan te passen'
+        break
+      default:
+        return new Observable()
+    }
+    const statusObj = {status:status}
+    console.log(statusObj,'obj')
+    return this.http.patch('http://localhost:3000/quotations/'+id,statusObj)
+        .pipe(map((res,status)=>{
+          return status
+        },catchError(err=>{
+          console.log(err)
+          return new Observable(err)
+        })))
   }
 
   downloadQuotation(id:string):Observable<any>{

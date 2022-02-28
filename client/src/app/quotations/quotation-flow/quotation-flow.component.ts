@@ -35,8 +35,6 @@ export class QuotationFlowComponent implements OnInit {
     const id = this.route.snapshot.params['id']
     if(id){
       this.dataService.getQuotation(id).subscribe(res=>{
-        // todo previousVersionId is undefined!
-        console.log('versionid',res)
         this.storage.setQuotationGet(res)
         const product = new ProductModel(res.quotationValues.productName,res.quotationValues.productCat,res.quotationValues.productPrice,
             res.quotationValues.productSpecifications,res.quotationValues.optionValues,res.productId)
@@ -53,6 +51,7 @@ export class QuotationFlowComponent implements OnInit {
         })
       })
     }
+    console.log(this.storage.getStep())
   }
 
   getIndex():number{
@@ -71,9 +70,10 @@ export class QuotationFlowComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.storage.resetQuotation()
-    this.storage.resetAvailableQuotationSpecifications()
+    this.storage.resetQuotationGet()
     this.storage.resetAvailableQuotationSpecifications()
     this.storage.resetStep()
+    console.log('destroyed')
   }
 
 }

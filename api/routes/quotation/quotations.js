@@ -17,6 +17,7 @@ router.post('/', check('customerInfo.email').isEmail() ,async (req, res, next) =
     }
     const newQuotation = new Schema.quotationModel({
         version: 1,
+        status: 'aangemaakt',
         productId: req.body.productId,
         selectedOptions: req.body.selectedOptions,
         selectedQuotationSpecifications: req.body.selectedQuotationSpecifications,
@@ -42,6 +43,7 @@ router.put('/:groupId/:previous', check('customerInfo.email').isEmail() ,async (
     }
     const newQuotation = new Schema.quotationModel({
         groupId: req.params.groupId,
+        status: 'aangepast',
         previousVersionId: req.params.previous,
         productId: req.body.productId,
         selectedOptions: req.body.selectedOptions,
@@ -50,19 +52,33 @@ router.put('/:groupId/:previous', check('customerInfo.email').isEmail() ,async (
         VAT: req.body.VAT,
         discount: req.body.discount
     })
-    console.log(newQuotation)
     newQuotation.save().then(result => {
         res.status(201).json(
             {quotation:result}
         )
     }).catch(err => {
+        let failedProp = ''
+        if (err.errors.hasOwnProperty('customerInfo')) {
+            failedProp = 'customerInfo'
+        }
         res.status(500).json({
-            error: err
+            error: err.errors.customerInfo.message
         })
     })
 })
 
-router.post('/action/:id', async (req, res, next) => {
+router.patch('/:id',async (req, res, next) => {
+    Schema.quotationModel.updateOne({_id:req.params.id},{status:req.body.status},{runValidators:true}).exec().then(result => {
+        res.status(201).json(
+        )
+    }).catch(err => {
+        res.status(500).json({
+            error: err.errors
+        })
+    })
+})
+
+router.get('/action/:id', async (req, res, next) => {
     const action = req.query.action
     if(action==='pdf'){
         const quotationId = req.params.id
@@ -77,13 +93,12 @@ router.post('/action/:id', async (req, res, next) => {
             pdfDoc.end()
         })
     } else if(action==='mail'){
-        console.log('action started')
         const quotationId = req.params.id
         Schema.quotationModel.findById({_id:quotationId},{__v:0}).exec().then(doc=>{
             const pdfDoc = new PDFDocument()
+            // todo finish the quotation pdf
             pdfDoc.text(doc?.quotationValues.productName)
             pdfDoc.end()
-            // todo finish the quotation pdf
             const sendEmail = async options =>{
                 const transporter = nodemailer.createTransport({
                     service: 'Gmail',
@@ -102,6 +117,7 @@ router.post('/action/:id', async (req, res, next) => {
                 await transporter.sendMail(mailOptions).catch(err=>{
                     console.log(err)
                 })
+                Schema.quotationModel.updateOne({_id:quotationId},{status:'verstuurd'})
             }
 
             sendEmail({email:'ph.29@hotmail.com',
@@ -127,6 +143,8 @@ router.post('/action/:id', async (req, res, next) => {
 // todo finish this
     }
 })
+
+
 
 router.get('/', (req, res, next) => {
     Schema.quotationModel.find({}, {__v: 0}).then(result => {

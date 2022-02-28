@@ -12,20 +12,32 @@ import {DomSanitizer, SafeHtml, SafeUrl, SafeValue} from '@angular/platform-brow
 })
 export class QuotationOverviewComponent implements OnInit {
   quotations:QuotationGetModel[]
+  latestVersionQuotations:QuotationGetModel[]
   activatedActionsMenu:string|undefined
   selectedFileBLOB:any|undefined
-
+  displayDialog:boolean
+  idOfStatusChanged:string|undefined
   items = [
     {label: 'Bekijken', icon: 'pi pi-fw pi-eye'
     },
     {label: 'Nieuwe versie', icon: 'pi pi-fw pi-pencil'},
     {label: 'Toon pdf', icon: 'pi pi-fw pi-download' },
     {label: 'Versturen', icon: 'pi pi-fw pi-trash'},
+    {label: 'Statuswijziging',icon: 'pi pi-info-circle'}
   ];
   constructor(private dataService:DataService,private router:Router,private messageService:MessageService,private sanitizer: DomSanitizer) {
+    this.displayDialog = false
     this.quotations = []
+    this.latestVersionQuotations = []
     this.dataService.getQuotations().subscribe(res=>{
       this.quotations = res
+      this.latestVersionQuotations = this.quotations.filter(quotGet=>{
+        const filteredQuotGets = this.quotations.filter(quotGetGroupId=>{
+          return quotGetGroupId.groupId === quotGet.groupId
+
+        })
+        return filteredQuotGets.every(quot => quot.version <= quotGet.version)
+      })
     })
   }
 
@@ -42,10 +54,9 @@ export class QuotationOverviewComponent implements OnInit {
 
   showMenu(id:string){
     this.activatedActionsMenu = id
-
   }
 
-  hideMenu(id:string){
+  hideMenu(){
     this.activatedActionsMenu = undefined
   }
 
@@ -57,19 +68,50 @@ export class QuotationOverviewComponent implements OnInit {
   }
 
   totalPrice(id:string):number|undefined{
-    const quot = this.quotations.find(quot=>{return quot._id===id})
+    const quot = this.latestVersionQuotations.find(quot=>{return quot._id===id})
     if(quot){
       const productPrice = quot.quotationValues.productPrice
-      const optionsPrice = quot.quotationValues.optionValues.map(val=>{
+      const options = quot.quotationValues.optionValues.map(val=>{
         return val.price||0
-      }).reduce((x,y)=>(x+y))
-      const quotSpecsPrice = quot.quotationValues.quotationSpecificationValues.map(quotspec=>{
+      })
+      let optionsPrice = 0
+      let quotSpecsPrice = 0
+      if(options.length>0){
+        optionsPrice = options.reduce((x,y)=>(x+y))
+      }
+      const quotSpecs = quot.quotationValues.quotationSpecificationValues.map(quotspec=>{
         return quotspec.price||0
-      }).reduce((x,y)=>(x+y))
+      })
+      if(quotSpecs.length>0){
+        quotSpecsPrice = quotSpecs.reduce((x,y)=>(x+y))
+      }
       const subTotal = productPrice+optionsPrice+quotSpecsPrice
       return subTotal-(quot.discount*subTotal/100)
     }
     return undefined
+  }
+
+  showDialog(id:string|undefined){
+    this.displayDialog = true
+    this.idOfStatusChanged = id
+  }
+
+  onStatusChanged(newStatus:string){
+    if(this.idOfStatusChanged && newStatus){
+      this.dataService.editStatusQuotation(this.idOfStatusChanged,newStatus).subscribe(res=>{
+        this.dataService.getQuotations().subscribe(res=>{
+          this.quotations = res
+          this.latestVersionQuotations = this.quotations.filter(quotGet=>{
+            const filteredQuotGets = this.quotations.filter(quotGetGroupId=>{
+              return quotGetGroupId.groupId === quotGet.groupId
+
+            })
+            return filteredQuotGets.every(quot => quot.version <= quotGet.version)
+          })
+          this.idOfStatusChanged = undefined
+        })
+      })
+    }
   }
 
   handleClick(event:any,id:string){
@@ -87,11 +129,14 @@ export class QuotationOverviewComponent implements OnInit {
 
         })
         break
+      case 'Statuswijziging':
+        this.showDialog(this.activatedActionsMenu)
+        break
       case 'Nieuwe versie':
         this.router.navigate(['offertes','nieuwe-versie',id])
         break
     }
-
+    this.hideMenu()
   }
 
 }

@@ -41,7 +41,7 @@ export class QuotationStorageService {
   }
 
   resetStep(){
-    this.step = undefined
+    this.step = 'customer'
   }
 
   setMessage(msg:string){
@@ -86,6 +86,10 @@ export class QuotationStorageService {
       lastName: undefined,
       email: undefined
     }, 21, 0, undefined)
+  }
+
+  resetQuotationGet(){
+    this.quotationGet = undefined
   }
 
   getAvailableQuotationSpecifications():Observable<QuotationSpecificationModel[]> {

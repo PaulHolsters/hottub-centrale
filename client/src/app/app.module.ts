@@ -48,6 +48,7 @@ import { QuotationSpecificationsComponent } from './quotations/quotation-flow/qu
 import {QuotationStorageService} from "./services/quotation.storage.service";
 import { QuotationSpecificationPicklistComponent } from './quotations/quotation-flow/quotation-specifications/quotation-specification-picklist/quotation-specification-picklist.component';
 import {CheckboxModule} from "primeng/checkbox";
+import {DialogModule} from "primeng/dialog";
 
 const appRoutes: Routes = [
   {path: 'producten', component: ProductsComponent},
@@ -107,6 +108,7 @@ const appRoutes: Routes = [
         PickListModule,
         ToastModule,
         CheckboxModule,
+        DialogModule,
     ],
   exports: [BrowserAnimationsModule],
   providers: [DataService,ProductStorageService,QuotationStorageService,BrowserAnimationsModule,MessageService],

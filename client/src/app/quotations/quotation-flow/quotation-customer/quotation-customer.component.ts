@@ -19,6 +19,7 @@ export class QuotationCustomerComponent implements OnInit {
     this.quotation = this.storage.getQuotation()
     this.storage.quotationFetched.subscribe(res=>{
       this.quotation = res
+      console.log('setting quotation',res)
     })
     this.disabled = false
     this.nextClicked = false

@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 
 /************************************************************   schema's  *************************************************************************************/
 const productSchemas = require('./Product')
+const {Schema} = require("mongoose");
 
 const quotationSchema = new mongoose.Schema({
     groupId: mongoose.Schema.Types.ObjectId,
@@ -11,31 +12,28 @@ const quotationSchema = new mongoose.Schema({
     productId: {type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true},
     selectedOptions: {type: [{type: mongoose.Schema.Types.ObjectId, ref: 'Option'}]},
     selectedQuotationSpecifications: {type: [{type: mongoose.Schema.Types.ObjectId, ref: 'QuotationSpecification'}]},
-    customerInfo: {
-        type:{
+    status: {type: String,enum:['aangemaakt','aangepast','verstuurd','goedgekeurd','aan te passen']},
+    customerInfo: {type:new mongoose.Schema({
             email:String,
             firstName:{
                 type: String,
                 required: true,
-                minlength: [2, 'Een voornaam moet minimaal 2 letters hebben.'],
+                minLength: [2, 'Een voornaam moet minimaal 2 letters hebben.'],
                 trim: true
             },
             lastName:{
                 type: String,
                 required: true,
-                minlength: [2, 'Een voornaam moet minimaal 2 letters hebben.'],
+                minLength: [2, 'Een achternaam moet minimaal 2 letters hebben.'],
                 trim: true
-            },
-        },
-        required:true
-    },
+            }}),required:true},
     quotationValues: {
         type: {
             productName: {
                 type: String,
                 required: true,
                 lowercase: true,
-                minlength: [2, 'Een offerte specificatie dient minimaal 2 karakters lang te zijn.'],
+                minLength: [2, 'Een offerte specificatie dient minimaal 2 karakters lang te zijn.'],
                 trim: true
             },
             productCat: {type: String, required: true, enum: ['hottub', 'sauna', 'tiny house']},
@@ -47,7 +45,7 @@ const quotationSchema = new mongoose.Schema({
                         type: String,
                         required: true,
                         lowercase: true,
-                        minlength: [2, 'Een optie dient minimaal 2 karakters lang te zijn.'],
+                        minLength: [2, 'Een optie dient minimaal 2 karakters lang te zijn.'],
                         trim: true,
                         alias: 'productOption'
                     },
@@ -61,7 +59,7 @@ const quotationSchema = new mongoose.Schema({
                         type: String,
                         required: true,
                         lowercase: true,
-                        minlength: [2, 'Een optie dient minimaal 2 karakters lang te zijn.'],
+                        minLength: [2, 'Een optie dient minimaal 2 karakters lang te zijn.'],
                         trim: true,
                         alias: 'productSpecification'
                     }
@@ -75,7 +73,7 @@ const quotationSchema = new mongoose.Schema({
                         type: String,
                         required: true,
                         lowercase: true,
-                        minlength: [2, 'Een optie dient minimaal 2 karakters lang te zijn.'],
+                        minLength: [2, 'Een optie dient minimaal 2 karakters lang te zijn.'],
                         trim: true,
                         alias: 'quotationSpecification'
                     },
@@ -93,7 +91,7 @@ const quotationSpecificationSchema = new mongoose.Schema({
         type: String,
         required: true,
         lowercase: true,
-        minlength: [2, 'Een offerte specificatie dient minimaal 2 karakters lang te zijn.'],
+        minLength: [2, 'Een offerte specificatie dient minimaal 2 karakters lang te zijn.'],
         trim: true,
         alias: 'quotationSpecification'
     },
@@ -158,7 +156,7 @@ quotationSchema.path('selectedQuotationSpecifications').validate(async function 
     return ok
 },'Ongeldige offeret spec ids')
 // todo sanitize userinput => er mag geen javascript als voornaam meegegeven kunnen worden
-quotationSchema.path('customerInfo.firstName').validate(async function(propValue){
+quotationSchema.path('customerInfo').validate(function(propValue){
     return propValue.firstName.substr(0,1).toUpperCase()===propValue.firstName.substr(0,1)
 }, 'Een voornaam moet beginnen met een hoofdletter')
 
@@ -199,13 +197,15 @@ quotationSchema.pre('save',async function (next) {
         // check that the quotationId given has the correct groupId and version number ( the last version number for the given groupId )
         // since only the last version of a quotation is allowed to be updated with a new version
         const prevId = this.previousVersionId
+        console.log(prevId,'prevId')
         const quotation = await quotationModel.findById({_id:prevId.toString()}, {__v: 0}).exec()
         if(quotation && quotation.version!==undefined && quotation.groupId.toString()===this.groupId.toString()){
             const quots = await quotationModel.find({},{version:1}).where({groupId:this.groupId}).exec()
             quots.forEach(quot=>{
                 if(quot.version > quotation.version) next(Error)
             })
-            this.version = quotation.version++
+            const newVersion = quotation.version + 1
+            this.version = newVersion
         } else{
             next(Error)
         }

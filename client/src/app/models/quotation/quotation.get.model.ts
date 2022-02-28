@@ -6,6 +6,7 @@ export class QuotationGetModel {
   constructor(
       public groupId: string,
       public previousVersionId:string|undefined,
+      public status:string,
       public version: number,
               public VAT: number,
               public discount: number,

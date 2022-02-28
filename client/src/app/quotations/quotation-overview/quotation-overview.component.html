@@ -1,13 +1,14 @@
 <p-toast></p-toast>
 
 <div class="card">
-  <p-table [value]="quotations" responsiveLayout="scroll">
+  <p-table [value]="latestVersionQuotations" responsiveLayout="scroll">
     <ng-template pTemplate="header">
       <tr>
         <th>Klant</th>
         <th>Product</th>
         <th>Korting</th>
         <th>Totaalprijs (excl. BTW)</th>
+        <th>Status</th>
         <th>Acties</th>
       </tr>
     </ng-template>
@@ -17,10 +18,11 @@
         <td>{{quotation.quotationValues.productName}}</td>
         <td>{{quotation['discount']}} %</td>
         <td>{{totalPrice(quotation._id) | currency:'EUR'}}</td>
+        <td>{{quotation['status']}}</td>
         <td>
           <i *ngIf="isIcon(quotation._id)" style="cursor:pointer" class="pi pi-ellipsis-h" (click)="showMenu(quotation._id)"></i>
           <p-menu (click)="handleClick($event,quotation._id)"
-                  *ngIf="isMenu(quotation._id)" [model]="items" (mouseleave)="hideMenu(quotation._id)"
+                  *ngIf="isMenu(quotation._id)" [model]="items" (mouseleave)="hideMenu()"
           #menu>
           </p-menu>
         </td>
@@ -29,4 +31,10 @@
   </p-table>
 </div>
 
+<p-dialog title="Statuswijziging" [(visible)]="displayDialog">
+  <form>
+    <p-radioButton label="goedgekeurd" (ngModelChange)="onStatusChanged($event)" name="status" value="approved" ngModel></p-radioButton>
+    <p-radioButton label="aan te passen" (ngModelChange)="onStatusChanged($event)" name="status" value="to be altered" ngModel=""></p-radioButton>
+  </form>
+</p-dialog>
 
