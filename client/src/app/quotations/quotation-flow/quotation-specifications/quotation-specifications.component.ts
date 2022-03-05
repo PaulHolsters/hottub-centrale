@@ -59,8 +59,13 @@ export class QuotationSpecificationsComponent implements OnInit {
   }
 
   addQuotationSpecification() {
-    if(this.newQuotationSpecificationName && this.newQuotationSpecificationPrice){
-      const newQuotationSpecification = new QuotationSpecificationModel(this.newQuotationSpecificationName.trim(),this.newQuotationSpecificationPrice)
+    if(this.newQuotationSpecificationName){
+      let newQuotationSpecification
+      if(this.newQuotationSpecificationPrice){
+        newQuotationSpecification = new QuotationSpecificationModel(this.newQuotationSpecificationName.trim(),this.newQuotationSpecificationPrice)
+      } else{
+        newQuotationSpecification = new QuotationSpecificationModel(this.newQuotationSpecificationName.trim())
+      }
       this.loading = true
       this.dataService.createQuotationSpecification(newQuotationSpecification).subscribe(quotspec=> {
         this.quotation.quotationSpecifications?.push(quotspec)

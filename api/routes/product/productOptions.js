@@ -3,6 +3,7 @@ const router = express.Router()
 
 const Schema = require('../../models/Product')
 const mongoose = require("mongoose");
+const {query} = require("express-validator");
 
 router.post('/', (req, res, next) => {
     const newProductOption = new Schema.optionModel({
@@ -50,7 +51,7 @@ router.put('/:id', (req, res, next) => {
     Schema.optionModel.findByIdAndUpdate({_id:req.params.id},{
         name:req.body.name,
         price:req.body.price
-    },{runValidators:true}).then(result=>{
+    },{runValidators:true,context:'query'}).then(result=>{
         res.status(200).json()
     }).catch(err=>{
         let failedProp = ''

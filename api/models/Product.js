@@ -31,7 +31,8 @@ const productOptionSchema = new mongoose.Schema({
 productSchema.path('name').validate(async function (propValue) {
     if(this._update){
         // a name always gets inserted in lowercase after trimming
-        return (await productModel.find().where('name').equals(propValue).countDocuments()) === 1
+        const docs = await productModel.find().where('name').equals(propValue).countDocuments()
+        return docs === 0 || docs === 1
     } else{
         // a name always gets inserted in lowercase after trimming
         return (await productModel.find().where('name').equals(propValue).countDocuments()) === 0
@@ -55,9 +56,9 @@ productSchema.path('specifications').validate(function (propValue) {
 },'Id niet uniek.')
 
 productSchema.path('specifications').validate(async function (propValue) {
-    console.log('running spec val')
     if(this._update){
-        return (await productModel.find().where('specifications').all(propValue).size(propValue.length)).length === 1
+        const docs = (await productModel.find().where('specifications').all(propValue).size(propValue.length)).length
+        return docs === 0 || docs === 1
     } else{
         return (await productModel.find().where('specifications').all(propValue).size(propValue.length)).length === 0
     }
@@ -104,14 +105,23 @@ productSchema.path('options').validate(async function (propValue) {
     })
     return ok
 },'Geen geldig id')
-// todo ook hier ga je een onderschied moeten maken tussen create en update
+
 productSpecificationSchema.path('name').validate(async function (propValue) {
-    return (await specificationModel.find().where('name').equals(propValue).countDocuments()) === 0
+    if(this._update){
+        const docs = await specificationModel.find().where('name').equals(propValue).countDocuments()
+        return docs === 0 || docs === 1
+    } else{
+        return (await specificationModel.find().where('name').equals(propValue).countDocuments()) === 0
+    }
 }, 'Er bestaat al een specificatie met deze naam.')
 
-
 productOptionSchema.path('name').validate(async function (propValue) {
-    return (await optionModel.find().where('name').equals(propValue).countDocuments()) === 0
+    if(this._update){
+        const docs = await optionModel.find().where('name').equals(propValue).countDocuments()
+        return docs === 0 || docs===1
+    } else{
+        return (await optionModel.find().where('name').equals(propValue).countDocuments()) === 0
+    }
 }, 'Er bestaat al een optie met deze naam.')
 
 productOptionSchema.path('price').validate(function (propValue) {

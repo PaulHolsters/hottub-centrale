@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ProductStorageService} from "../../../../services/product.storage.service";
 import {DataService} from "../../../../services/data.service";
 import {OptionModel} from "../../../../models/product/option.model";
+import {ConfirmationService} from "primeng/api";
 
 @Component({
   selector: 'app-option-picklist',
@@ -13,7 +14,12 @@ export class OptionPicklistComponent implements OnInit {
   @Input() target: OptionModel[]
   @Output() listChanged = new EventEmitter<{source:OptionModel[],target:OptionModel[]}>()
   @Output('store') storeEvent = new EventEmitter<{source:OptionModel[],target:OptionModel[]}>()
-  constructor(private storage: ProductStorageService, private dataService: DataService) {
+
+  editedOption:OptionModel|undefined
+  loadedOption:OptionModel|undefined
+  displayEditOptionDialog:boolean
+  constructor(private storage: ProductStorageService, private dataService: DataService,private confirmationService:ConfirmationService) {
+    this.displayEditOptionDialog = false
     this.source = []
     this.target = []
   }
@@ -22,12 +28,18 @@ export class OptionPicklistComponent implements OnInit {
   }
 
   deleteOption(id:string){
-    this.dataService.deleteOption(id).subscribe(res=>{
-      // inform parent to rerender this component
-      this.source.splice(this.source.findIndex(spec=>{
-        return spec._id===id
-      }),1)
-      this.listChanged.emit({source:this.source,target:this.target})
+    this.confirmationService.confirm({
+      message: 'Als je deze optie verwijdert, dan wordt deze verwijderd uit alle producten die mogelijks momenteel ' +
+          'van deze optie gebruik maken. Doorgaan?',
+      accept: ()=>{
+        this.dataService.deleteOption(id).subscribe(res=>{
+          // inform parent to rerender this component
+          this.source.splice(this.source.findIndex(opt=>{
+            return opt._id===id
+          }),1)
+          this.listChanged.emit({source:this.source,target:this.target})
+        })
+      }
     })
   }
 
@@ -40,8 +52,43 @@ export class OptionPicklistComponent implements OnInit {
 
   editOption(id:string){
     // open a dialog where the user can edit this specification
+    this.editedOption = this.source.find(opt=>{
+      return opt._id===id
+    })
+    if(this.editedOption){
+      this.editedOption = {...this.editedOption}
+      this.loadedOption = {...this.editedOption}
+      this.displayEditOptionDialog = true
+    }
+  }
+
+  cancel(){
+    this.editedOption = undefined
+    this.loadedOption = undefined
+    this.displayEditOptionDialog = false
+  }
+
+  save(){
     // inform the parent to rerender this component
-    this.listChanged.emit({source:this.source,target:this.target})
+    if(this.editedOption)
+      this.dataService.editOption(this.editedOption).subscribe(res=>{
+        const index = this.source.findIndex(opt=>{
+          return opt._id===this.editedOption?._id
+        })
+        if(index>=0 && this.editedOption?.name && this.editedOption?.price){
+          this.source[index].name = this.editedOption?.name
+          this.source[index].price = this.editedOption?.price
+        }
+        this.listChanged.emit({source:this.source,target:this.target})
+        this.editedOption = undefined
+        this.loadedOption= undefined
+        this.displayEditOptionDialog = false
+      })
+  }
+
+  isDisabled():boolean{
+    return this.editedOption?.name.trim() === this.loadedOption?.name.trim()&&this.editedOption?.price === this.loadedOption?.price;
+
   }
 
 }

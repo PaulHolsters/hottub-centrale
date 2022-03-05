@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {SpecificationModel} from "../../../../models/product/specification.model";
 import {ProductStorageService} from "../../../../services/product.storage.service";
 import {DataService} from "../../../../services/data.service";
+import {ConfirmationService} from "primeng/api";
 
 @Component({
   selector: 'app-specification-picklist',
@@ -13,21 +14,33 @@ export class SpecificationPicklistComponent implements OnInit {
   @Input() target: SpecificationModel[]
   @Output() listChanged = new EventEmitter<{source:SpecificationModel[],target:SpecificationModel[]}>()
   @Output('store') storeEvent = new EventEmitter<{source:SpecificationModel[],target:SpecificationModel[]}>()
-  constructor(private storage: ProductStorageService, private dataService: DataService) {
+
+  displayEditSpecificationDialog: boolean
+  editedSpecification:SpecificationModel|undefined
+  loadedSpecification:SpecificationModel|undefined
+  constructor(private storage: ProductStorageService, private dataService: DataService,
+              private confirmationService: ConfirmationService) {
     this.source = []
     this.target = []
+    this.displayEditSpecificationDialog = false
   }
 
   ngOnInit(): void {
   }
 
   deleteSpecification(id:string){
-    this.dataService.deleteSpecification(id).subscribe(res=>{
-      // inform parent to rerender this component
-      this.source.splice(this.source.findIndex(spec=>{
-        return spec._id===id
-      }),1)
-      this.listChanged.emit({source:this.source,target:this.target})
+    this.confirmationService.confirm({
+      message: 'Als je deze specificatie verwijdert, dan wordt deze verwijderd uit alle producten die mogelijks momenteel ' +
+          'van deze specificatie gebruik maken. Doorgaan?',
+      accept: ()=>{
+        this.dataService.deleteSpecification(id).subscribe(res=>{
+          // inform parent to rerender this component
+          this.source.splice(this.source.findIndex(spec=>{
+            return spec._id===id
+          }),1)
+          this.listChanged.emit({source:this.source,target:this.target})
+        })
+      }
     })
   }
 
@@ -40,8 +53,43 @@ export class SpecificationPicklistComponent implements OnInit {
 
   editSpecification(id:string){
     // open a dialog where the user can edit this specification
+    this.editedSpecification = this.source.find(spec=>{
+      return spec._id===id
+    })
+    if(this.editedSpecification){
+      this.editedSpecification = {...this.editedSpecification}
+      this.loadedSpecification = {...this.editedSpecification}
+      this.displayEditSpecificationDialog = true
+    }
+  }
+
+  cancel(){
+    this.editedSpecification = undefined
+    this.loadedSpecification = undefined
+    this.displayEditSpecificationDialog = false
+  }
+
+  save(){
     // inform the parent to rerender this component
-    this.listChanged.emit({source:this.source,target:this.target})
+    if(this.editedSpecification)
+    this.dataService.editSpecification(this.editedSpecification).subscribe(res=>{
+      const index = this.source.findIndex(spec=>{
+        return spec._id===this.editedSpecification?._id
+      })
+      if(index>=0 && this.editedSpecification?.name){
+        this.source[index].name = this.editedSpecification?.name
+      }
+      this.listChanged.emit({source:this.source,target:this.target})
+      this.editedSpecification = undefined
+      this.loadedSpecification = undefined
+      this.displayEditSpecificationDialog = false
+    })
+
+  }
+
+  isDisabled():boolean{
+    return this.editedSpecification?.name.trim() === this.loadedSpecification?.name.trim();
+
   }
 
 }

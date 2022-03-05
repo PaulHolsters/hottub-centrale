@@ -164,7 +164,17 @@ responseType:"blob"
     }))
   }
 
-  //todo add edit product/option
+  editOption(opt:OptionModel):Observable<any>{
+    return this.http.put('http://localhost:3000/product-options/'+opt._id,opt).pipe(map(res=>{
+      return res
+    }))
+  }
+
+  editQuotationSpecification(quotSpec:QuotationSpecificationModel):Observable<any>{
+    return this.http.put('http://localhost:3000/quotation-specifications/'+quotSpec._id,quotSpec).pipe(map(res=>{
+      return res
+    }))
+  }
 
   deleteSpecification(id:string):Observable<any>{
     return this.http.delete('http://localhost:3000/product-specifications/'+id).pipe(map(res=>{
@@ -172,10 +182,14 @@ responseType:"blob"
     }))
   }
 
-  // todo add delete product/option
-
   deleteOption(id:string):Observable<any>{
     return this.http.delete('http://localhost:3000/product-options/'+id).pipe(map(res=>{
+      return res
+    }))
+  }
+
+  deleteQuotationSpecification(id:string):Observable<any>{
+    return this.http.delete('http://localhost:3000/quotation-specifications/'+id).pipe(map(res=>{
       return res
     }))
   }

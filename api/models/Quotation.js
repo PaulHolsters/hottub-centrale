@@ -2,7 +2,6 @@ const mongoose = require('mongoose')
 
 /************************************************************   schema's  *************************************************************************************/
 const productSchemas = require('./Product')
-const {Schema} = require("mongoose");
 
 const quotationSchema = new mongoose.Schema({
     groupId: mongoose.Schema.Types.ObjectId,
@@ -162,6 +161,7 @@ quotationSchema.path('customerInfo').validate(function(propValue){
 
 // valid prices
 quotationSpecificationSchema.path('price').validate(function (propValue) {
+    console.log('price val quoit')
     return Math.trunc(propValue) === propValue
 })
 quotationSchema.path('quotationValues.price').validate(function (propValue) {
@@ -197,7 +197,6 @@ quotationSchema.pre('save',async function (next) {
         // check that the quotationId given has the correct groupId and version number ( the last version number for the given groupId )
         // since only the last version of a quotation is allowed to be updated with a new version
         const prevId = this.previousVersionId
-        console.log(prevId,'prevId')
         const quotation = await quotationModel.findById({_id:prevId.toString()}, {__v: 0}).exec()
         if(quotation && quotation.version!==undefined && quotation.groupId.toString()===this.groupId.toString()){
             const quots = await quotationModel.find({},{version:1}).where({groupId:this.groupId}).exec()

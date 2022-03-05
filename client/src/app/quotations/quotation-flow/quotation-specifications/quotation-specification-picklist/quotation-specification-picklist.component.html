@@ -17,11 +17,11 @@
       </div>
       <div class="col-3 m-0 grid d-flex flex-column justify-content-center" style="">
                <span class="p-buttonset" style="">
-                 <button (click)="editOption(quotspec._id)" pButton type="button"
+                 <button (click)="editQuotationSpecification(quotspec._id)" pButton type="button"
                          class="p-button-warning mr-1"
                          icon="pi pi-pencil">
                  </button>
-                 <button (click)="deleteOption(quotspec._id)" pButton type="button" class="p-button-danger "
+                 <button (click)="deleteQuotationSpecification(quotspec._id)" pButton type="button" class="p-button-danger "
                          icon="pi pi-trash">
                  </button>
                </span>
@@ -30,3 +30,49 @@
   </ng-template>
 </p-pickList>
 
+
+<p-confirmDialog
+        header="Offerte specificatie verwijderen?"
+        icon="pi pi-exclamation-triangle"
+        acceptLabel="Ja"
+        rejectLabel="Nee">
+</p-confirmDialog>
+
+<p-dialog header="Offerte specificatie" [(visible)]="displayEditQuotationSpecificationDialog" [style]="{width: '50vw'}">
+  <form class="grid">
+    <div class="formField col-12 grid">
+      <div class="col-12 grid">
+        <div class="col-fixed" style="width:max-content">
+          <label for="newQuotationSpecificationName" class="label">Naam specificatie</label>
+        </div>
+        <div class="col-7">
+          <input *ngIf="editedQuotationSpecification" id="newQuotationSpecificationName" name="newQuotationSpecificationName"
+                 type="text" pInputText [(ngModel)]="editedQuotationSpecification.name">
+        </div>
+      </div>
+      <div class="col-12 grid">
+        <div class="col-fixed" style="width:max-content">
+          <label for="newQuotationSpecificationPrice" class="label">Prijs specificatie</label>
+        </div>
+        <div class="col-7">
+          <div class="p-inputgroup">
+            <input *ngIf="editedQuotationSpecification" pInputText id="newQuotationSpecificationPrice" type="number" min="2"
+                   [(ngModel)]="editedQuotationSpecification.price" name="newQuotationSpecificationPrice">
+            <span class="p-inputgroup-addon">&euro;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  <p-divider class="col-12 grid p-0 mt-2 mb-2"></p-divider>
+  <div class="col-12 grid p-0 d-flex justify-content-end">
+    <span class="p-buttonset m-0">
+        <button (click)="cancel()" pButton type="button" label="Annuleren" class="p-button-outlined"
+                icon="pi pi-times"></button>
+        <button *ngIf="isDisabled()" [style]="{'cursor':'not-allowed'}" [disabled]="true" pButton type="button" label="Bewaren" class="p-button-success"
+                icon="pi pi-check"></button>
+              <button *ngIf="!isDisabled()" [disabled]="false" (click)="save()" pButton type="button" label="Bewaren" class="p-button-success"
+                      icon="pi pi-check"></button>
+    </span>
+  </div>
+</p-dialog>

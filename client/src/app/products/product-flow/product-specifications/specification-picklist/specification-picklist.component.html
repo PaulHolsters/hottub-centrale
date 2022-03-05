@@ -26,3 +26,30 @@
     </div>
   </ng-template>
 </p-pickList>
+
+<p-confirmDialog
+        header="Specificatie verwijderen?"
+        icon="pi pi-exclamation-triangle"
+        acceptLabel="Ja"
+        rejectLabel="Nee">
+</p-confirmDialog>
+
+<p-dialog header="Specificatie" [(visible)]="displayEditSpecificationDialog" [style]="{width: '50vw'}">
+  <form class="grid">
+    <div class="formField col-12 grid">
+        <input class="col-12 mt-2" *ngIf="editedSpecification" id="specificationName" name="specificationName" type="text"
+               pInputText [(ngModel)]="editedSpecification.name" #specificationName>
+    </div>
+  </form>
+  <p-divider class="col-12 grid p-0 mt-2 mb-2"></p-divider>
+  <div class="col-12 grid p-0 d-flex justify-content-end">
+    <span class="p-buttonset m-0">
+        <button (click)="cancel()" pButton type="button" label="Annuleren" class="p-button-outlined"
+                icon="pi pi-times"></button>
+        <button *ngIf="isDisabled()" [style]="{'cursor':'not-allowed'}" [disabled]="true" pButton type="button" label="Bewaren" class="p-button-success"
+                icon="pi pi-check"></button>
+              <button *ngIf="!isDisabled()" [disabled]="false" (click)="save()" pButton type="button" label="Bewaren" class="p-button-success"
+                      icon="pi pi-check"></button>
+    </span>
+  </div>
+</p-dialog>

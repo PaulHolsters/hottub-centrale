@@ -43,7 +43,7 @@ router.get('/', (req, res, next) => {
 })
 
 router.patch('/:id', (req, res, next) => {
-    Schema.specificationModel.updateOne({_id: req.params.id}, {$set: {name: req.body.name}}, {runValidators: true}).then(result => {
+    Schema.specificationModel.updateOne({_id: req.params.id}, {$set: {name: req.body.name}}, {runValidators: true,context:'query'}).then(result => {
         res.status(200).json()
     }).catch(err => {
         let failedProp = ''

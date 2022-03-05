@@ -87,7 +87,7 @@ router.put('/:id', async (req, res, next) => {
         if(Schema.listsAreUnique([product.specifications,req.body.specifications])) update['specifications']=req.body.specifications
         if(Schema.listsAreUnique([product.options,req.body.options])) update['options']=req.body.options
     })
-    Schema.productModel.findByIdAndUpdate({_id: req.params.id}, update, {runValidators: true}).then(result => {
+    Schema.productModel.findByIdAndUpdate({_id: req.params.id}, update, {runValidators: true,context:'query'}).then(result => {
         res.status(200).json()
     }).catch(err => {
         let failedProp = ''

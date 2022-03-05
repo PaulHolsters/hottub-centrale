@@ -36,7 +36,7 @@ import {PickListModule} from "primeng/picklist";
 import { SpecificationPicklistComponent } from './products/product-flow/product-specifications/specification-picklist/specification-picklist.component';
 import { OptionPicklistComponent } from './products/product-flow/product-options/option-picklist/option-picklist.component';
 import {ToastModule} from "primeng/toast";
-import {MessageService} from "primeng/api";
+import {ConfirmationService, MessageService} from "primeng/api";
 import { QuotationsComponent } from './quotations/quotations.component';
 import { QuotationFlowComponent } from './quotations/quotation-flow/quotation-flow.component';
 import { QuotationOverviewComponent } from './quotations/quotation-overview/quotation-overview.component';
@@ -49,6 +49,7 @@ import {QuotationStorageService} from "./services/quotation.storage.service";
 import { QuotationSpecificationPicklistComponent } from './quotations/quotation-flow/quotation-specifications/quotation-specification-picklist/quotation-specification-picklist.component';
 import {CheckboxModule} from "primeng/checkbox";
 import {DialogModule} from "primeng/dialog";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 const appRoutes: Routes = [
   {path: 'producten', component: ProductsComponent},
@@ -109,9 +110,10 @@ const appRoutes: Routes = [
         ToastModule,
         CheckboxModule,
         DialogModule,
+        ConfirmDialogModule,
     ],
   exports: [BrowserAnimationsModule],
-  providers: [DataService,ProductStorageService,QuotationStorageService,BrowserAnimationsModule,MessageService],
+  providers: [DataService,ProductStorageService,QuotationStorageService,BrowserAnimationsModule,MessageService,ConfirmationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
