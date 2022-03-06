@@ -1,0 +1,3 @@
+p-pickList ::ng-deep ul.p-picklist-target button{
+    display:none;
+}

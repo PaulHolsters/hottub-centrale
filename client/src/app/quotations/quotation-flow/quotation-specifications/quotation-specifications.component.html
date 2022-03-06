@@ -15,19 +15,20 @@
   <div class="formField col-12 grid m-0 p-0 mt-5 ml-2">
     <div class="col-12 grid">
       <div class="col-fixed" style="width:max-content">
-        <label for="newOptionName" class="label">Naam extra dienst</label>
+        <label for="newQuotationSpecificationName" class="label">Naam extra dienst</label>
       </div>
       <div class="col-7">
-        <input id="newOptionName" name="newOptionName" type="text" pInputText [(ngModel)]="newQuotationSpecificationName">
+        <input id="newQuotationSpecificationName" name="newQuotationSpecificationName" type="text"
+               pInputText [(ngModel)]="newQuotationSpecificationName">
       </div>
     </div>
     <div class="col-12 grid">
       <div class="col-fixed" style="width:max-content">
-        <label for="newOptionPrice" class="label">Prijs extra dienst</label>
+        <label for="newQuotationSpecificationPrice" class="label">Prijs extra dienst</label>
       </div>
       <div class="col-7">
         <div class="p-inputgroup">
-          <input pInputText id="newOptionPrice" type="number" min="2"
+          <input pInputText id="newQuotationSpecificationPrice" type="number" min="0"
                  [(ngModel)]="newQuotationSpecificationPrice" name="newQuotationSpecificationPrice">
           <span class="p-inputgroup-addon">&euro;</span>
         </div>

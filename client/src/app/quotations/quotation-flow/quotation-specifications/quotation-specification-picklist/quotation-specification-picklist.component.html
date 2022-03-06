@@ -10,10 +10,10 @@
   <ng-template let-quotspec pTemplate="item" class="">
     <div class="grid" style="">
       <div class="col-9 m-0 grid d-flex flex-column justify-content-center" style="">
-        <div style="overflow-x: auto;" class="col-12 p-0">{{quotspec.name}}</div>
-      </div>
-      <div class="col-9 m-0 grid d-flex flex-column justify-content-center" style="">
-        <div style="overflow-x: auto;" class="col-12 p-0">{{quotspec.price}}</div>
+        <div style="overflow-x: auto;" class="col-12 p-0">
+          <span style="display: block"><i>{{quotspec.price | currency: 'EUR'}}</i></span>
+          <span style="display: block">{{quotspec.name}}</span>
+        </div>
       </div>
       <div class="col-3 m-0 grid d-flex flex-column justify-content-center" style="">
                <span class="p-buttonset" style="">

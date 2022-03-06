@@ -10,10 +10,10 @@
   <ng-template let-option pTemplate="item" class="">
     <div class="grid" style="">
       <div class="col-9 m-0 grid d-flex flex-column justify-content-center" style="">
-        <div style="overflow-x: auto;" class="col-12 p-0">{{option.name}}</div>
-      </div>
-      <div class="col-9 m-0 grid d-flex flex-column justify-content-center" style="">
-        <div style="overflow-x: auto;" class="col-12 p-0">{{option.price}}</div>
+        <div style="overflow-x: auto;" class="col-12 p-0">
+          <span style="display: block"><i>{{option.price | currency: 'EUR'}}</i></span>
+          <span style="display: block">{{option.name}}</span>
+        </div>
       </div>
       <div class="col-3 m-0 grid d-flex flex-column justify-content-center" style="">
                <span class="p-buttonset" style="">
@@ -54,7 +54,7 @@
         </div>
         <div class="col-7">
           <div class="p-inputgroup">
-            <input *ngIf="editedOption" pInputText id="newOptionPrice" type="number" min="2"
+            <input *ngIf="editedOption" pInputText id="newOptionPrice" type="number" min="0"
                    [(ngModel)]="editedOption.price" name="newOptionPrice">
             <span class="p-inputgroup-addon">&euro;</span>
           </div>

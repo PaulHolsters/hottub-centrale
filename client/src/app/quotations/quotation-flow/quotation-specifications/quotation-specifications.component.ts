@@ -68,6 +68,7 @@ export class QuotationSpecificationsComponent implements OnInit {
       }
       this.loading = true
       this.dataService.createQuotationSpecification(newQuotationSpecification).subscribe(quotspec=> {
+        console.log('created')
         this.quotation.quotationSpecifications?.push(quotspec)
         this.newQuotationSpecificationName = undefined
         this.newQuotationSpecificationPrice = undefined

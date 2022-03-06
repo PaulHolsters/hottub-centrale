@@ -76,7 +76,7 @@ const quotationSchema = new mongoose.Schema({
                         trim: true,
                         alias: 'quotationSpecification'
                     },
-                    price: {type: Number, min: 100}
+                    price: {type: Number, min: 0}
                 }]
             },
         }
@@ -94,7 +94,7 @@ const quotationSpecificationSchema = new mongoose.Schema({
         trim: true,
         alias: 'quotationSpecification'
     },
-    price: {type: Number, min: 100}
+    price: {type: Number, min: 0}
 }, {})
 
 /************************************************************   validation functions   **************************************************************************/
@@ -161,7 +161,6 @@ quotationSchema.path('customerInfo').validate(function(propValue){
 
 // valid prices
 quotationSpecificationSchema.path('price').validate(function (propValue) {
-    console.log('price val quoit')
     return Math.trunc(propValue) === propValue
 })
 quotationSchema.path('quotationValues.price').validate(function (propValue) {

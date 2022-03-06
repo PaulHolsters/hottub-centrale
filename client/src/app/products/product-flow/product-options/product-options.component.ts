@@ -61,7 +61,8 @@ export class ProductOptionsComponent implements OnInit {
   }
 
   addOption() {
-    if(this.newOptionName && this.newOptionPrice){
+    if(this.newOptionName && (this.newOptionPrice || this.newOptionPrice===0)){
+      console.log('price is ok to be zero')
       const newOption = new OptionModel(this.newOptionName.trim(),this.newOptionPrice)
       this.loading = true
       this.dataService.createOption(newOption).subscribe(opt => {
