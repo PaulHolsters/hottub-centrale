@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MenuItem} from "primeng/api";
 import {ProductStorageService} from "../../services/product.storage.service";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {ProductModel} from "../../models/product/product.model";
 import {DataService} from "../../services/data.service";
 
@@ -75,5 +75,15 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
     this.storage.resetAvailableOptions()
     this.storage.resetStep()
   }
+
+  next(){
+
+  }
+
+  cancel(){
+
+  }
+  previous(){}
+  reset(){}
 
 }
