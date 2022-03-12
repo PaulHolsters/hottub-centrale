@@ -21,6 +21,18 @@ export class ProductSpecificationsComponent implements OnInit {
   loading: boolean
 
   constructor(private router: Router, private storage: ProductStorageService, private dataService: DataService) {
+    this.storage.nextClicked.subscribe(()=>{
+      this.next()
+    })
+    this.storage.cancelClicked.subscribe(()=>{
+      this.cancel()
+    })
+    this.storage.resetClicked.subscribe(()=>{
+      this.reset()
+    })
+    this.storage.previousClicked.subscribe(()=>{
+      this.previous()
+    })
     this.newSpecification = this.storage.getSpecificationInput()
     this.nextClicked = false
     this.previousClicked = false

@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ProductModel} from "../../../models/product/product.model";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ProductStorageService} from "../../../services/product.storage.service";
@@ -17,6 +17,15 @@ export class ProductInfoComponent implements OnInit{
     this.product = this.storage.getProduct()
     this.storage.productFetched.subscribe(res=>{
       this.product = res
+    })
+    this.storage.nextClicked.subscribe(()=>{
+      this.next()
+    })
+    this.storage.cancelClicked.subscribe(()=>{
+      this.cancel()
+    })
+    this.storage.resetClicked.subscribe(()=>{
+      this.reset()
     })
     this.disabled = false
     this.nextClicked = false

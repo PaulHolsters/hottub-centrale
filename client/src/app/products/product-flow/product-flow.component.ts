@@ -77,13 +77,29 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
   }
 
   next(){
-
+    this.storage.nextClicked.emit()
   }
 
   cancel(){
-
+    this.storage.cancelClicked.emit()
   }
-  previous(){}
-  reset(){}
+
+  previous(){
+    this.storage.previousClicked.emit()
+  }
+
+  reset(){
+    this.storage.resetClicked.emit()
+  }
+
+  save(){
+    this.storage.saveClicked.emit()
+  }
+
+  isDisabled():boolean{
+    const product = this.storage.getProduct()
+    return !(product.specifications.length>0 &&
+        product.name && product.price)
+  }
 
 }

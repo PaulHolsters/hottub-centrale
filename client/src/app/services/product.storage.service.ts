@@ -20,6 +20,11 @@ export class ProductStorageService {
   private newOptionPrice:number|undefined
   stepChange = new EventEmitter<string>()
   productFetched = new EventEmitter<ProductModel>()
+  nextClicked = new EventEmitter<null>()
+  previousClicked = new EventEmitter<null>()
+  cancelClicked = new EventEmitter<null>()
+  resetClicked = new EventEmitter<null>()
+  saveClicked = new EventEmitter<null>()
   private message:string|undefined
 
   setMessage(msg:string){

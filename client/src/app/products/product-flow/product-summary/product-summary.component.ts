@@ -1,4 +1,4 @@
-import {Component,  OnInit } from '@angular/core';
+import {Component, OnInit, Output} from '@angular/core';
 import {ProductStorageService} from "../../../services/product.storage.service";
 import {ProductModel} from "../../../models/product/product.model";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -20,18 +20,21 @@ export class ProductSummaryComponent implements OnInit {
               private dataService:  DataService,
               private messageService:MessageService,
               private route:ActivatedRoute) {
+    this.storage.cancelClicked.subscribe(()=>{
+      this.cancel()
+    })
+    this.storage.previousClicked.subscribe(()=>{
+      this.previous()
+    })
+    this.storage.saveClicked.subscribe(()=>{
+      this.save()
+    })
     this.previousClicked = false
     this.product = this.storage.getProduct()
   }
 
   ngOnInit(): void {
 
-  }
-
-
-  isDisabled(){
-    return !(this.product.specifications.length>0 &&
-      this.product.name && this.product.price)
   }
 
   save(){
