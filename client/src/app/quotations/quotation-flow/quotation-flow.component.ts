@@ -76,4 +76,28 @@ export class QuotationFlowComponent implements OnInit {
     console.log('destroyed')
   }
 
+  next(){
+    this.storage.nextClicked.emit()
+  }
+
+  cancel(){
+    this.storage.cancelClicked.emit()
+  }
+
+  previous(){
+    this.storage.previousClicked.emit()
+  }
+
+  reset(){
+    this.storage.resetClicked.emit()
+  }
+
+  save(){
+    this.storage.saveClicked.emit()
+  }
+
+  isDisabled():boolean{
+    return false
+  }
+
 }

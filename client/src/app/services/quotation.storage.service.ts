@@ -15,6 +15,11 @@ export class QuotationStorageService {
   step:string|undefined
   stepChange:EventEmitter<string|undefined>
   quotationFetched:EventEmitter<QuotationModel>
+  nextClicked = new EventEmitter<null>()
+  previousClicked = new EventEmitter<null>()
+  cancelClicked = new EventEmitter<null>()
+  resetClicked = new EventEmitter<null>()
+  saveClicked = new EventEmitter<null>()
   quotation:QuotationModel
   quotationGet:QuotationGetModel|undefined
   availableQuotationSpecifications:QuotationSpecificationModel[]|undefined

@@ -20,6 +20,15 @@ export class QuotationSummaryComponent implements OnInit {
               private dataService:  DataService,
               private messageService:MessageService,
               private route:ActivatedRoute) {
+    this.storage.cancelClicked.subscribe(()=>{
+      this.cancel()
+    })
+    this.storage.previousClicked.subscribe(()=>{
+      this.previous()
+    })
+    this.storage.saveClicked.subscribe(()=>{
+      this.save()
+    })
     this.previousClicked = false
     this.quotation = this.storage.getQuotation()
     this.selectedOptions = []

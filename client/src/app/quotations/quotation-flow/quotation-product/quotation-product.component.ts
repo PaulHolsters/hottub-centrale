@@ -18,6 +18,18 @@ export class QuotationProductComponent implements OnInit {
   nextClicked: boolean
   previousClicked: boolean
   constructor(private storage:QuotationStorageService, private router: Router,private dataService:DataService) {
+    this.storage.nextClicked.subscribe(()=>{
+      this.next()
+    })
+    this.storage.cancelClicked.subscribe(()=>{
+      this.cancel()
+    })
+    this.storage.resetClicked.subscribe(()=>{
+      this.reset()
+    })
+    this.storage.previousClicked.subscribe(()=>{
+      this.previous()
+    })
     this.previousClicked = false
     this.quotation = this.storage.getQuotation()
     console.log(this.quotation.product)

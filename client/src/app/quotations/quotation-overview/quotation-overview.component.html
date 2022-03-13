@@ -31,13 +31,23 @@
   </p-table>
 </div>
 
-<p-dialog header="Statuswijziging" [(visible)]="displayDialog" [style]="{width: '30vw'}">
+<p-dialog header="Statuswijziging" [(visible)]="displayDialog" [style]="{width: '30vw'}" (onHide)="resetDialog()">
   <form class="grid">
     <div class="formField col-12">
-      <p-radioButton label="goedgekeurd" (ngModelChange)="onStatusChanged($event)" name="status" value="approved" ngModel></p-radioButton>
+      <p-radioButton label="goedgekeurd"
+                     [(ngModel)]="selectedStatus"
+                     (ngModelChange)="onStatusChanged($event)"
+                     name="status"
+                     value="approved"
+                     ngModel></p-radioButton>
     </div>
     <div class="formField col-12">
-      <p-radioButton label="aan te passen" (ngModelChange)="onStatusChanged($event)" name="status" value="to be altered" ngModel></p-radioButton>
+      <p-radioButton label="aan te passen"
+                     (ngModelChange)="onStatusChanged($event)"
+                     [(ngModel)]="selectedStatus"
+                     name="status"
+                     value="to be altered"
+                     ngModel></p-radioButton>
     </div>
   </form>
 </p-dialog>

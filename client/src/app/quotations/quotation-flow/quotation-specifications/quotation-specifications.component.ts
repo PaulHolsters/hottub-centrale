@@ -20,6 +20,18 @@ export class QuotationSpecificationsComponent implements OnInit {
   availableQuotationSpecifications: QuotationSpecificationModel[]
   loading: boolean
   constructor(private storage:QuotationStorageService,private dataService:DataService,private router:Router) {
+    this.storage.nextClicked.subscribe(()=>{
+      this.next()
+    })
+    this.storage.cancelClicked.subscribe(()=>{
+      this.cancel()
+    })
+    this.storage.resetClicked.subscribe(()=>{
+      this.reset()
+    })
+    this.storage.previousClicked.subscribe(()=>{
+      this.previous()
+    })
     this.quotation = this.storage.getQuotation()
     this.newQuotationSpecificationName = this.storage.getQuotationSpecificationNameInput()
     this.newQuotationSpecificationPrice = this.storage.getQuotationSpecificationPriceInput()
