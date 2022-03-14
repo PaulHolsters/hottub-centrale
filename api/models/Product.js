@@ -30,6 +30,7 @@ const productOptionSchema = new mongoose.Schema({
 
 productSchema.path('name').validate(async function (propValue) {
     if(this._update){
+        console.log('update callin')
         // a name always gets inserted in lowercase after trimming
         const docs = await productModel.find().where('name').equals(propValue).countDocuments()
         return docs === 0 || docs === 1
@@ -57,6 +58,7 @@ productSchema.path('specifications').validate(function (propValue) {
 
 productSchema.path('specifications').validate(async function (propValue) {
     if(this._update){
+        console.log('update callin specs')
         const docs = (await productModel.find().where('specifications').all(propValue).size(propValue.length)).length
         return docs === 0 || docs === 1
     } else{

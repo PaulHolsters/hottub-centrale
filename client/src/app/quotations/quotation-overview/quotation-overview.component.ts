@@ -19,6 +19,7 @@ export class QuotationOverviewComponent implements OnInit {
   displayDialog:boolean
   idOfStatusChanged:string|undefined
   selectedStatus:string|undefined
+  initialStatus:string|undefined
   items = [
     {label: 'Bekijken', icon: 'pi pi-fw pi-eye'
     },
@@ -93,29 +94,46 @@ export class QuotationOverviewComponent implements OnInit {
   }
 
   showDialog(id:string|undefined){
-    this.displayDialog = true
-    this.idOfStatusChanged = id
     const selectedQuot = this.quotations.find(quot=>{
       return quot._id === id
     })
     switch (selectedQuot?.status) {
       case 'goedgekeurd':
-        this.selectedStatus = 'approved'
+        this.initialStatus = 'approved'
+          this.selectedStatus = 'approved'
         break
       case 'aan te passen':
-        this.selectedStatus = 'to be altered'
+        this.initialStatus = 'to be altered'
+          this.selectedStatus = 'to be altered'
         break
     }
+    this.idOfStatusChanged = id
+    this.displayDialog = true
   }
 
   resetDialog(){
     this.idOfStatusChanged = undefined
     this.selectedStatus = undefined
+    this.initialStatus = undefined
   }
 
   onStatusChanged(newStatus:string){
     if(this.idOfStatusChanged && newStatus){
-      this.dataService.editStatusQuotation(this.idOfStatusChanged,newStatus).subscribe(res=>{
+      this.selectedStatus = newStatus
+    }
+  }
+
+  cancel(){
+    this.displayDialog = false
+  }
+
+  isDisabled(){
+    return !(this.selectedStatus && this.initialStatus!==this.selectedStatus)
+  }
+
+  save(){
+    if(this.idOfStatusChanged && this.initialStatus && this.selectedStatus && this.initialStatus!==this.selectedStatus){
+      this.dataService.editStatusQuotation(this.idOfStatusChanged,this.selectedStatus).subscribe(res=>{
         this.dataService.getQuotations().subscribe(res=>{
           this.quotations = res
           this.latestVersionQuotations = this.quotations.filter(quotGet=>{
@@ -126,6 +144,7 @@ export class QuotationOverviewComponent implements OnInit {
             return filteredQuotGets.every(quot => quot.version <= quotGet.version)
           })
         })
+        this.displayDialog = false
       })
     }
   }
