@@ -58,10 +58,14 @@ productSchema.path('specifications').validate(function (propValue) {
 
 productSchema.path('specifications').validate(async function (propValue) {
     if(this._update){
-        console.log('update callin specs')
+        // todo fix bug : als er al een ander bestaat dan vind hij er één en als die gelijk is met propValue maar van een ander product
+        //  dan zou je dubbele specs krijgen hoewel het totaal gelijk is aan 1
+        //  je zal methode moeten bedenken die enkel producten telt met een verschillend ID of tenminste vervolgens een filtering doen
+
         const docs = (await productModel.find().where('specifications').all(propValue).size(propValue.length)).length
         return docs === 0 || docs === 1
     } else{
+        console.log('update NOT callin double specs')
         return (await productModel.find().where('specifications').all(propValue).size(propValue.length)).length === 0
     }
 }, 'Lijst met specificaties is niet uniek.')
