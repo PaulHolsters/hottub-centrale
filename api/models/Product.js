@@ -30,10 +30,12 @@ const productOptionSchema = new mongoose.Schema({
 
 productSchema.path('name').validate(async function (propValue) {
     if(this._update){
-        console.log('update callin')
         // a name always gets inserted in lowercase after trimming
-        const docs = await productModel.find().where('name').equals(propValue).countDocuments()
-        return docs === 0 || docs === 1
+        let docs = await productModel.find().where('name').equals(propValue).exec()
+        docs = docs.filter(doc=>{
+            return doc._id.toString()!==this._conditions._id.toString()
+        })
+        return docs.length === 0
     } else{
         // a name always gets inserted in lowercase after trimming
         return (await productModel.find().where('name').equals(propValue).countDocuments()) === 0
@@ -58,14 +60,12 @@ productSchema.path('specifications').validate(function (propValue) {
 
 productSchema.path('specifications').validate(async function (propValue) {
     if(this._update){
-        // todo fix bug : als er al een ander bestaat dan vind hij er één en als die gelijk is met propValue maar van een ander product
-        //  dan zou je dubbele specs krijgen hoewel het totaal gelijk is aan 1
-        //  je zal methode moeten bedenken die enkel producten telt met een verschillend ID of tenminste vervolgens een filtering doen
-
-        const docs = (await productModel.find().where('specifications').all(propValue).size(propValue.length)).length
-        return docs === 0 || docs === 1
+        let docs = await productModel.find().where('specifications').all(propValue).size(propValue.length).exec()
+        docs = docs.filter(doc=>{
+            return doc._id.toString()!==this._conditions._id.toString()
+        })
+        return docs.length === 0
     } else{
-        console.log('update NOT callin double specs')
         return (await productModel.find().where('specifications').all(propValue).size(propValue.length)).length === 0
     }
 }, 'Lijst met specificaties is niet uniek.')
@@ -114,8 +114,11 @@ productSchema.path('options').validate(async function (propValue) {
 
 productSpecificationSchema.path('name').validate(async function (propValue) {
     if(this._update){
-        const docs = await specificationModel.find().where('name').equals(propValue).countDocuments()
-        return docs === 0 || docs === 1
+        let docs = await specificationModel.find().where('name').equals(propValue).exec()
+        docs = docs.filter(doc=>{
+            return doc._id.toString()!==this._conditions._id.toString()
+        })
+        return docs.length === 0
     } else{
         return (await specificationModel.find().where('name').equals(propValue).countDocuments()) === 0
     }
@@ -123,8 +126,11 @@ productSpecificationSchema.path('name').validate(async function (propValue) {
 
 productOptionSchema.path('name').validate(async function (propValue) {
     if(this._update){
-        const docs = await optionModel.find().where('name').equals(propValue).countDocuments()
-        return docs === 0 || docs===1
+        let docs = await optionModel.find().where('name').equals(propValue).exec()
+        docs = docs.filter(doc=>{
+            return doc._id.toString()!==this._conditions._id.toString()
+        })
+        return docs.length === 0
     } else{
         return (await optionModel.find().where('name').equals(propValue).countDocuments()) === 0
     }
