@@ -15,7 +15,9 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
   index: number
   items: MenuItem[]
 
-  constructor(private dataService:DataService, private storage:ProductStorageService, private route:ActivatedRoute) {
+  constructor(private dataService:DataService,
+              private storage:ProductStorageService,
+              private route:ActivatedRoute) {
     this.step = this.storage.getStep()
     this.index = this.getIndex()
     this.items = [
@@ -53,7 +55,6 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
               return specAv._id===spec._id
             }),1)
           })
-          console.log(avSpecs)
           this.storage.setAvailableSpecifications(avSpecs)
         })
         this.storage.getAvailableOptions().subscribe(avOps=>{
@@ -62,7 +63,6 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
               return optAv._id===opt._id
             }),1)
           })
-          console.log(avOps)
           this.storage.setAvailableOptions(avOps)
         })
       })
@@ -77,23 +77,28 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
   }
 
   next(){
-    this.storage.nextClicked.emit()
+    this.storage.setClickConsumed(false)
+    this.storage.nextClicked.emit(this.step)
   }
 
   cancel(){
-    this.storage.cancelClicked.emit()
+    this.storage.setClickConsumed(false)
+    this.storage.cancelClicked.emit(this.step)
   }
 
   previous(){
-    this.storage.previousClicked.emit()
+    this.storage.setClickConsumed(false)
+    this.storage.previousClicked.emit(this.step)
   }
 
   reset(){
-    this.storage.resetClicked.emit()
+    this.storage.setClickConsumed(false)
+    this.storage.resetClicked.emit(this.step)
   }
 
   save(){
-    this.storage.saveClicked.emit()
+    this.storage.setClickConsumed(false)
+    this.storage.saveClicked.emit(this.step)
   }
 
   isDisabled():boolean{

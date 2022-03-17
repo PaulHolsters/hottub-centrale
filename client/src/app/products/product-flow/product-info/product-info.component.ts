@@ -10,25 +10,27 @@ import {ProductStorageService} from "../../../services/product.storage.service";
 })
 export class ProductInfoComponent implements OnInit{
   product: ProductModel
-  disabled: boolean
-  nextClicked: boolean
 
   constructor(private router:Router, private storage:ProductStorageService) {
     this.product = this.storage.getProduct()
     this.storage.productFetched.subscribe(res=>{
       this.product = res
     })
-    this.storage.nextClicked.subscribe(()=>{
-      this.next()
+    this.storage.nextClicked.subscribe((step)=>{
+      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+        this.next()
+      }
     })
-    this.storage.cancelClicked.subscribe(()=>{
-      this.cancel()
+    this.storage.cancelClicked.subscribe((step)=>{
+      if(step===this.storage.getStep()  && !this.storage.getClickConsumed()){
+        this.cancel()
+      }
     })
-    this.storage.resetClicked.subscribe(()=>{
-      this.reset()
+    this.storage.resetClicked.subscribe((step)=>{
+      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+        this.reset()
+      }
     })
-    this.disabled = false
-    this.nextClicked = false
   }
 
   ngOnInit(): void {
@@ -36,9 +38,9 @@ export class ProductInfoComponent implements OnInit{
   }
 
   next(){
-    this.nextClicked = true
     this.storage.setProduct(this.product)
     this.storage.setStep('specifications')
+    this.storage.setClickConsumed(true)
   }
 
   reset(){
@@ -46,11 +48,13 @@ export class ProductInfoComponent implements OnInit{
       this.product.name = undefined
       this.product.cat = 'hottub'
       this.product.price = undefined
+      this.storage.setClickConsumed(true)
     }
   }
 
   cancel(){
     this.router.navigate(['/producten'])
+    this.storage.setClickConsumed(true)
   }
 
 }

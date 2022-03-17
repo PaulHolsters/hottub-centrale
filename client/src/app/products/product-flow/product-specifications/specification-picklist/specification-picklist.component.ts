@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {SpecificationModel} from "../../../../models/product/specification.model";
 import {ProductStorageService} from "../../../../services/product.storage.service";
 import {DataService} from "../../../../services/data.service";
@@ -9,7 +9,7 @@ import {ConfirmationService} from "primeng/api";
   templateUrl: './specification-picklist.component.html',
   styleUrls: ['./specification-picklist.component.css']
 })
-export class SpecificationPicklistComponent implements OnInit {
+export class SpecificationPicklistComponent implements OnInit,OnDestroy {
   @Input() source: SpecificationModel[]
   @Input() target: SpecificationModel[]
   @Output() listChanged = new EventEmitter<{source:SpecificationModel[],target:SpecificationModel[]}>()
@@ -20,12 +20,17 @@ export class SpecificationPicklistComponent implements OnInit {
   loadedSpecification:SpecificationModel|undefined
   constructor(private storage: ProductStorageService, private dataService: DataService,
               private confirmationService: ConfirmationService) {
+    console.log('init pick')
     this.source = []
     this.target = []
     this.displayEditSpecificationDialog = false
   }
 
   ngOnInit(): void {
+  }
+
+  ngOnDestroy() {
+    console.log('destr pick')
   }
 
   deleteSpecification(id:string){
@@ -48,7 +53,9 @@ export class SpecificationPicklistComponent implements OnInit {
     // call the store function of the parent without rerendering this component
     // while passing the source and the target
     // the the parent should update its lists via the store ?
+    console.log('store event emitted')
     this.storeEvent.emit({source:this.source,target:this.target})
+
   }
 
   editSpecification(id:string){

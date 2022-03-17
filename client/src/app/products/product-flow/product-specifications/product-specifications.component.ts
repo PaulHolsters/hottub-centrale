@@ -1,4 +1,4 @@
-import {Component,  OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ProductStorageService} from "../../../services/product.storage.service";
 import {ProductModel} from "../../../models/product/product.model";
 import {Router} from "@angular/router";
@@ -11,31 +11,35 @@ import {PickList} from "primeng/picklist";
   templateUrl: './product-specifications.component.html',
   styleUrls: ['./product-specifications.component.css']
 })
-export class ProductSpecificationsComponent implements OnInit {
+export class ProductSpecificationsComponent implements OnInit,OnDestroy {
   @ViewChild('pickList') pickList: PickList | undefined
   newSpecification: string|undefined
-  nextClicked: boolean
-  previousClicked: boolean
   product: ProductModel
   availableSpecifications: SpecificationModel[]
   loading: boolean
 
   constructor(private router: Router, private storage: ProductStorageService, private dataService: DataService) {
-    this.storage.nextClicked.subscribe(()=>{
-      this.next()
+    this.storage.nextClicked.subscribe((step)=>{
+      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+        this.next()
+      }
     })
-    this.storage.cancelClicked.subscribe(()=>{
-      this.cancel()
+    this.storage.cancelClicked.subscribe((step)=>{
+      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+        this.cancel()
+      }
     })
-    this.storage.resetClicked.subscribe(()=>{
-      this.reset()
+    this.storage.resetClicked.subscribe((step)=>{
+      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+        this.reset()
+      }
     })
-    this.storage.previousClicked.subscribe(()=>{
-      this.previous()
+    this.storage.previousClicked.subscribe((step)=>{
+      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+        this.previous()
+      }
     })
     this.newSpecification = this.storage.getSpecificationInput()
-    this.nextClicked = false
-    this.previousClicked = false
     this.product = this.storage.getProduct()
     this.availableSpecifications = []
     this.loading = true
@@ -46,7 +50,9 @@ export class ProductSpecificationsComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
 
+  ngOnDestroy() {
   }
 
   store(lists: { source: SpecificationModel[], target: SpecificationModel[] } | null) {
@@ -84,15 +90,15 @@ export class ProductSpecificationsComponent implements OnInit {
   }
 
   next() {
-    this.nextClicked = true
     this.storage.setStep('options')
     this.store(null)
+    this.storage.setClickConsumed(true)
   }
 
   previous() {
-    this.previousClicked = true
     this.storage.setStep('info')
     this.store(null)
+    this.storage.setClickConsumed(true)
   }
 
   reset() {
@@ -104,10 +110,12 @@ export class ProductSpecificationsComponent implements OnInit {
         this.newSpecification = undefined
       })
     }
+    this.storage.setClickConsumed(true)
   }
 
   cancel() {
     this.router.navigate(['/producten'])
+    this.storage.setClickConsumed(true)
   }
 
 }

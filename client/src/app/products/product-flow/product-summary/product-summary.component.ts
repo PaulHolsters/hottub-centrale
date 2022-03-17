@@ -12,7 +12,6 @@ import {MessageService} from "primeng/api";
   providers: []
 })
 export class ProductSummaryComponent implements OnInit {
-  previousClicked: boolean
   product:ProductModel
 
   constructor(private storage:ProductStorageService,
@@ -20,16 +19,21 @@ export class ProductSummaryComponent implements OnInit {
               private dataService:  DataService,
               private messageService:MessageService,
               private route:ActivatedRoute) {
-    this.storage.cancelClicked.subscribe(()=>{
-      this.cancel()
+    this.storage.cancelClicked.subscribe((step)=>{
+      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+        this.cancel()
+      }
     })
-    this.storage.previousClicked.subscribe(()=>{
-      this.previous()
+    this.storage.previousClicked.subscribe((step)=>{
+      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+        this.previous()
+      }
     })
-    this.storage.saveClicked.subscribe(()=>{
-      this.save()
+    this.storage.saveClicked.subscribe((step)=>{
+      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+        this.save()
+      }
     })
-    this.previousClicked = false
     this.product = this.storage.getProduct()
   }
 
@@ -53,15 +57,17 @@ export class ProductSummaryComponent implements OnInit {
         this.messageService.add({key: 'errorMsg', severity:'error', summary: err.error.error, life:5000});
       })
     }
+    this.storage.setClickConsumed(true)
   }
 
   previous() {
-    this.previousClicked = true
     this.storage.setStep('options')
+    this.storage.setClickConsumed(true)
   }
 
   cancel() {
     this.router.navigate(['/producten'])
+    this.storage.setClickConsumed(true)
   }
 
 }

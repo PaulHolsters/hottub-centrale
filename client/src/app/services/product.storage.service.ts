@@ -9,6 +9,7 @@ import {Observable} from "rxjs";
 export class ProductStorageService {
 
   constructor(private dataService: DataService) {
+    console.log('storage init')
   }
 
   private product = new ProductModel(undefined, 'hottub', undefined, [], [])
@@ -19,16 +20,25 @@ export class ProductStorageService {
   private newOptionName:string|undefined
   private newOptionPrice:number|undefined
   stepChange = new EventEmitter<string>()
+  private clickConsumed = true
   productFetched = new EventEmitter<ProductModel>()
-  nextClicked = new EventEmitter<null>()
-  previousClicked = new EventEmitter<null>()
-  cancelClicked = new EventEmitter<null>()
-  resetClicked = new EventEmitter<null>()
-  saveClicked = new EventEmitter<null>()
+  nextClicked = new EventEmitter<string>()
+  previousClicked = new EventEmitter<string>()
+  cancelClicked = new EventEmitter<string>()
+  resetClicked = new EventEmitter<string>()
+  saveClicked = new EventEmitter<string>()
   private message:string|undefined
 
   setMessage(msg:string){
     this.message = msg
+  }
+
+  getClickConsumed(){
+    return this.clickConsumed
+  }
+
+  setClickConsumed(value:boolean){
+    this.clickConsumed = value
   }
 
   resetMessage(){

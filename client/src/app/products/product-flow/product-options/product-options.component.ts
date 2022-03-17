@@ -15,28 +15,32 @@ export class ProductOptionsComponent implements OnInit {
   @ViewChild('pickList') pickList: PickList | undefined
   newOptionName: string|undefined
   newOptionPrice: number|undefined
-  nextClicked: boolean
-  previousClicked: boolean
   product: ProductModel
   availableOptions: OptionModel[]
   loading: boolean
   constructor(private router: Router, private storage: ProductStorageService, private dataService: DataService) {
-    this.storage.nextClicked.subscribe(()=>{
-      this.next()
+    this.storage.nextClicked.subscribe((step)=>{
+      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+        this.next()
+      }
     })
-    this.storage.cancelClicked.subscribe(()=>{
-      this.cancel()
+    this.storage.cancelClicked.subscribe((step)=>{
+      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+        this.cancel()
+      }
     })
-    this.storage.resetClicked.subscribe(()=>{
-      this.reset()
+    this.storage.resetClicked.subscribe((step)=>{
+      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+        this.reset()
+      }
     })
-    this.storage.previousClicked.subscribe(()=>{
-      this.previous()
+    this.storage.previousClicked.subscribe((step)=>{
+      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+        this.previous()
+      }
     })
     this.newOptionName = this.storage.getOptionNameInput()
     this.newOptionPrice = this.storage.getOptionPriceInput()
-    this.nextClicked = false
-    this.previousClicked = false
     this.product = this.storage.getProduct()
     this.availableOptions= []
     this.loading = true
@@ -88,15 +92,15 @@ export class ProductOptionsComponent implements OnInit {
   }
 
   next(){
-    this.nextClicked = true
     this.store(null)
     this.storage.setStep('summary')
+    this.storage.setClickConsumed(true)
   }
 
   previous() {
-    this.previousClicked = true
     this.storage.setStep('specifications')
     this.store(null)
+    this.storage.setClickConsumed(true)
   }
 
   reset() {
@@ -109,11 +113,13 @@ export class ProductOptionsComponent implements OnInit {
         this.newOptionName = undefined
         this.newOptionPrice = undefined
       })
+      this.storage.setClickConsumed(true)
     }
   }
 
   cancel() {
     this.router.navigate(['/producten'])
+    this.storage.setClickConsumed(true)
   }
 
 }
