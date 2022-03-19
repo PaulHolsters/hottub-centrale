@@ -9,9 +9,7 @@ import {Observable} from "rxjs";
 export class ProductStorageService {
 
   constructor(private dataService: DataService) {
-    console.log('storage init')
   }
-
   private product = new ProductModel(undefined, 'hottub', undefined, [], [])
   private availableSpecifications:SpecificationModel[]|undefined
   private availableOptions:OptionModel[]|undefined
@@ -57,14 +55,24 @@ export class ProductStorageService {
     return this.message
   }
 
+  getStateAvailableSpecifications():boolean{
+    return this.availableSpecifications===undefined
+  }
+
   getAvailableSpecifications():Observable<SpecificationModel[]> {
-    if (!this.availableSpecifications) {
       return this.dataService.getSpecifications()
-    }
-      return new Observable((observer)=>{
-        if(this.availableSpecifications)
-        observer.next([...this.availableSpecifications])
-      })
+  }
+
+  getAvailableSpecificationsNoSub():SpecificationModel[]|undefined{
+    if(this.availableSpecifications)
+    return [...this.availableSpecifications]
+    return undefined
+  }
+
+  getAvailableOptionsNoSub():OptionModel[]|undefined{
+    if(this.availableOptions)
+      return [...this.availableOptions]
+    return undefined
   }
 
   setAvailableSpecifications(newList:SpecificationModel[]){
@@ -78,14 +86,12 @@ export class ProductStorageService {
     this.availableSpecifications = undefined
   }
 
+  getStateAvailableOptions():boolean{
+    return this.availableOptions===undefined
+  }
+
   getAvailableOptions():Observable<OptionModel[]> {
-    if (!this.availableOptions) {
-      return this.dataService.getOptions()
-    }
-    return new Observable((observer)=>{
-      if(this.availableOptions)
-      observer.next([...this.availableOptions])
-    })
+    return this.dataService.getOptions()
   }
 
   setAvailableOptions(newList:OptionModel[]){
@@ -141,6 +147,7 @@ export class ProductStorageService {
   }
 
   getProduct(): ProductModel {
+    console.log('getProduct called')
     const productCopy = {...this.product}
     if (this.product.specifications) {
       const specificationsCopy: SpecificationModel[] = []

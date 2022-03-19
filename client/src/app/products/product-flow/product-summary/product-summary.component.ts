@@ -1,9 +1,10 @@
-import {Component, OnInit, Output} from '@angular/core';
+import {Component, OnDestroy, OnInit, Output} from '@angular/core';
 import {ProductStorageService} from "../../../services/product.storage.service";
 import {ProductModel} from "../../../models/product/product.model";
 import {ActivatedRoute, Router} from "@angular/router";
 import {DataService} from "../../../services/data.service";
 import {MessageService} from "primeng/api";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-product-summary',
@@ -11,34 +12,50 @@ import {MessageService} from "primeng/api";
   styleUrls: ['./product-summary.component.css'],
   providers: []
 })
-export class ProductSummaryComponent implements OnInit {
+export class ProductSummaryComponent implements OnInit,OnDestroy {
   product:ProductModel
+
+  previousSub:Subscription
+  cancelSub:Subscription
+  saveSub:Subscription
 
   constructor(private storage:ProductStorageService,
               private router:Router,
               private dataService:  DataService,
               private messageService:MessageService,
               private route:ActivatedRoute) {
-    this.storage.cancelClicked.subscribe((step)=>{
-      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+    this.storage.cancelClicked.subscribe(()=>{
+      if(this.storage.getStep()==='summary' && !this.storage.getClickConsumed()){
         this.cancel()
       }
     })
-    this.storage.previousClicked.subscribe((step)=>{
-      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+    this.previousSub = this.storage.previousClicked.subscribe(()=>{
+      if(this.storage.getStep()==='summary' && !this.storage.getClickConsumed()){
         this.previous()
       }
     })
-    this.storage.saveClicked.subscribe((step)=>{
-      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+    this.cancelSub = this.storage.cancelClicked.subscribe(()=>{
+      if(this.storage.getStep()==='summary' && !this.storage.getClickConsumed()){
+        this.cancel()
+      }
+    })
+    this.saveSub = this.storage.saveClicked.subscribe(()=>{
+      if(this.storage.getStep()==='summary' && !this.storage.getClickConsumed()){
         this.save()
       }
     })
+    console.log('getting product from summary 1')
     this.product = this.storage.getProduct()
   }
 
   ngOnInit(): void {
 
+  }
+
+  ngOnDestroy() {
+    this.previousSub.unsubscribe()
+    this.cancelSub.unsubscribe()
+    this.saveSub.unsubscribe()
   }
 
   save(){

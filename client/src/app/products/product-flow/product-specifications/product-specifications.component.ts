@@ -5,6 +5,7 @@ import {Router} from "@angular/router";
 import {SpecificationModel} from "../../../models/product/specification.model";
 import {DataService} from "../../../services/data.service";
 import {PickList} from "primeng/picklist";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-product-specifications',
@@ -16,43 +17,48 @@ export class ProductSpecificationsComponent implements OnInit,OnDestroy {
   newSpecification: string|undefined
   product: ProductModel
   availableSpecifications: SpecificationModel[]
-  loading: boolean
+  loading:boolean
+  nextSub:Subscription
+  previousSub:Subscription
+  cancelSub:Subscription
+  resetSub:Subscription
 
   constructor(private router: Router, private storage: ProductStorageService, private dataService: DataService) {
-    this.storage.nextClicked.subscribe((step)=>{
-      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+    this.nextSub = this.storage.nextClicked.subscribe(()=>{
+      if(this.storage.getStep()==='specifications' && !this.storage.getClickConsumed()){
         this.next()
       }
     })
-    this.storage.cancelClicked.subscribe((step)=>{
-      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+    this.cancelSub = this.storage.cancelClicked.subscribe(()=>{
+      if(this.storage.getStep()==='specifications' && !this.storage.getClickConsumed()){
         this.cancel()
       }
     })
-    this.storage.resetClicked.subscribe((step)=>{
-      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+    this.resetSub = this.storage.resetClicked.subscribe(()=>{
+      if(this.storage.getStep()==='specifications' && !this.storage.getClickConsumed()){
         this.reset()
       }
     })
-    this.storage.previousClicked.subscribe((step)=>{
-      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+     this.previousSub = this.storage.previousClicked.subscribe(()=>{
+      if(this.storage.getStep()==='specifications' && !this.storage.getClickConsumed()){
         this.previous()
       }
     })
     this.newSpecification = this.storage.getSpecificationInput()
+    console.log('getting product from specs 1')
     this.product = this.storage.getProduct()
-    this.availableSpecifications = []
-    this.loading = true
-    this.storage.getAvailableSpecifications().subscribe(specList => {
-      this.availableSpecifications = specList
-      this.loading = false
-    })
+    this.availableSpecifications = this.storage.getAvailableSpecificationsNoSub()||[]
+    this.loading = false
   }
 
   ngOnInit() {
   }
 
   ngOnDestroy() {
+    this.nextSub.unsubscribe()
+    this.previousSub.unsubscribe()
+    this.cancelSub.unsubscribe()
+    this.resetSub.unsubscribe()
   }
 
   store(lists: { source: SpecificationModel[], target: SpecificationModel[] } | null) {
@@ -67,13 +73,9 @@ export class ProductSpecificationsComponent implements OnInit,OnDestroy {
 
   reload(lists:{source:SpecificationModel[],target:SpecificationModel[]}) {
     this.store(lists)
+    console.log('getting product from specs 2')
     this.product = this.storage.getProduct()
-    this.loading = true
-    this.storage.getAvailableSpecifications().subscribe(specList => {
-      // op dit moment worden de available specs geladen maw de lengte zal 0 zijn
-      this.availableSpecifications = specList
-      this.loading = false
-    })
+    this.availableSpecifications = this.storage.getAvailableSpecificationsNoSub()||[]
   }
 
   addSpecification() {
@@ -105,10 +107,8 @@ export class ProductSpecificationsComponent implements OnInit,OnDestroy {
     if (this.product && this.product.specifications) {
       this.product.specifications = []
       this.storage.resetAvailableSpecifications()
-      this.storage.getAvailableSpecifications().subscribe(specList => {
-        this.availableSpecifications = specList
-        this.newSpecification = undefined
-      })
+      this.newSpecification = undefined
+      this.availableSpecifications = this.storage.getAvailableSpecificationsNoSub()||[]
     }
     this.storage.setClickConsumed(true)
   }

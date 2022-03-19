@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterViewChecked, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ProductModel} from "../../models/product/product.model";
 import {DataService} from "../../services/data.service";
 import {Router} from "@angular/router";
 import {MessageService} from "primeng/api";
+import {ProductStorageService} from "../../services/product.storage.service";
 
 @Component({
   selector: 'app-product-overview',
   templateUrl: './product-overview.component.html',
   styleUrls: ['./product-overview.component.css']
 })
-export class ProductOverviewComponent implements OnInit {
+export class ProductOverviewComponent implements OnInit,AfterViewChecked {
   products:ProductModel[]
   activatedActionsMenu:string|undefined
   // todo hou er rekening mee dat setRoute de links van elk menu zet
@@ -19,7 +20,11 @@ export class ProductOverviewComponent implements OnInit {
     {label: 'Aanpassen', icon: 'pi pi-fw pi-pencil', routerLink:['']},
     {label: 'Verwijderen', icon: 'pi pi-fw pi-trash'}
   ];
-  constructor(private dataService:DataService,private router:Router,private messageService:MessageService,) {
+  constructor(private dataService:DataService,
+              private router:Router,
+              private messageService:MessageService,
+              private storage:ProductStorageService,
+              private cd: ChangeDetectorRef) {
     this.products = []
     this.dataService.getProducts().subscribe(res=>{
       this.products = res
@@ -89,4 +94,11 @@ export class ProductOverviewComponent implements OnInit {
     })
   }
 
+  ngAfterViewChecked(): void {
+    if(this.storage.hasMessage()){
+      this.messageService.add({key:'successMsg', severity:'success', summary: this.storage.getMessage()})
+      this.storage.resetMessage()
+      this.cd.detectChanges()
+    }
+  }
 }

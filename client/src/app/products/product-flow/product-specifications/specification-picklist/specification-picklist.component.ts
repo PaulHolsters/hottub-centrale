@@ -20,7 +20,6 @@ export class SpecificationPicklistComponent implements OnInit,OnDestroy {
   loadedSpecification:SpecificationModel|undefined
   constructor(private storage: ProductStorageService, private dataService: DataService,
               private confirmationService: ConfirmationService) {
-    console.log('init pick')
     this.source = []
     this.target = []
     this.displayEditSpecificationDialog = false
@@ -30,7 +29,6 @@ export class SpecificationPicklistComponent implements OnInit,OnDestroy {
   }
 
   ngOnDestroy() {
-    console.log('destr pick')
   }
 
   deleteSpecification(id:string){
@@ -53,7 +51,6 @@ export class SpecificationPicklistComponent implements OnInit,OnDestroy {
     // call the store function of the parent without rerendering this component
     // while passing the source and the target
     // the the parent should update its lists via the store ?
-    console.log('store event emitted')
     this.storeEvent.emit({source:this.source,target:this.target})
 
   }

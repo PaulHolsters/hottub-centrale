@@ -1,58 +1,67 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ProductStorageService} from "../../../services/product.storage.service";
 import {PickList} from "primeng/picklist";
 import {ProductModel} from "../../../models/product/product.model";
 import {Router} from "@angular/router";
 import {DataService} from "../../../services/data.service";
 import {OptionModel} from "../../../models/product/option.model";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-product-options',
   templateUrl: './product-options.component.html',
   styleUrls: ['./product-options.component.css']
 })
-export class ProductOptionsComponent implements OnInit {
+export class ProductOptionsComponent implements OnInit,OnDestroy {
   @ViewChild('pickList') pickList: PickList | undefined
   newOptionName: string|undefined
   newOptionPrice: number|undefined
   product: ProductModel
   availableOptions: OptionModel[]
   loading: boolean
+  nextSub:Subscription
+  previousSub:Subscription
+  cancelSub:Subscription
+  resetSub:Subscription
   constructor(private router: Router, private storage: ProductStorageService, private dataService: DataService) {
-    this.storage.nextClicked.subscribe((step)=>{
-      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+    this.nextSub = this.storage.nextClicked.subscribe(()=>{
+      if(this.storage.getStep()==='options' && !this.storage.getClickConsumed()){
         this.next()
       }
     })
-    this.storage.cancelClicked.subscribe((step)=>{
-      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+    this.cancelSub = this.storage.cancelClicked.subscribe(()=>{
+      if(this.storage.getStep()==='options' && !this.storage.getClickConsumed()){
         this.cancel()
       }
     })
-    this.storage.resetClicked.subscribe((step)=>{
-      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+    this.resetSub = this.storage.resetClicked.subscribe(()=>{
+      if(this.storage.getStep()==='options' && !this.storage.getClickConsumed()){
         this.reset()
       }
     })
-    this.storage.previousClicked.subscribe((step)=>{
-      if(step===this.storage.getStep() && !this.storage.getClickConsumed()){
+    this.previousSub = this.storage.previousClicked.subscribe(()=>{
+      if(this.storage.getStep()==='options' && !this.storage.getClickConsumed()){
         this.previous()
       }
     })
     this.newOptionName = this.storage.getOptionNameInput()
     this.newOptionPrice = this.storage.getOptionPriceInput()
+    console.log('getting product from options 1')
     this.product = this.storage.getProduct()
-    this.availableOptions= []
-    this.loading = true
-    this.storage.getAvailableOptions().subscribe(optList => {
-      this.availableOptions = optList
-      this.loading = false
-    })
+    this.availableOptions = this.storage.getAvailableOptionsNoSub()||[]
+    this.loading = false
   }
 
 
   ngOnInit(): void {
 
+  }
+
+  ngOnDestroy() {
+    this.nextSub.unsubscribe()
+    this.previousSub.unsubscribe()
+    this.cancelSub.unsubscribe()
+    this.resetSub.unsubscribe()
   }
 
   store(lists: { source: OptionModel[], target: OptionModel[] } | null) {
@@ -68,17 +77,13 @@ export class ProductOptionsComponent implements OnInit {
 
   reload(lists:{source:OptionModel[],target:OptionModel[]}) {
     this.store(lists)
+    console.log('getting product from options 2')
     this.product = this.storage.getProduct()
-    this.loading = true
-    this.storage.getAvailableOptions().subscribe(optList => {
-      this.availableOptions = optList
-      this.loading = false
-    })
+    this.availableOptions = this.storage.getAvailableOptionsNoSub()||[]
   }
 
   addOption() {
     if(this.newOptionName && (this.newOptionPrice || this.newOptionPrice===0)){
-      console.log('price is ok to be zero')
       const newOption = new OptionModel(this.newOptionName.trim(),this.newOptionPrice)
       this.loading = true
       this.dataService.createOption(newOption).subscribe(opt => {
@@ -108,11 +113,9 @@ export class ProductOptionsComponent implements OnInit {
       this.product.options = []
       this.availableOptions = []
       this.storage.resetAvailableOptions()
-      this.storage.getAvailableOptions().subscribe(optList => {
-        this.availableOptions = optList
-        this.newOptionName = undefined
-        this.newOptionPrice = undefined
-      })
+      this.newOptionName = undefined
+      this.newOptionPrice = undefined
+      this.availableOptions = this.storage.getAvailableOptionsNoSub()||[]
       this.storage.setClickConsumed(true)
     }
   }

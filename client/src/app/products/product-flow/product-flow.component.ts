@@ -1,9 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MenuItem} from "primeng/api";
 import {ProductStorageService} from "../../services/product.storage.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {ProductModel} from "../../models/product/product.model";
+import {ActivatedRoute} from "@angular/router";
 import {DataService} from "../../services/data.service";
+import {Observable} from "rxjs";
 
 @Component({
   selector: 'app-product-flow',
@@ -49,27 +49,43 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
     if(id){
       this.dataService.getProduct(id).subscribe(res=>{
         this.storage.productFetched.emit(res)
-        this.storage.getAvailableSpecifications().subscribe(avSpecs=>{
-          res.specifications.forEach(spec=>{
-            avSpecs.splice(avSpecs.findIndex(specAv=>{
-              return specAv._id===spec._id
-            }),1)
+        if(this.storage.getStateAvailableSpecifications()){
+          this.storage.getAvailableSpecifications().subscribe(avSpecs=>{
+            res.specifications.forEach(spec=>{
+              avSpecs.splice(avSpecs.findIndex(specAv=>{
+                return specAv._id===spec._id
+              }),1)
+            })
+            this.storage.setAvailableSpecifications(avSpecs)
           })
+        }
+        if(this.storage.getStateAvailableOptions()){
+          this.storage.getAvailableOptions().subscribe(avOps=>{
+            res.options.forEach(opt=>{
+              avOps.splice(avOps.findIndex(optAv=>{
+                return optAv._id===opt._id
+              }),1)
+            })
+            this.storage.setAvailableOptions(avOps)
+          })
+        }
+      })
+    } else{
+      if(this.storage.getStateAvailableSpecifications()){
+        this.storage.getAvailableSpecifications().subscribe(avSpecs=>{
           this.storage.setAvailableSpecifications(avSpecs)
         })
+      }
+      if(this.storage.getStateAvailableOptions()){
         this.storage.getAvailableOptions().subscribe(avOps=>{
-          res.options.forEach(opt=>{
-            avOps.splice(avOps.findIndex(optAv=>{
-              return optAv._id===opt._id
-            }),1)
-          })
           this.storage.setAvailableOptions(avOps)
         })
-      })
+      }
     }
   }
 
   ngOnDestroy(): void {
+    console.log('resetting product')
     this.storage.resetProduct()
     this.storage.resetAvailableSpecifications()
     this.storage.resetAvailableOptions()
@@ -102,6 +118,7 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
   }
 
   isDisabled():boolean{
+    console.log('getting product from flow 1')
     const product = this.storage.getProduct()
     return !(product.specifications.length>0 &&
         product.name && product.price)
