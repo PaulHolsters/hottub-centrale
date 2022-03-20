@@ -117,7 +117,15 @@ router.get('/action/:id', async (req, res, next) => {
                 await transporter.sendMail(mailOptions).catch(err=>{
                     console.log(err)
                 })
-                Schema.quotationModel.updateOne({_id:quotationId},{status:'verstuurd'})
+                console.log(quotationId)
+                Schema.quotationModel.updateOne({_id:quotationId},{status:'verstuurd'},{runValidators:true}).exec().then(result => {
+                    res.status(201).json(
+                    )
+                }).catch(err => {
+                    res.status(500).json({
+                        error: err.error
+                    })
+                })
             }
 
             sendEmail({email:'ph.29@hotmail.com',
@@ -129,21 +137,22 @@ router.get('/action/:id', async (req, res, next) => {
                         content: pdfDoc
                     }
                 ]}).then(()=>{
-                console.log('email send')
                 res.status(201).json()
-
             }).catch(err=>{
-                console.log('no email send',err)
+                res.status(500).json({
+                    error: 'email verzenden mislukt'
+                })
             })
 
         }).catch(err=>{
-            console.log('global error',err)
+            res.status(500).json({
+                error: 'email verzenden mislukt'
+            })
         })
     } else if(action==='invoice'){
 // todo finish this
     }
 })
-
 
 
 router.get('/', (req, res, next) => {

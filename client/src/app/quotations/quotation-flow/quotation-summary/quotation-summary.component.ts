@@ -77,22 +77,18 @@ export class QuotationSummaryComponent implements OnInit,OnDestroy {
         this.dataService.editQuotation(previousQuotation).subscribe(res=>{
           this.storage.setMessage('Nieuwe versie bewaard')
           this.router.navigate(['/offertes'])
-          // todo zet blocked terug op false
           this.afterSave?.emit()
         },err=>{
           this.messageService.add({key: 'errorMsg', severity:'error', summary: err.error.error, life:5000});
-          // todo zet blocked terug op false
           this.afterSave?.emit()
         })
     } else{
       this.dataService.createQuotation(this.quotation).subscribe(res => {
         this.storage.setMessage('Offerte bewaard')
         this.router.navigate(['/offertes'])
-        // todo zet blocked terug op false
         this.afterSave?.emit()
       },err=>{
         this.messageService.add({key: 'errorMsg', severity:'error', summary: err.error.error, life:5000});
-        // todo zet blocked terug op false
         this.afterSave?.emit()
       })
     }

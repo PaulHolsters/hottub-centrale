@@ -1,5 +1,5 @@
-<p-toast></p-toast>
-
+<p-toast key="successMsg"></p-toast>
+<p-toast key="errorMsg"></p-toast>
 <div class="card">
   <p-table [value]="latestVersionQuotations" responsiveLayout="scroll">
     <ng-template pTemplate="header">
@@ -67,3 +67,7 @@
     </div>
   </form>
 </p-dialog>
+
+<p-blockUI [blocked]="blocked">
+  <p style="color:lightyellow;font-size: 1.2rem">Offerte wordt verstuurd. Even geduld...</p>
+</p-blockUI>

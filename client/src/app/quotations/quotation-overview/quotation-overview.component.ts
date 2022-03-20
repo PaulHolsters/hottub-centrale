@@ -1,17 +1,19 @@
 
-import { Component, OnInit } from '@angular/core';
+import {AfterViewChecked, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {DataService} from "../../services/data.service";
 import {Router} from "@angular/router";
 import {MessageService} from "primeng/api";
 import {QuotationGetModel} from "../../models/quotation/quotation.get.model";
 import {DomSanitizer, SafeHtml, SafeUrl, SafeValue} from '@angular/platform-browser';
+import {QuotationStorageService} from "../../services/quotation.storage.service";
+import {interval} from "rxjs";
 
 @Component({
   selector: 'app-quotation-overview',
   templateUrl: './quotation-overview.component.html',
   styleUrls: ['./quotation-overview.component.css']
 })
-export class QuotationOverviewComponent implements OnInit {
+export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
   quotations:QuotationGetModel[]
   latestVersionQuotations:QuotationGetModel[]
   activatedActionsMenu:string|undefined
@@ -20,6 +22,7 @@ export class QuotationOverviewComponent implements OnInit {
   idOfStatusChanged:string|undefined
   selectedStatus:string|undefined
   initialStatus:string|undefined
+  blocked:boolean
   items = [
     {label: 'Bekijken', icon: 'pi pi-fw pi-eye'
     },
@@ -28,10 +31,12 @@ export class QuotationOverviewComponent implements OnInit {
     {label: 'Versturen', icon: 'pi pi-fw pi-trash'},
     {label: 'Statuswijziging',icon: 'pi pi-info-circle'}
   ];
-  constructor(private dataService:DataService,private router:Router,private messageService:MessageService,private sanitizer: DomSanitizer) {
+  constructor(private dataService:DataService,private storage:QuotationStorageService,
+              private cd: ChangeDetectorRef, private router:Router,private messageService:MessageService,private sanitizer: DomSanitizer) {
     this.displayDialog = false
     this.quotations = []
     this.latestVersionQuotations = []
+    this.blocked = false
     this.dataService.getQuotations().subscribe(res=>{
       this.quotations = res
       this.latestVersionQuotations = this.quotations.filter(quotGet=>{
@@ -160,8 +165,14 @@ export class QuotationOverviewComponent implements OnInit {
         this.router.navigate(['offertes/details/'+id])
         break
       case 'Versturen':
+        this.blocked = true
         this.dataService.sendQuotation(id).subscribe(res=>{
-
+          this.blocked = false
+          this.storage.setMessage('Offerte verstuurd')
+          location.reload()
+        },err=>{
+          this.blocked = false
+          this.messageService.add({key: 'errorMsg', severity:'error', summary: err.error.error, life:5000});
         })
         break
       case 'Statuswijziging':
@@ -172,6 +183,14 @@ export class QuotationOverviewComponent implements OnInit {
         break
     }
     this.hideMenu()
+  }
+
+  ngAfterViewChecked(): void {
+    if(this.storage.hasMessage()){
+      this.messageService.add({key:'successMsg', severity:'success', summary: this.storage.getMessage()})
+      this.storage.resetMessage()
+      this.cd.detectChanges()
+    }
   }
 
 }
