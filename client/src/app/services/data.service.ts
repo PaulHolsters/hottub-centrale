@@ -125,7 +125,7 @@ responseType:"blob"
   }
 
   sendQuotation(id:string):Observable<any>{
-    return this.http.post('http://localhost:3000/quotations/action/'+id+'?action=mail',null).pipe(map((res)=>{
+    return this.http.get('http://localhost:3000/quotations/action/'+id+'?action=mail').pipe(map((res)=>{
       return res
     }),catchError(err=>{
       console.log('ae',err)

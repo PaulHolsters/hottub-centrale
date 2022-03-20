@@ -20,11 +20,11 @@ export class ProductStorageService {
   stepChange = new EventEmitter<string>()
   private clickConsumed = true
   productFetched = new EventEmitter<ProductModel>()
-  nextClicked = new EventEmitter<string>()
-  previousClicked = new EventEmitter<string>()
-  cancelClicked = new EventEmitter<string>()
-  resetClicked = new EventEmitter<string>()
-  saveClicked = new EventEmitter<string>()
+  nextClicked = new EventEmitter<null>()
+  previousClicked = new EventEmitter<null>()
+  cancelClicked = new EventEmitter<null>()
+  resetClicked = new EventEmitter<null>()
+  saveClicked = new EventEmitter<null>()
   private message:string|undefined
 
   setMessage(msg:string){

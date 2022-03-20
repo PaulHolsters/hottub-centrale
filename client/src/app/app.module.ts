@@ -50,6 +50,7 @@ import { QuotationSpecificationPicklistComponent } from './quotations/quotation-
 import {CheckboxModule} from "primeng/checkbox";
 import {DialogModule} from "primeng/dialog";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {BlockUIModule} from "primeng/blockui";
 
 const appRoutes: Routes = [
   {path: 'producten', component: ProductsComponent},
@@ -111,6 +112,7 @@ const appRoutes: Routes = [
         CheckboxModule,
         DialogModule,
         ConfirmDialogModule,
+        BlockUIModule,
     ],
   exports: [BrowserAnimationsModule],
   providers: [DataService,ProductStorageService,QuotationStorageService,BrowserAnimationsModule,MessageService,ConfirmationService],

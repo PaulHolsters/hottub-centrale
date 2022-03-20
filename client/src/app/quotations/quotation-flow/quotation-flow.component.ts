@@ -15,7 +15,9 @@ export class QuotationFlowComponent implements OnInit {
   step: string|undefined
   index: number
   items: MenuItem[]
+  blocked: boolean
   constructor(private storage:QuotationStorageService,private route:ActivatedRoute,private dataService:DataService) {
+    this.blocked = false
     this.step = this.storage.getStep()
     this.index = this.getIndex()
     this.items = [
@@ -77,27 +79,34 @@ export class QuotationFlowComponent implements OnInit {
   }
 
   next(){
+    this.storage.setClickConsumed(false)
     this.storage.nextClicked.emit()
   }
 
   cancel(){
+    this.storage.setClickConsumed(false)
     this.storage.cancelClicked.emit()
   }
 
   previous(){
+    this.storage.setClickConsumed(false)
     this.storage.previousClicked.emit()
   }
 
   reset(){
+    this.storage.setClickConsumed(false)
     this.storage.resetClicked.emit()
   }
 
   save(){
+    this.blocked = true
+    this.storage.setClickConsumed(false)
     this.storage.saveClicked.emit()
   }
 
   isDisabled():boolean{
-    return false
+    const quot = this.storage.getQuotation()
+    return !quot.product || !quot.customerInfo.firstName || !quot.customerInfo.lastName|| !quot.customerInfo.email
   }
 
 }

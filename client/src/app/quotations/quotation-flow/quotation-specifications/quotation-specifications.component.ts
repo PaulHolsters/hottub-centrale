@@ -1,42 +1,51 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {QuotationModel} from "../../../models/quotation/quotation.model";
 import {QuotationStorageService} from "../../../services/quotation.storage.service";
 import {OptionModel} from "../../../models/product/option.model";
 import {QuotationSpecificationModel} from "../../../models/quotation/quotation-specification.model";
 import {DataService} from "../../../services/data.service";
 import {Router} from "@angular/router";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-quotation-specifications',
   templateUrl: './quotation-specifications.component.html',
   styleUrls: ['./quotation-specifications.component.css']
 })
-export class QuotationSpecificationsComponent implements OnInit {
+export class QuotationSpecificationsComponent implements OnInit,OnDestroy {
   quotation:QuotationModel
   newQuotationSpecificationName: string|undefined
   newQuotationSpecificationPrice: number|undefined
-  nextClicked: boolean
-  previousClicked: boolean
+  nextSub:Subscription
+  previousSub:Subscription
+  cancelSub:Subscription
+  resetSub:Subscription
   availableQuotationSpecifications: QuotationSpecificationModel[]
   loading: boolean
   constructor(private storage:QuotationStorageService,private dataService:DataService,private router:Router) {
-    this.storage.nextClicked.subscribe(()=>{
-      this.next()
+    this.nextSub = this.storage.nextClicked.subscribe(()=>{
+      if(this.storage.getStep()==='specifications' && !this.storage.getClickConsumed()){
+        this.next()
+      }
     })
-    this.storage.cancelClicked.subscribe(()=>{
-      this.cancel()
+    this.cancelSub = this.storage.cancelClicked.subscribe(()=>{
+      if(this.storage.getStep()==='specifications' && !this.storage.getClickConsumed()){
+        this.cancel()
+      }
     })
-    this.storage.resetClicked.subscribe(()=>{
-      this.reset()
+    this.resetSub = this.storage.resetClicked.subscribe(()=>{
+      if(this.storage.getStep()==='specifications' && !this.storage.getClickConsumed()){
+        this.reset()
+      }
     })
-    this.storage.previousClicked.subscribe(()=>{
-      this.previous()
+    this.previousSub = this.storage.previousClicked.subscribe(()=>{
+      if(this.storage.getStep()==='specifications' && !this.storage.getClickConsumed()){
+        this.previous()
+      }
     })
     this.quotation = this.storage.getQuotation()
     this.newQuotationSpecificationName = this.storage.getQuotationSpecificationNameInput()
     this.newQuotationSpecificationPrice = this.storage.getQuotationSpecificationPriceInput()
-    this.nextClicked = false
-    this.previousClicked = false
     this.availableQuotationSpecifications= []
     this.loading = true
     this.storage.getAvailableQuotationSpecifications().subscribe(quotSpecList => {
@@ -46,6 +55,13 @@ export class QuotationSpecificationsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  ngOnDestroy() {
+    this.nextSub.unsubscribe()
+    this.previousSub.unsubscribe()
+    this.cancelSub.unsubscribe()
+    this.resetSub.unsubscribe()
   }
 
   store(lists: { source: QuotationSpecificationModel[], target: QuotationSpecificationModel[] } | null) {
@@ -91,18 +107,19 @@ export class QuotationSpecificationsComponent implements OnInit {
   }
 
   next(){
-    this.nextClicked = true
+    this.storage.setClickConsumed(true)
     this.store(null)
     this.storage.setStep('options')
   }
 
   previous() {
-    this.previousClicked = true
+    this.storage.setClickConsumed(true)
     this.storage.setStep('product')
     this.store(null)
   }
 
   reset() {
+    this.storage.setClickConsumed(true)
     if (this.quotation && this.quotation.quotationSpecifications) {
       this.quotation.quotationSpecifications = []
       this.availableQuotationSpecifications = []
@@ -116,6 +133,7 @@ export class QuotationSpecificationsComponent implements OnInit {
   }
 
   cancel() {
+    this.storage.setClickConsumed(true)
     this.router.navigate(['/offertes'])
   }
 

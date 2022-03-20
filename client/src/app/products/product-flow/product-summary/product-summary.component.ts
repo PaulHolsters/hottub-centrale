@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {ProductStorageService} from "../../../services/product.storage.service";
 import {ProductModel} from "../../../models/product/product.model";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -13,8 +13,8 @@ import {Subscription} from "rxjs";
   providers: []
 })
 export class ProductSummaryComponent implements OnInit,OnDestroy {
+  @Output() afterSave:EventEmitter<null>
   product:ProductModel
-
   previousSub:Subscription
   cancelSub:Subscription
   saveSub:Subscription
@@ -24,11 +24,7 @@ export class ProductSummaryComponent implements OnInit,OnDestroy {
               private dataService:  DataService,
               private messageService:MessageService,
               private route:ActivatedRoute) {
-    this.storage.cancelClicked.subscribe(()=>{
-      if(this.storage.getStep()==='summary' && !this.storage.getClickConsumed()){
-        this.cancel()
-      }
-    })
+    this.afterSave = new EventEmitter<null>()
     this.previousSub = this.storage.previousClicked.subscribe(()=>{
       if(this.storage.getStep()==='summary' && !this.storage.getClickConsumed()){
         this.previous()
@@ -63,15 +59,19 @@ export class ProductSummaryComponent implements OnInit,OnDestroy {
       this.dataService.editProduct(this.product).subscribe(res=>{
         this.storage.setMessage('Product aangepast')
         this.router.navigate(['/producten/overzicht'])
+        this.afterSave.emit()
       },err=>{
         this.messageService.add({key: 'errorMsg', severity:'error', summary: err.error.error, life:5000});
+        this.afterSave.emit()
       })
     } else{
       this.dataService.createProduct(this.product).subscribe(res => {
         this.storage.setMessage('Product bewaard')
         this.router.navigate(['/producten'])
+        this.afterSave.emit()
       },err=>{
         this.messageService.add({key: 'errorMsg', severity:'error', summary: err.error.error, life:5000});
+        this.afterSave.emit()
       })
     }
     this.storage.setClickConsumed(true)

@@ -20,6 +20,7 @@ export class QuotationStorageService {
   cancelClicked = new EventEmitter<null>()
   resetClicked = new EventEmitter<null>()
   saveClicked = new EventEmitter<null>()
+  private clickConsumed = true
   quotation:QuotationModel
   quotationGet:QuotationGetModel|undefined
   availableQuotationSpecifications:QuotationSpecificationModel[]|undefined
@@ -47,6 +48,14 @@ export class QuotationStorageService {
 
   resetStep(){
     this.step = 'customer'
+  }
+
+  getClickConsumed(){
+    return this.clickConsumed
+  }
+
+  setClickConsumed(value:boolean){
+    this.clickConsumed = value
   }
 
   setMessage(msg:string){

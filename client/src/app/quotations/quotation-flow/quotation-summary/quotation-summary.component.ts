@@ -1,18 +1,22 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {DataService} from "../../../services/data.service";
 import {MessageService} from "primeng/api";
 import {QuotationModel} from "../../../models/quotation/quotation.model";
 import {QuotationStorageService} from "../../../services/quotation.storage.service";
 import {OptionModel} from "../../../models/product/option.model";
+import {interval, Subscription} from "rxjs";
 
 @Component({
   selector: 'app-quotation-summary',
   templateUrl: './quotation-summary.component.html',
   styleUrls: ['./quotation-summary.component.css']
 })
-export class QuotationSummaryComponent implements OnInit {
-  previousClicked: boolean
+export class QuotationSummaryComponent implements OnInit,OnDestroy {
+  @Output() afterSave:EventEmitter<null>
+  previousSub:Subscription
+  cancelSub:Subscription
+  saveSub:Subscription
   quotation:QuotationModel
   selectedOptions:OptionModel[]|undefined
   constructor(private storage:QuotationStorageService,
@@ -20,16 +24,22 @@ export class QuotationSummaryComponent implements OnInit {
               private dataService:  DataService,
               private messageService:MessageService,
               private route:ActivatedRoute) {
-    this.storage.cancelClicked.subscribe(()=>{
-      this.cancel()
+    this.afterSave = new EventEmitter<null>()
+    this.previousSub = this.storage.previousClicked.subscribe(()=>{
+      if(this.storage.getStep()==='summary' && !this.storage.getClickConsumed()){
+        this.previous()
+      }
     })
-    this.storage.previousClicked.subscribe(()=>{
-      this.previous()
+    this.cancelSub = this.storage.cancelClicked.subscribe(()=>{
+      if(this.storage.getStep()==='summary' && !this.storage.getClickConsumed()){
+        this.cancel()
+      }
     })
-    this.storage.saveClicked.subscribe(()=>{
-      this.save()
+    this.saveSub = this.storage.saveClicked.subscribe(()=>{
+      if(this.storage.getStep()==='summary' && !this.storage.getClickConsumed()){
+        this.save()
+      }
     })
-    this.previousClicked = false
     this.quotation = this.storage.getQuotation()
     this.selectedOptions = []
     this.selectedOptions = this.quotation.product?.options.filter(opt=>{
@@ -40,7 +50,14 @@ export class QuotationSummaryComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  ngOnDestroy() {
+    this.previousSub.unsubscribe()
+    this.cancelSub.unsubscribe()
+    this.saveSub.unsubscribe()
+  }
+
   save(){
+    this.storage.setClickConsumed(true)
     if(this.route.snapshot.params['id']){
       const previousQuotation = this.storage.getQuotationGet()
       if(previousQuotation){
@@ -56,33 +73,39 @@ export class QuotationSummaryComponent implements OnInit {
         previousQuotation.discount = this.quotation.discount
         previousQuotation.previousVersionId = previousQuotation._id
       }
-    if(previousQuotation)
-      this.dataService.editQuotation(previousQuotation).subscribe(res=>{
-        this.storage.setMessage('Nieuwe versie bewaard')
-        this.router.navigate(['/offertes'])
-      },err=>{
-        this.messageService.add({key: 'errorMsg', severity:'error', summary: err.error.error, life:5000});
-      })
+      if(previousQuotation)
+        this.dataService.editQuotation(previousQuotation).subscribe(res=>{
+          this.storage.setMessage('Nieuwe versie bewaard')
+          this.router.navigate(['/offertes'])
+          // todo zet blocked terug op false
+          this.afterSave?.emit()
+        },err=>{
+          this.messageService.add({key: 'errorMsg', severity:'error', summary: err.error.error, life:5000});
+          // todo zet blocked terug op false
+          this.afterSave?.emit()
+        })
     } else{
       this.dataService.createQuotation(this.quotation).subscribe(res => {
         this.storage.setMessage('Offerte bewaard')
         this.router.navigate(['/offertes'])
+        // todo zet blocked terug op false
+        this.afterSave?.emit()
       },err=>{
         this.messageService.add({key: 'errorMsg', severity:'error', summary: err.error.error, life:5000});
+        // todo zet blocked terug op false
+        this.afterSave?.emit()
       })
     }
   }
 
-  isDisabled(){
-    return false
-  }
 
   previous() {
-    this.previousClicked = true
+    this.storage.setClickConsumed(true)
     this.storage.setStep('options')
   }
 
   cancel() {
+    this.storage.setClickConsumed(true)
     this.router.navigate(['/offertes'])
   }
 

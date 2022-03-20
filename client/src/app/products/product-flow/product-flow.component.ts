@@ -14,10 +14,11 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
   step: string
   index: number
   items: MenuItem[]
-
+  blocked:boolean
   constructor(private dataService:DataService,
               private storage:ProductStorageService,
               private route:ActivatedRoute) {
+    this.blocked = false
     this.step = this.storage.getStep()
     this.index = this.getIndex()
     this.items = [
@@ -94,31 +95,30 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
 
   next(){
     this.storage.setClickConsumed(false)
-    this.storage.nextClicked.emit(this.step)
+    this.storage.nextClicked.emit()
   }
 
   cancel(){
     this.storage.setClickConsumed(false)
-    this.storage.cancelClicked.emit(this.step)
+    this.storage.cancelClicked.emit()
   }
 
   previous(){
     this.storage.setClickConsumed(false)
-    this.storage.previousClicked.emit(this.step)
+    this.storage.previousClicked.emit()
   }
 
   reset(){
     this.storage.setClickConsumed(false)
-    this.storage.resetClicked.emit(this.step)
+    this.storage.resetClicked.emit()
   }
 
   save(){
     this.storage.setClickConsumed(false)
-    this.storage.saveClicked.emit(this.step)
+    this.storage.saveClicked.emit()
   }
 
   isDisabled():boolean{
-    console.log('getting product from flow 1')
     const product = this.storage.getProduct()
     return !(product.specifications.length>0 &&
         product.name && product.price)
