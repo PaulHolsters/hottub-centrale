@@ -19,9 +19,9 @@
         <td>{{quotation['discount']}} %</td>
         <td>{{totalPrice(quotation._id) | currency:'EUR'}}</td>
         <td>{{quotation['status']}}</td>
-        <td>
+        <td (mouseleave)="hideMenu()" >
           <i *ngIf="isIcon(quotation._id)" style="cursor:pointer" class="pi pi-ellipsis-h" (click)="showMenu(quotation._id)"></i>
-          <p-menu (click)="handleClick($event,quotation._id)"
+          <p-menu (click)="handleClick($event,quotation._id)" [style]="{'position':'absolute','z-index': '50','right':'4rem' }"
                   *ngIf="isMenu(quotation._id)" [model]="items" (mouseleave)="hideMenu()"
           #menu>
           </p-menu>
