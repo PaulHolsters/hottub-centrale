@@ -11,7 +11,7 @@ const quotationSchema = new mongoose.Schema({
     productId: {type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true},
     selectedOptions: {type: [{type: mongoose.Schema.Types.ObjectId, ref: 'Option'}]},
     selectedQuotationSpecifications: {type: [{type: mongoose.Schema.Types.ObjectId, ref: 'QuotationSpecification'}]},
-    status: {type: String,enum:['aangemaakt','aangepast','verstuurd','goedgekeurd','aan te passen']},
+    status: {type: String,enum:['aangemaakt','aangepast','verstuurd','goedgekeurd','aan te passen','geannuleerd']},
     customerInfo: {type:new mongoose.Schema({
             email:String,
             firstName:{

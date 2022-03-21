@@ -111,6 +111,10 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
         this.initialStatus = 'to be altered'
           this.selectedStatus = 'to be altered'
         break
+      case 'geannuleerd':
+        this.initialStatus = 'cancelled'
+        this.selectedStatus = 'cancelled'
+        break
     }
     this.idOfStatusChanged = id
     this.displayDialog = true
@@ -137,7 +141,7 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
   }
 
   save(){
-    if(this.idOfStatusChanged && this.initialStatus && this.selectedStatus && this.initialStatus!==this.selectedStatus){
+    if(this.idOfStatusChanged && this.selectedStatus && this.initialStatus!==this.selectedStatus){
       this.dataService.editStatusQuotation(this.idOfStatusChanged,this.selectedStatus).subscribe(res=>{
         this.dataService.getQuotations().subscribe(res=>{
           this.quotations = res

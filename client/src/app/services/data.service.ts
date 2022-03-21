@@ -100,11 +100,13 @@ export class DataService {
       case 'to be altered':
         status = 'aan te passen'
         break
+      case 'cancelled':
+        status = 'geannuleerd'
+        break
       default:
         return new Observable()
     }
     const statusObj = {status:status}
-    console.log(statusObj,'obj')
     return this.http.patch('http://localhost:3000/quotations/'+id,statusObj)
         .pipe(map((res,status)=>{
           return status
@@ -128,7 +130,6 @@ responseType:"blob"
     return this.http.get('http://localhost:3000/quotations/action/'+id+'?action=mail').pipe(map((res)=>{
       return res
     }),catchError(err=>{
-      console.log('ae',err)
       return throwError(err)
     }))
   }

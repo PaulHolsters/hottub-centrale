@@ -95,6 +95,9 @@ router.get('/action/:id', async (req, res, next) => {
     } else if(action==='mail'){
         const quotationId = req.params.id
         Schema.quotationModel.findById({_id:quotationId},{__v:0}).exec().then(doc=>{
+            if(doc?.status!=='aangemaakt' && doc?.status!=='aangepast' && doc?.status!=='aan te passen' ){
+                throw new Error('Enkel offertes met status \'aangemaakt\', \'aangepast\' of \'aan te passen\' kunnen verstuurd worden.')
+            }
             const pdfDoc = new PDFDocument()
             // todo finish the quotation pdf
             pdfDoc.text(doc?.quotationValues.productName)
@@ -143,10 +146,9 @@ router.get('/action/:id', async (req, res, next) => {
                     error: 'email verzenden mislukt'
                 })
             })
-
         }).catch(err=>{
             res.status(500).json({
-                error: 'email verzenden mislukt'
+                error: err.toString().substr(err.toString().indexOf(':')+1)
             })
         })
     } else if(action==='invoice'){
