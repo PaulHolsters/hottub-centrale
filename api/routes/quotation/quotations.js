@@ -62,6 +62,7 @@ router.put('/:groupId/:previous', check('customerInfo.email').isEmail() ,async (
             failedProp = 'customerInfo'
         }
         res.status(500).json({
+            // todo fix messaging here => it is undefined sometimes!
             error: err.errors.customerInfo.message
         })
     })

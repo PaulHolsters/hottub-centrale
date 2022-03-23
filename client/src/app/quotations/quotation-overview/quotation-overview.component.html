@@ -1,7 +1,7 @@
 <p-toast key="successMsg"></p-toast>
 <p-toast key="errorMsg"></p-toast>
-<div class="card">
-  <p-table [value]="latestVersionQuotations" responsiveLayout="scroll">
+<div style="border: 1px solid red; height:100%;">
+  <p-table [value]="latestVersionQuotations" [scrollable]="true" scrollHeight="85vh">
     <ng-template pTemplate="header">
       <tr>
         <th>Klant</th>
