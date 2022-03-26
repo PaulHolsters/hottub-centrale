@@ -55,10 +55,9 @@
           <label for="newQuotationSpecificationPrice" class="label">Prijs specificatie</label>
         </div>
         <div class="col-7">
-          <div class="p-inputgroup">
-            <input *ngIf="editedQuotationSpecification" pInputText id="newQuotationSpecificationPrice" type="number" min="2"
-                   [(ngModel)]="editedQuotationSpecification.price" name="newQuotationSpecificationPrice">
-            <span class="p-inputgroup-addon">&euro;</span>
+          <div class="">
+            <p-inputNumber *ngIf="editedQuotationSpecification" mode="currency" currency="EUR" [maxFractionDigits]="0" [(ngModel)]="editedQuotationSpecification.price" name="newQuotationSpecificationPrice"
+                           id="newQuotationSpecificationPrice" ></p-inputNumber>
           </div>
         </div>
       </div>

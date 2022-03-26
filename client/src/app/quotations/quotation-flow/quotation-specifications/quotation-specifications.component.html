@@ -27,10 +27,9 @@
         <label for="newQuotationSpecificationPrice" class="label">Prijs extra dienst</label>
       </div>
       <div class="col-7">
-        <div class="p-inputgroup">
-          <input pInputText id="newQuotationSpecificationPrice" type="number" min="0"
-                 [(ngModel)]="newQuotationSpecificationPrice" name="newQuotationSpecificationPrice">
-          <span class="p-inputgroup-addon">&euro;</span>
+        <div class="">
+          <p-inputNumber mode="currency" currency="EUR" [maxFractionDigits]="0" [(ngModel)]="newQuotationSpecificationPrice" name="newQuotationSpecificationPrice"
+                         id="newQuotationSpecificationPrice" ></p-inputNumber>
         </div>
       </div>
       <div class="col">
