@@ -120,6 +120,7 @@ export class DataService {
     return this.http.get('http://localhost:3000/quotations/action/'+id+'?action=pdf',{
 responseType:"blob"
     }).pipe(map((res)=>{
+      console.log(res)
       return res
     }),catchError(err=>{
       return throwError(err)

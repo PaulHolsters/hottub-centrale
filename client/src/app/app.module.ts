@@ -51,6 +51,7 @@ import {CheckboxModule} from "primeng/checkbox";
 import {DialogModule} from "primeng/dialog";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {BlockUIModule} from "primeng/blockui";
+import {InputNumberModule} from "primeng/inputnumber";
 
 const appRoutes: Routes = [
   {path: 'producten', component: ProductsComponent},
@@ -113,6 +114,7 @@ const appRoutes: Routes = [
         DialogModule,
         ConfirmDialogModule,
         BlockUIModule,
+        InputNumberModule,
     ],
   exports: [BrowserAnimationsModule],
   providers: [DataService,ProductStorageService,QuotationStorageService,BrowserAnimationsModule,MessageService,ConfirmationService],

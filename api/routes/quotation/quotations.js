@@ -83,7 +83,9 @@ router.get('/action/:id', async (req, res, next) => {
     const action = req.query.action
     if(action==='pdf'){
         const quotationId = req.params.id
+        console.log(quotationId)
         Schema.quotationModel.findById({_id:quotationId},{__v:0}).exec().then(doc=>{
+            console.log('pdf send')
             res.setHeader('Content-Type', 'application/pdf')
             res.setHeader('Content-Disposition','attachment; filename = "offerte_"'+ doc?.quotationValues.productName +'"')
             const pdfDoc = new PDFDocument()
@@ -92,6 +94,7 @@ router.get('/action/:id', async (req, res, next) => {
             pdfDoc.text(doc?.quotationValues.productName)
             // todo finish the quotation pdf
             pdfDoc.end()
+
         })
     } else if(action==='mail'){
         const quotationId = req.params.id
@@ -111,6 +114,7 @@ router.get('/action/:id', async (req, res, next) => {
                         pass: 'Vistaline123;'
                     }
                 })
+                console.log(options.email)
                 const mailOptions = {
                     from: 'hottub.centrale.test@gmail.com',
                     to: options.email,

@@ -14,8 +14,8 @@ export class ProductInfoComponent implements OnInit,OnDestroy,AfterViewInit,DoCh
   nextSub:Subscription
   cancelSub:Subscription
   resetSub:Subscription
+  previousChar:string|undefined
   constructor(private router:Router, private storage:ProductStorageService) {
-    console.log('getting product from info 1')
     this.product = this.storage.getProduct()
     this.storage.productFetched.subscribe(res=>{
       this.product = res
@@ -75,6 +75,18 @@ export class ProductInfoComponent implements OnInit,OnDestroy,AfterViewInit,DoCh
   cancel(){
     this.router.navigate(['/producten'])
     this.storage.setClickConsumed(true)
+  }
+
+  noDecimals(event:any){
+    const char = event.data
+    if(this.previousChar === '.' || this.previousChar === ','){
+      if(this.product.price){
+        console.log(this.product.price)
+        this.product.price = Math.floor(this.product.price)
+        console.log(this.product.price)
+      }
+    }
+    this.previousChar = char
   }
 
 }

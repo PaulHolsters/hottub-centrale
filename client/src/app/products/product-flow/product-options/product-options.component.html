@@ -27,8 +27,8 @@
       </div>
       <div class="col-7">
         <div class="p-inputgroup">
-          <input pInputText id="newOptionPrice" type="number" min="0"
-                 [(ngModel)]="newOptionPrice" name="newOptionPrice">
+          <p-inputNumber mode="currency" currency="EUR" [maxFractionDigits]="0" [(ngModel)]="newOptionPrice" name="newOptionPrice"
+                         id="newOptionPrice" ></p-inputNumber>
           <span class="p-inputgroup-addon">&euro;</span>
         </div>
       </div>
