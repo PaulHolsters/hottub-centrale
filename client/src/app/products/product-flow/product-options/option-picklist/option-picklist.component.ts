@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ProductStorageService} from "../../../../services/product.storage.service";
 import {DataService} from "../../../../services/data.service";
 import {OptionModel} from "../../../../models/product/option.model";
-import {ConfirmationService} from "primeng/api";
+import {ConfirmationService, MessageService} from "primeng/api";
 
 @Component({
   selector: 'app-option-picklist',
@@ -18,7 +18,8 @@ export class OptionPicklistComponent implements OnInit {
   editedOption:OptionModel|undefined
   loadedOption:OptionModel|undefined
   displayEditOptionDialog:boolean
-  constructor(private storage: ProductStorageService, private dataService: DataService,private confirmationService:ConfirmationService) {
+  constructor(private storage: ProductStorageService, private dataService: DataService
+              ,private confirmationService:ConfirmationService,private messageService:MessageService) {
     this.displayEditOptionDialog = false
     this.source = []
     this.target = []
@@ -38,6 +39,7 @@ export class OptionPicklistComponent implements OnInit {
             return opt._id===id
           }),1)
           this.listChanged.emit({source:this.source,target:this.target})
+          this.messageService.add({severity:'success', summary: 'Optie verwijderd', life:3000});
         })
       }
     })
@@ -83,6 +85,9 @@ export class OptionPicklistComponent implements OnInit {
         this.editedOption = undefined
         this.loadedOption= undefined
         this.displayEditOptionDialog = false
+        this.messageService.add({severity:'success', summary: 'Optie aangepast', life:3000});
+      },err=>{
+        this.messageService.add({severity:'error', summary: err.error.error, life:3000});
       })
   }
 

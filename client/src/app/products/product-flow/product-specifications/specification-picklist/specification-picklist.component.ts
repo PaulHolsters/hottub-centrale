@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angula
 import {SpecificationModel} from "../../../../models/product/specification.model";
 import {ProductStorageService} from "../../../../services/product.storage.service";
 import {DataService} from "../../../../services/data.service";
-import {ConfirmationService} from "primeng/api";
+import {ConfirmationService, MessageService} from "primeng/api";
 
 @Component({
   selector: 'app-specification-picklist',
@@ -19,7 +19,7 @@ export class SpecificationPicklistComponent implements OnInit,OnDestroy {
   editedSpecification:SpecificationModel|undefined
   loadedSpecification:SpecificationModel|undefined
   constructor(private storage: ProductStorageService, private dataService: DataService,
-              private confirmationService: ConfirmationService) {
+              private confirmationService: ConfirmationService,private messageService:MessageService) {
     this.source = []
     this.target = []
     this.displayEditSpecificationDialog = false
@@ -42,6 +42,9 @@ export class SpecificationPicklistComponent implements OnInit,OnDestroy {
             return spec._id===id
           }),1)
           this.listChanged.emit({source:this.source,target:this.target})
+          this.messageService.add({severity:'success', summary: 'Specificatie verwijderd', life:3000});
+        },err=>{
+          this.messageService.add({severity:'error', summary: err.error.error, life:3000});
         })
       }
     })
@@ -87,8 +90,10 @@ export class SpecificationPicklistComponent implements OnInit,OnDestroy {
       this.editedSpecification = undefined
       this.loadedSpecification = undefined
       this.displayEditSpecificationDialog = false
+      this.messageService.add({severity:'success', summary: 'Specificatie aangepast', life:3000});
+    },err=>{
+      this.messageService.add({severity:'error', summary: err.error.error, life:3000});
     })
-
   }
 
   isDisabled():boolean{
