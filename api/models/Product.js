@@ -8,7 +8,7 @@ const productSchema = new mongoose.Schema({
         minlength: [2, 'Een productnaam dient minimaal 2 karakters lang te zijn.'], alias: 'productName'
     },
     cat: {type: String, enum: ['hottub', 'sauna', 'tiny house'], required: true, alias: 'category', default: 'hottub'},
-    price: {type: Number, required: true, min: 100, alias: 'basePrice'},
+    price: {type: Number, required: true, min: [100,'De prijs dient minimaal 100 euro te zijn.'], alias: 'basePrice'},
     specifications: {
         type: [{type: mongoose.Schema.Types.ObjectId, ref: 'ProductSpecification'}]
     },

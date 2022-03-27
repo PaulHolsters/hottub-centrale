@@ -16,9 +16,12 @@
         <td>{{product.cat}}</td>
         <td>{{product['price'] | currency:'EUR'}}</td>
         <td>{{priceWithOptions(product._id) | currency:'EUR'}}</td>
-        <td>
+        <td (mouseleave)="hideMenu()" >
           <i *ngIf="isIcon(product._id)" style="cursor:pointer" class="pi pi-ellipsis-h" (click)="showMenu(product._id)"></i>
-          <p-menu (click)="deleteProduct(product._id)" *ngIf="isMenu(product._id)" [model]="items" (mouseleave)="hideMenu(product._id)"></p-menu>
+          <p-menu (click)="handleClick($event,product._id)" [style]="{'position':'absolute','z-index': '50','right':'4rem' }"
+                  *ngIf="isMenu(product._id)" [model]="items" (mouseleave)="hideMenu()"
+                  #menu>
+          </p-menu>
         </td>
       </tr>
     </ng-template>

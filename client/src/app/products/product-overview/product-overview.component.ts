@@ -15,9 +15,9 @@ export class ProductOverviewComponent implements OnInit,AfterViewChecked {
   activatedActionsMenu:string|undefined
   // todo hou er rekening mee dat setRoute de links van elk menu zet
   items = [
-    {label: 'Bekijken', icon: 'pi pi-fw pi-eye',routerLink:['']
+    {label: 'Bekijken', icon: 'pi pi-fw pi-eye'
     },
-    {label: 'Aanpassen', icon: 'pi pi-fw pi-pencil', routerLink:['']},
+    {label: 'Aanpassen', icon: 'pi pi-fw pi-pencil'},
     {label: 'Verwijderen', icon: 'pi pi-fw pi-trash'}
   ];
   constructor(private dataService:DataService,
@@ -44,15 +44,28 @@ export class ProductOverviewComponent implements OnInit,AfterViewChecked {
 
   showMenu(id:string){
     this.activatedActionsMenu = id
-    this.setRoute(id)
   }
 
-  hideMenu(id:string){
+  hideMenu(){
     this.activatedActionsMenu = undefined
-    this.unsetRoute(id)
   }
 
-  setRoute(id:string){
+  handleClick(event:any,id:string){
+    switch (event.target.innerText){
+      case 'Bekijken':
+        this.router.navigate(['offertes/details/'+id])
+        break
+      case 'Verwijderen':
+        this.deleteProduct(id)
+        break
+      case 'Aanpassen':
+        this.router.navigate(['producten','aanpassen',id])
+        break
+    }
+    this.hideMenu()
+  }
+
+/*  setRoute(id:string){
     if(this.items){
       this.items[0].routerLink = ['/producten','details',id]
       this.items[1].routerLink = ['/producten','aanpassen',id]
@@ -64,8 +77,7 @@ export class ProductOverviewComponent implements OnInit,AfterViewChecked {
       this.items[0].routerLink = ['']
       this.items[1].routerLink = ['']
     }
-  }
-
+  }*/
 
   priceWithOptions(id:string):number|undefined{
     const product = this.products.find(prod=>{
@@ -79,10 +91,6 @@ export class ProductOverviewComponent implements OnInit,AfterViewChecked {
 
   productDetails(id:string){
     this.router.navigate(['producten','details',id])
-  }
-
-  editProduct(id:string){
-    this.router.navigate(['producten','aanpassen',id])
   }
 
   deleteProduct(id:string){
