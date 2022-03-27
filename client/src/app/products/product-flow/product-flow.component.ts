@@ -15,6 +15,7 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
   index: number
   items: MenuItem[]
   blocked:boolean
+  id:string|undefined
   constructor(private dataService:DataService,
               private storage:ProductStorageService,
               private route:ActivatedRoute) {
@@ -46,9 +47,9 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
       this.step = step
       this.index = this.getIndex()
     })
-    const id = this.route.snapshot.params['id']
-    if(id){
-      this.dataService.getProduct(id).subscribe(res=>{
+    this.id = this.route.snapshot.params['id']
+    if(this.id){
+      this.dataService.getProduct(this.id).subscribe(res=>{
         this.storage.productFetched.emit(res)
         if(this.storage.getStateAvailableSpecifications()){
           this.storage.getAvailableSpecifications().subscribe(avSpecs=>{
@@ -86,7 +87,6 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log('resetting product')
     this.storage.resetProduct()
     this.storage.resetAvailableSpecifications()
     this.storage.resetAvailableOptions()
