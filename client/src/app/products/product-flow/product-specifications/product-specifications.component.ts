@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ProductStorageService} from "../../../services/product.storage.service";
 import {ProductModel} from "../../../models/product/product.model";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {SpecificationModel} from "../../../models/product/specification.model";
 import {DataService} from "../../../services/data.service";
 import {PickList} from "primeng/picklist";
@@ -16,6 +16,7 @@ export class ProductSpecificationsComponent implements OnInit,OnDestroy {
   @ViewChild('pickList') pickList: PickList | undefined
   newSpecification: string|undefined
   product: ProductModel
+  initialProduct:ProductModel
   availableSpecifications: SpecificationModel[]
   loading:boolean
   nextSub:Subscription
@@ -23,7 +24,7 @@ export class ProductSpecificationsComponent implements OnInit,OnDestroy {
   cancelSub:Subscription
   resetSub:Subscription
 
-  constructor(private router: Router, private storage: ProductStorageService, private dataService: DataService) {
+  constructor(private router: Router, private storage: ProductStorageService, private dataService: DataService,private route: ActivatedRoute) {
     this.nextSub = this.storage.nextClicked.subscribe(()=>{
       if(this.storage.getStep()==='specifications' && !this.storage.getClickConsumed()){
         this.next()
@@ -45,8 +46,8 @@ export class ProductSpecificationsComponent implements OnInit,OnDestroy {
       }
     })
     this.newSpecification = this.storage.getSpecificationInput()
-    console.log('getting product from specs 1')
     this.product = this.storage.getProduct()
+    this.initialProduct = this.storage.getInitialProduct()
     this.availableSpecifications = this.storage.getAvailableSpecificationsNoSub()||[]
     this.loading = false
   }
@@ -105,12 +106,31 @@ export class ProductSpecificationsComponent implements OnInit,OnDestroy {
 
   reset() {
     if (this.product && this.product.specifications) {
-      this.product.specifications = []
-      this.storage.resetAvailableSpecifications()
-      this.newSpecification = undefined
-      this.availableSpecifications = this.storage.getAvailableSpecificationsNoSub()||[]
+      if(this.route.snapshot.params['id']){
+        this.storage.getAvailableSpecifications().subscribe(specs=>{
+          console.log(specs)
+          this.product.specifications = [...this.initialProduct.specifications]
+          if(this.product.specifications.length>0){
+            this.availableSpecifications = specs.filter(spec=>{
+              return !this.product.specifications.map(spec2=>{
+                return spec2._id
+              }).includes(spec._id)
+            })
+          } else{
+            this.availableSpecifications = specs
+          }
+          this.storage.setAvailableSpecifications([...this.availableSpecifications])
+        })
+        this.newSpecification = undefined
+        this.storage.setClickConsumed(true)
+      } else{
+        this.product.specifications = []
+        this.storage.resetAvailableSpecifications()
+        this.newSpecification = undefined
+        this.availableSpecifications = this.storage.getAvailableSpecificationsNoSub()||[]
+        this.storage.setClickConsumed(true)
+      }
     }
-    this.storage.setClickConsumed(true)
   }
 
   cancel() {

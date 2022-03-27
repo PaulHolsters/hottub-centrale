@@ -13,7 +13,6 @@ import {ProductStorageService} from "../../services/product.storage.service";
 export class ProductOverviewComponent implements OnInit,AfterViewChecked {
   products:ProductModel[]
   activatedActionsMenu:string|undefined
-  // todo hou er rekening mee dat setRoute de links van elk menu zet
   items = [
     {label: 'Bekijken', icon: 'pi pi-fw pi-eye'
     },
@@ -65,20 +64,6 @@ export class ProductOverviewComponent implements OnInit,AfterViewChecked {
     this.hideMenu()
   }
 
-/*  setRoute(id:string){
-    if(this.items){
-      this.items[0].routerLink = ['/producten','details',id]
-      this.items[1].routerLink = ['/producten','aanpassen',id]
-    }
-  }
-
-  unsetRoute(id:string){
-    if(this.items){
-      this.items[0].routerLink = ['']
-      this.items[1].routerLink = ['']
-    }
-  }*/
-
   priceWithOptions(id:string):number|undefined{
     const product = this.products.find(prod=>{
       return prod._id===id
@@ -97,7 +82,7 @@ export class ProductOverviewComponent implements OnInit,AfterViewChecked {
     this.dataService.deleteProduct(id).subscribe(res=>{
       this.dataService.getProducts().subscribe(res=>{
         this.products = res
-        this.messageService.add({severity:'success', summary: 'Product verwijderd'})
+        this.messageService.add({severity:'success',key:'successMsg', summary: 'Product verwijderd'})
       })
     })
   }

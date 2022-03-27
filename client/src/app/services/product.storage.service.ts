@@ -11,6 +11,7 @@ export class ProductStorageService {
   constructor(private dataService: DataService) {
   }
   private product = new ProductModel(undefined, 'hottub', undefined, [], [])
+  private initialProduct = new ProductModel(undefined, 'hottub', undefined, [], [])
   private availableSpecifications:SpecificationModel[]|undefined
   private availableOptions:OptionModel[]|undefined
   private step = 'info'
@@ -142,12 +143,22 @@ export class ProductStorageService {
     this.product = product
   }
 
+  setInitialProduct(product:ProductModel){
+    this.initialProduct = product
+  }
+
+  getInitialProduct():ProductModel{
+    const init = {...this.initialProduct}
+    init.specifications = [...this.initialProduct.specifications]
+    init.options = [...this.initialProduct.options]
+    return init
+  }
+
   resetProduct() {
     this.product = new ProductModel(undefined, 'hottub', undefined, [], [])
   }
 
   getProduct(): ProductModel {
-    console.log('getProduct called')
     const productCopy = {...this.product}
     if (this.product.specifications) {
       const specificationsCopy: SpecificationModel[] = []

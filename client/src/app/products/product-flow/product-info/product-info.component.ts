@@ -11,14 +11,19 @@ import {Subscription} from "rxjs";
 })
 export class ProductInfoComponent implements OnInit,OnDestroy,AfterViewInit,DoCheck{
   product: ProductModel
+  initialProduct: ProductModel
   nextSub:Subscription
   cancelSub:Subscription
   resetSub:Subscription
-  previousChar:string|undefined
-  constructor(private router:Router, private storage:ProductStorageService) {
+  constructor(private router:Router, private storage:ProductStorageService, private route: ActivatedRoute) {
     this.product = this.storage.getProduct()
+    this.initialProduct = this.storage.getInitialProduct()
     this.storage.productFetched.subscribe(res=>{
-      this.product = res
+      this.product = {...res}
+      if(!this.initialProduct._id){
+        this.storage.setInitialProduct({...res})
+        this.initialProduct = this.storage.getInitialProduct()
+      }
     })
     this.nextSub = this.storage.nextClicked.subscribe(()=>{
       if(this.storage.getStep()==='info' && !this.storage.getClickConsumed()){
@@ -64,29 +69,26 @@ export class ProductInfoComponent implements OnInit,OnDestroy,AfterViewInit,DoCh
   }
 
   reset(){
-    if(this.product){
-      this.product.name = undefined
-      this.product.cat = 'hottub'
-      this.product.price = undefined
-      this.storage.setClickConsumed(true)
+    if(this.route.snapshot.params['id']){
+      if(this.product){
+        this.product.name = this.initialProduct.name
+        this.product.cat = this.initialProduct.cat
+        this.product.price = this.initialProduct.price
+        this.storage.setClickConsumed(true)
+      }
+    } else{
+      if(this.product){
+        this.product.name = undefined
+        this.product.cat = 'hottub'
+        this.product.price = undefined
+        this.storage.setClickConsumed(true)
+      }
     }
   }
 
   cancel(){
     this.router.navigate(['/producten'])
     this.storage.setClickConsumed(true)
-  }
-
-  noDecimals(event:any){
-    const char = event.data
-    if(this.previousChar === '.' || this.previousChar === ','){
-      if(this.product.price){
-        console.log(this.product.price)
-        this.product.price = Math.floor(this.product.price)
-        console.log(this.product.price)
-      }
-    }
-    this.previousChar = char
   }
 
 }

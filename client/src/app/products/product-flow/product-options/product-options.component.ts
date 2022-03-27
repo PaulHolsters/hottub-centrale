@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ProductStorageService} from "../../../services/product.storage.service";
 import {PickList} from "primeng/picklist";
 import {ProductModel} from "../../../models/product/product.model";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {DataService} from "../../../services/data.service";
 import {OptionModel} from "../../../models/product/option.model";
 import {Subscription} from "rxjs";
@@ -17,13 +17,14 @@ export class ProductOptionsComponent implements OnInit,OnDestroy {
   newOptionName: string|undefined
   newOptionPrice: number|undefined
   product: ProductModel
+  initialProduct: ProductModel
   availableOptions: OptionModel[]
   loading: boolean
   nextSub:Subscription
   previousSub:Subscription
   cancelSub:Subscription
   resetSub:Subscription
-  constructor(private router: Router, private storage: ProductStorageService, private dataService: DataService) {
+  constructor(private router: Router, private storage: ProductStorageService, private dataService: DataService,private route: ActivatedRoute) {
     this.nextSub = this.storage.nextClicked.subscribe(()=>{
       if(this.storage.getStep()==='options' && !this.storage.getClickConsumed()){
         this.next()
@@ -46,8 +47,8 @@ export class ProductOptionsComponent implements OnInit,OnDestroy {
     })
     this.newOptionName = this.storage.getOptionNameInput()
     this.newOptionPrice = this.storage.getOptionPriceInput()
-    console.log('getting product from options 1')
     this.product = this.storage.getProduct()
+    this.initialProduct = this.storage.getInitialProduct()
     this.availableOptions = this.storage.getAvailableOptionsNoSub()||[]
     this.loading = false
   }
@@ -77,7 +78,6 @@ export class ProductOptionsComponent implements OnInit,OnDestroy {
 
   reload(lists:{source:OptionModel[],target:OptionModel[]}) {
     this.store(lists)
-    console.log('getting product from options 2')
     this.product = this.storage.getProduct()
     this.availableOptions = this.storage.getAvailableOptionsNoSub()||[]
   }
@@ -110,13 +110,33 @@ export class ProductOptionsComponent implements OnInit,OnDestroy {
 
   reset() {
     if (this.product && this.product.options) {
-      this.product.options = []
-      this.availableOptions = []
-      this.storage.resetAvailableOptions()
-      this.newOptionName = undefined
-      this.newOptionPrice = undefined
-      this.availableOptions = this.storage.getAvailableOptionsNoSub()||[]
-      this.storage.setClickConsumed(true)
+      if(this.route.snapshot.params['id']){
+        this.storage.getAvailableOptions().subscribe(options=>{
+          this.product.options = [...this.initialProduct.options]
+          console.log(this.product.options,options)
+          if(this.product.options.length>0){
+            this.availableOptions = options.filter(opt=>{
+              return !this.product.options.map(option=>{
+                return option._id
+              }).includes(opt._id)
+            })
+          } else{
+            this.availableOptions = options
+          }
+          this.storage.setAvailableOptions([...this.availableOptions])
+        })
+        this.newOptionName = undefined
+        this.newOptionPrice = undefined
+        this.storage.setClickConsumed(true)
+      } else{
+        this.product.options = []
+        this.availableOptions = []
+        this.storage.resetAvailableOptions()
+        this.newOptionName = undefined
+        this.newOptionPrice = undefined
+        this.availableOptions = this.storage.getAvailableOptionsNoSub()||[]
+        this.storage.setClickConsumed(true)
+      }
     }
   }
 
