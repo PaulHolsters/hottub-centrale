@@ -79,7 +79,7 @@ export class QuotationSummaryComponent implements OnInit,OnDestroy {
           this.router.navigate(['/offertes'])
           this.afterSave?.emit()
         },err=>{
-          this.messageService.add({key: 'errorMsg', severity:'error', summary: err.error.error, life:5000});
+          this.messageService.add({severity:'error', summary: err.error.error, life:5000});
           this.afterSave?.emit()
         })
     } else{
@@ -88,7 +88,7 @@ export class QuotationSummaryComponent implements OnInit,OnDestroy {
         this.router.navigate(['/offertes'])
         this.afterSave?.emit()
       },err=>{
-        this.messageService.add({key: 'errorMsg', severity:'error', summary: err.error.error, life:5000});
+        this.messageService.add({ severity:'error', summary: err.error.error, life:5000});
         this.afterSave?.emit()
       })
     }
@@ -106,8 +106,7 @@ export class QuotationSummaryComponent implements OnInit,OnDestroy {
   }
 
   // todo zorg ervoor dat als je een offerte aanpast enkel geldige waarden gebruikt worden
-  //  dwz producten die effectief bestaan met al hun eig en offerte specs die bestaan
-
+  //  dwz producten die effectief bestaan met al hun eig en offerte specs die bestaan=> wijzigingen in producten hebben hier namelijk een weerslag op
   // todo zorg ervoor dat je in de frontend geen offertes kan aanpassen die al zijn gefactureerd of een status 'akkoord' hebben
 
 }

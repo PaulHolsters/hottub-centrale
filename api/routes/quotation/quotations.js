@@ -25,11 +25,13 @@ router.post('/', check('customerInfo.email').isEmail() ,async (req, res, next) =
         VAT: req.body.VAT,
         discount: req.body.discount
     })
+    console.log(newQuotation)
     newQuotation.save().then(result => {
         res.status(201).json()
     }).catch(err => {
+        console.log('err',err)
         res.status(500).json({
-            error: err
+            error: err.toString().substr(err.toString().lastIndexOf(':')+2)
         })
     })
 })

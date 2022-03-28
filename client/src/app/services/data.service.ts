@@ -64,6 +64,11 @@ export class DataService {
   }
 
   createQuotation(quotation:QuotationModel):Observable<any>{
+    if(quotation.customerInfo.firstName && quotation.customerInfo.firstName?.trim()[0]!==quotation.customerInfo.firstName?.trim()[0].toUpperCase()){
+      quotation.customerInfo.firstName = quotation.customerInfo.firstName?.trim()[0].toUpperCase() + quotation.customerInfo.firstName?.trim().substr(1)
+    } else{
+      throwError('bad customerInfo')
+    }
     const quotationObj = {
       version: quotation.version,
       productId: quotation?.product?._id,
@@ -76,7 +81,6 @@ export class DataService {
       discount: quotation.discount
     }
     return this.http.post('http://localhost:3000/quotations',quotationObj).pipe(map((err,res)=>{
-      console.log(err,res)
       return res
     }))
   }

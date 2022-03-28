@@ -154,6 +154,9 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
           })
         })
         this.displayDialog = false
+        this.messageService.add({severity:'success', summary: 'Statuswijziging doorgevoerd', life:3000});
+      },err=>{
+        this.messageService.add({severity:'error', summary: err.error.error, life:3000});
       })
     }
   }
@@ -176,7 +179,7 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
           location.reload()
         },err=>{
           this.blocked = false
-          this.messageService.add({key: 'errorMsg', severity:'error', summary: err.error.error, life:5000});
+          this.messageService.add({severity:'error', summary: err.error.error, life:3000});
         })
         break
       case 'Statuswijziging':
@@ -191,7 +194,7 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
 
   ngAfterViewChecked(): void {
     if(this.storage.hasMessage()){
-      this.messageService.add({key:'successMsg', severity:'success', summary: this.storage.getMessage()})
+      this.messageService.add({severity:'success', summary: this.storage.getMessage()})
       this.storage.resetMessage()
       this.cd.detectChanges()
     }
