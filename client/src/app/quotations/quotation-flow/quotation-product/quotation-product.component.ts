@@ -4,7 +4,6 @@ import {QuotationStorageService} from "../../../services/quotation.storage.servi
 import {Router} from "@angular/router";
 import {ProductModel} from "../../../models/product/product.model";
 import {DataService} from "../../../services/data.service";
-import {QuotationSpecificationModel} from "../../../models/quotation/quotation-specification.model";
 import {Subscription} from "rxjs";
 
 @Component({
@@ -14,12 +13,15 @@ import {Subscription} from "rxjs";
 })
 export class QuotationProductComponent implements OnInit,OnDestroy {
   quotation: QuotationModel
+  initialQuotation:QuotationModel|undefined
   products:ProductModel[]
   nextSub:Subscription
   previousSub:Subscription
   cancelSub:Subscription
   resetSub:Subscription
+  destroyed:boolean|undefined
   constructor(private storage:QuotationStorageService, private router: Router,private dataService:DataService) {
+    console.log('constr prod')
     this.nextSub = this.storage.nextClicked.subscribe(()=>{
       if(this.storage.getStep()==='product' && !this.storage.getClickConsumed()){
         this.next()
@@ -41,36 +43,37 @@ export class QuotationProductComponent implements OnInit,OnDestroy {
       }
     })
     this.quotation = this.storage.getQuotation()
-    console.log(this.quotation.product)
     this.products = []
     this.dataService.getProducts().subscribe(res=>{
       this.products = res
     })
-    this.storage.quotationFetched.subscribe(res=>{
-      console.log('fetched')
-      this.quotation = res
-    })
   }
 
   ngOnInit(): void {
+    this.initialQuotation = this.storage.getInitialQuotation()
+    console.log('init product quot')
   }
 
   ngOnDestroy() {
-    this.nextSub.unsubscribe()
-    this.previousSub.unsubscribe()
-    this.cancelSub.unsubscribe()
-    this.resetSub.unsubscribe()
-  }
+      if(this.nextSub)
+        this.nextSub.unsubscribe()
+      if(this.previousSub)
+        this.previousSub.unsubscribe()
+      if(this.cancelSub)
+        this.cancelSub.unsubscribe()
+      if(this.resetSub)
+        this.resetSub.unsubscribe()
+      console.log('destr prod')
+    }
 
   previous() {
-    this.storage.setClickConsumed(true)
     this.storage.setStep('customer')
     this.storage.setQuotation(this.quotation)
+    this.storage.setClickConsumed(true)
   }
 
   next(){
     this.storage.setClickConsumed(true)
-    console.log(this.quotation)
     this.storage.setQuotation(this.quotation)
     this.storage.setStep('specifications')
   }

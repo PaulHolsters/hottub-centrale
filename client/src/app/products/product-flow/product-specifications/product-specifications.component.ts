@@ -60,6 +60,7 @@ export class ProductSpecificationsComponent implements OnInit,OnDestroy {
     this.previousSub.unsubscribe()
     this.cancelSub.unsubscribe()
     this.resetSub.unsubscribe()
+    console.log('destr specs')
   }
 
   store(lists: { source: SpecificationModel[], target: SpecificationModel[] } | null) {
@@ -74,7 +75,6 @@ export class ProductSpecificationsComponent implements OnInit,OnDestroy {
 
   reload(lists:{source:SpecificationModel[],target:SpecificationModel[]}) {
     this.store(lists)
-    console.log('getting product from specs 2')
     this.product = this.storage.getProduct()
     this.availableSpecifications = this.storage.getAvailableSpecificationsNoSub()||[]
   }

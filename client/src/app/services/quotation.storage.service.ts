@@ -22,10 +22,12 @@ export class QuotationStorageService {
   saveClicked = new EventEmitter<null>()
   private clickConsumed = true
   quotation:QuotationModel
+  initialQuotation:QuotationModel
   quotationGet:QuotationGetModel|undefined
   availableQuotationSpecifications:QuotationSpecificationModel[]|undefined
   private newQuotationSpecificationName:string|undefined
   private newQuotationSpecificationPrice:number|undefined
+
   constructor(private dataService: DataService) {
     this.step = 'customer'
     this.stepChange = new EventEmitter<string|undefined>()
@@ -35,6 +37,31 @@ export class QuotationStorageService {
       lastName: undefined,
       email: undefined
     }, 21, 0, undefined)
+    this.initialQuotation = new QuotationModel(1, undefined, [], [], {
+      firstName: undefined,
+      lastName: undefined,
+      email: undefined
+    }, 21, 0, undefined)
+  }
+
+  setInitialQuotation(quotation:QuotationModel){
+    const init = {...quotation}
+    init.customerInfo = {...quotation.customerInfo}
+    init.options = {...quotation.options}
+    if(quotation.product)
+      init.product = {...quotation.product}
+    init.quotationSpecifications = [...quotation.quotationSpecifications]
+    this.initialQuotation = init
+  }
+
+  getInitialQuotation():QuotationModel{
+    const init = {...this.initialQuotation}
+    init.customerInfo = {...this.initialQuotation.customerInfo}
+    init.options = {...this.initialQuotation.options}
+    if(this.initialQuotation.product)
+    init.product = {...this.initialQuotation.product}
+    init.quotationSpecifications = [...this.initialQuotation.quotationSpecifications]
+    return init
   }
 
   getStep() {
@@ -125,6 +152,10 @@ export class QuotationStorageService {
 
   resetAvailableQuotationSpecifications(){
     this.availableQuotationSpecifications = undefined
+  }
+
+  getStateAvailableQuotationSpecifications():boolean{
+    return this.availableQuotationSpecifications===undefined
   }
 
   setQuotationSpecificationNameInput(newQuotationSpecificationName:string|undefined){

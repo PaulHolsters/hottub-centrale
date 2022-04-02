@@ -16,6 +16,7 @@ export class ProductInfoComponent implements OnInit,OnDestroy,AfterViewInit,DoCh
   cancelSub:Subscription
   resetSub:Subscription
   constructor(private router:Router, private storage:ProductStorageService, private route: ActivatedRoute) {
+    console.log('constr prod')
     this.product = this.storage.getProduct()
     this.initialProduct = this.storage.getInitialProduct()
     this.storage.productFetched.subscribe(res=>{
@@ -44,7 +45,7 @@ export class ProductInfoComponent implements OnInit,OnDestroy,AfterViewInit,DoCh
   }
 
   ngOnInit(): void {
-    //console.log('init info',this.storage.getProduct())
+    console.log('init info')
   }
 
   ngDoCheck(): void {
@@ -67,6 +68,7 @@ export class ProductInfoComponent implements OnInit,OnDestroy,AfterViewInit,DoCh
     this.storage.setStep('specifications')
     this.storage.setClickConsumed(true)
   }
+
 
   reset(){
     if(this.route.snapshot.params['id']){

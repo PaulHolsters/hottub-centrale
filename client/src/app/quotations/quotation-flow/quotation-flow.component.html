@@ -1,28 +1,36 @@
 <div style="height:100%;" class="pt-1 pl-3 pr-3 pb-3 m-0 flex flex-column justify-content-between">
-  <div class="" >
-    <p-steps *ngIf="items" [model]="items" [activeIndex]="index"></p-steps>
-  </div>
-  <div  style="" class="">
-    <app-quotation-customer *ngIf="step==='customer'"></app-quotation-customer>
-    <app-quotation-product *ngIf="step==='product'"></app-quotation-product>
-    <app-quotation-specifications *ngIf="step==='specifications'"></app-quotation-specifications>
-    <app-quotation-options *ngIf="step==='options'"></app-quotation-options>
-    <app-quotation-summary (afterSave)="blocked=false" *ngIf="step==='summary'"></app-quotation-summary>
-  </div>
-  <div>
-    <p-divider class="col-12 grid p-0 mt-2 mb-2"></p-divider>
-    <div class="col-12 grid p-0 d-flex justify-content-end" >
+    <div class="">
+        <p-steps *ngIf="items" [model]="items" [activeIndex]="index"></p-steps>
+    </div>
+
+    <div style="" class="">
+        <app-quotation-customer *ngIf="step==='customer'"></app-quotation-customer>
+        <app-quotation-product *ngIf="step==='product'"></app-quotation-product>
+        <app-quotation-specifications *ngIf="step==='specifications'"></app-quotation-specifications>
+        <app-quotation-options *ngIf="step==='options'"></app-quotation-options>
+        <app-quotation-summary (afterSave)="blocked=false" *ngIf="step==='summary'"></app-quotation-summary>
+    </div>
+    <div>
+        <p-divider class="col-12 grid p-0 mt-2 mb-2"></p-divider>
+        <div class="col-12 grid p-0 d-flex justify-content-end">
     <span class="p-buttonset m-0">
-                <button *ngIf="step!=='summary'" (click)="reset()" pButton type="button" label="Leegmaken" class="p-button-warning"
+        <button *ngIf="step!=='summary' && !id" (click)="reset()" pButton type="button" label="Leegmaken"
+                class="p-button-warning"
+                icon="pi pi-trash"></button>
+                <button *ngIf="step!=='summary' && id" (click)="reset()" pButton type="button" label="Initiële waarde"
+                        class="p-button-warning"
                         icon="pi pi-trash"></button>
-                <button *ngIf="step!=='customer'" (click)="previous()" pButton type="button" label="Vorige" class="p-button-secondary"
-                        icon="pi pi-arrow-left"></button>
-        <button (click)="cancel()" pButton type="button" label="Annuleren" class="p-button-outlined"
-                icon="pi pi-times"></button>
-        <button *ngIf="step!=='summary'"  (click)="next()" pButton type="button" label="Volgende" class=""
+                        <button *ngIf="step!=='customer'" (click)="previous()" pButton type="button" label="Vorige"
+                                class="p-button-secondary"
+                                icon="pi pi-arrow-left"></button>
+                <button (click)="cancel()" pButton type="button" label="Annuleren" class="p-button-outlined"
+                        icon="pi pi-times"></button>
+        <button *ngIf="step!=='summary'" (click)="next()" pButton type="button" label="Volgende" class=""
                 icon="pi pi-arrow-right" iconPos="right"></button>
-                                <button *ngIf="step==='summary' && isDisabled()" [style]="{'cursor':'not-allowed'}" [disabled]="true"
-                                        (click)="save()" iconPos="left" icon="pi pi-check" label="Bewaar" pButton type="button"
+                                <button *ngIf="step==='summary' && isDisabled()" [style]="{'cursor':'not-allowed'}"
+                                        [disabled]="true"
+                                        (click)="save()" iconPos="left" icon="pi pi-check" label="Bewaar" pButton
+                                        type="button"
                                         class="p-button-success"
                                 ></button>
                       <button *ngIf="step==='summary' && !isDisabled()"
@@ -30,8 +38,8 @@
                               class="p-button-success"
                       ></button>
     </span>
+        </div>
     </div>
-  </div>
 </div>
 
 <p-blockUI [blocked]="blocked">

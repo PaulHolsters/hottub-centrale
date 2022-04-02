@@ -12,6 +12,7 @@ import {ProductModel} from "../../models/product/product.model";
   styleUrls: ['./quotation-flow.component.css']
 })
 export class QuotationFlowComponent implements OnInit {
+  id: string|undefined
   step: string|undefined
   index: number
   items: MenuItem[]
@@ -34,26 +35,33 @@ export class QuotationFlowComponent implements OnInit {
       this.step = step
       this.index = this.getIndex()
     })
-    const id = this.route.snapshot.params['id']
-    if(id){
-      this.dataService.getQuotation(id).subscribe(res=>{
+    this.id = this.route.snapshot.params['id']
+    if(this.id){
+      this.dataService.getQuotation(this.id).subscribe(res=>{
         this.storage.setQuotationGet(res)
         const product = new ProductModel(res.quotationValues.productName,res.quotationValues.productCat,res.quotationValues.productPrice,
             res.quotationValues.productSpecifications,res.quotationValues.optionValues,res.productId)
         const prefilledQuotation = new QuotationModel(res.version,product,res.selectedOptions,res.quotationValues.quotationSpecificationValues,
             res.customerInfo,res.VAT,res.discount,res._id)
         this.storage.quotationFetched.emit(prefilledQuotation)
-        this.storage.getAvailableQuotationSpecifications().subscribe(quotSpecs=>{
-          res.selectedQuotationSpecifications.forEach(specId=>{
-            quotSpecs.splice(quotSpecs.findIndex(specQuot=>{
-              return specQuot._id===specId
-            }),1)
+        if(this.storage.getStateAvailableQuotationSpecifications()){
+          this.storage.getAvailableQuotationSpecifications().subscribe(quotSpecs=>{
+            res.selectedQuotationSpecifications.forEach(specId=>{
+              quotSpecs.splice(quotSpecs.findIndex(specQuot=>{
+                return specQuot._id===specId
+              }),1)
+            })
+            this.storage.setAvailableQuotationSpecifications(quotSpecs)
           })
+        }
+      })
+    } else{
+      if(this.storage.getStateAvailableQuotationSpecifications()){
+        this.storage.getAvailableQuotationSpecifications().subscribe(quotSpecs=>{
           this.storage.setAvailableQuotationSpecifications(quotSpecs)
         })
-      })
+      }
     }
-    console.log(this.storage.getStep())
   }
 
   getIndex():number{
@@ -75,7 +83,6 @@ export class QuotationFlowComponent implements OnInit {
     this.storage.resetQuotationGet()
     this.storage.resetAvailableQuotationSpecifications()
     this.storage.resetStep()
-    console.log('destroyed')
   }
 
   next(){
