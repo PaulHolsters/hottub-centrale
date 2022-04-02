@@ -77,7 +77,7 @@ export class OptionPicklistComponent implements OnInit {
         const index = this.source.findIndex(opt=>{
           return opt._id===this.editedOption?._id
         })
-        if(index>=0 && this.editedOption?.name && this.editedOption?.price){
+        if(index>=0 && this.editedOption?.name && typeof this.editedOption?.price === 'number'){
           this.source[index].name = this.editedOption?.name
           this.source[index].price = this.editedOption?.price
         }
@@ -92,8 +92,14 @@ export class OptionPicklistComponent implements OnInit {
   }
 
   isDisabled():boolean{
-    return this.editedOption?.name.trim() === this.loadedOption?.name.trim()&&this.editedOption?.price === this.loadedOption?.price;
+    return (this.editedOption?.name.trim() === this.loadedOption?.name.trim() && this.editedOption?.price === this.loadedOption?.price)||
+        this.editedOption?.name.trim().length===0
 
   }
+
+/*  dit is de manier om het op te lossen alvast: onKeyDown event gebruiken ipv oninput
+  debugPrice(event:any){
+    console.log('debug',event.path[2].firstChild.childNodes[0].ariaValueNow)
+  }*/
 
 }

@@ -21,9 +21,9 @@ const productSpecificationSchema = new mongoose.Schema({
 },{})
 
 const productOptionSchema = new mongoose.Schema({
-    name: {type: String, required: true, lowercase: true, minlength:[2,'Een optie dient minimaal 2 karakters lang te zijn.'],
+    name: {type: String, required: [true,'U dient een optie in te voeren'], lowercase: true, minlength:[2,'Een optie dient minimaal 2 karakters lang te zijn.'],
         trim: true, alias: 'productOption'},
-    price: {type: Number, required: true, min: 0}
+    price: {type: Number, required: [true, 'Prijs is verplicht'], min: 0}
 },{})
 
 /************************************************************   validation functions   **************************************************************************/

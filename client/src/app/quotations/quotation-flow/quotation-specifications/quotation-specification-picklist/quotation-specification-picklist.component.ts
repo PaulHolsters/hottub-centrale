@@ -3,7 +3,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DataService} from "../../../../services/data.service";
 import {QuotationSpecificationModel} from "../../../../models/quotation/quotation-specification.model";
 import {QuotationStorageService} from "../../../../services/quotation.storage.service";
-import {ConfirmationService} from "primeng/api";
+import {ConfirmationService, MessageService} from "primeng/api";
 
 @Component({
   selector: 'app-quotation-specification-picklist',
@@ -18,7 +18,7 @@ export class QuotationSpecificationPicklistComponent implements OnInit {
   editedQuotationSpecification:QuotationSpecificationModel|undefined
   loadedQuotationSpecification:QuotationSpecificationModel|undefined
   displayEditQuotationSpecificationDialog:boolean
-  constructor(private storage: QuotationStorageService, private dataService: DataService,
+  constructor(private messageService: MessageService, storage: QuotationStorageService, private dataService: DataService,
               private confirmationService:ConfirmationService) {
     this.displayEditQuotationSpecificationDialog = false
     this.source = []
@@ -30,8 +30,7 @@ export class QuotationSpecificationPicklistComponent implements OnInit {
 
   deleteQuotationSpecification(id:string){
     this.confirmationService.confirm({
-      message: 'Als je deze specificatie verwijdert, dan wordt deze verwijderd uit alle producten die mogelijks momenteel ' +
-          'van deze specificatie gebruik maken. Doorgaan?',
+      message: 'Het verwijderen is definitief. Doorgaan?',
       accept: ()=>{
         this.dataService.deleteQuotationSpecification(id).subscribe(res=>{
           // inform parent to rerender this component
@@ -39,6 +38,7 @@ export class QuotationSpecificationPicklistComponent implements OnInit {
             return opt._id===id
           }),1)
           this.listChanged.emit({source:this.source,target:this.target})
+          this.messageService.add({severity:'success', summary: 'Offerte specificatie verwijderd', life:3000});
         })
       }
     })
@@ -76,7 +76,8 @@ export class QuotationSpecificationPicklistComponent implements OnInit {
         const index = this.source.findIndex(opt=>{
           return opt._id===this.editedQuotationSpecification?._id
         })
-        if(index>=0 && this.editedQuotationSpecification?.name && this.editedQuotationSpecification?.price){
+        if(index>=0 && this.editedQuotationSpecification?.name && this.editedQuotationSpecification?.price !== null
+            && this.editedQuotationSpecification?.price !== undefined){
           this.source[index].name = this.editedQuotationSpecification?.name
           this.source[index].price = this.editedQuotationSpecification?.price
         }
@@ -84,12 +85,15 @@ export class QuotationSpecificationPicklistComponent implements OnInit {
         this.editedQuotationSpecification = undefined
         this.loadedQuotationSpecification= undefined
         this.displayEditQuotationSpecificationDialog = false
+        this.messageService.add({severity:'success', summary: 'Offerte specificatie aangepast', life:3000});
+      },      err=>{
+        this.messageService.add({severity:'error', summary: err.error.error, life:3000});
       })
   }
 
   isDisabled():boolean{
-    return this.editedQuotationSpecification?.name.trim() === this.loadedQuotationSpecification?.name.trim()
-        &&this.editedQuotationSpecification?.price === this.loadedQuotationSpecification?.price;
+    return (this.editedQuotationSpecification?.name.trim() === this.loadedQuotationSpecification?.name.trim()
+        &&this.editedQuotationSpecification?.price === this.loadedQuotationSpecification?.price)||this.editedQuotationSpecification?.name.trim().length===0;
 
   }
 

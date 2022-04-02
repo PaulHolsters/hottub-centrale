@@ -94,7 +94,7 @@ const quotationSpecificationSchema = new mongoose.Schema({
         trim: true,
         alias: 'quotationSpecification'
     },
-    price: {type: Number, min: 0}
+    price: {type: Number,required:[true,'Voer een prijs in van minimaal 0 euro'], min: [0,'U moet een bedrag invoeren van minimaal 0 euro.']}
 }, {})
 
 /************************************************************   validation functions   **************************************************************************/
@@ -160,9 +160,6 @@ quotationSchema.path('customerInfo').validate(function(propValue){
 }, 'Een voornaam moet beginnen met een hoofdletter')
 
 // valid prices
-quotationSpecificationSchema.path('price').validate(function (propValue) {
-    return Math.trunc(propValue) === propValue
-})
 quotationSchema.path('quotationValues.price').validate(function (propValue) {
     return Math.trunc(propValue) === propValue
 })
@@ -174,6 +171,17 @@ quotationSchema.path('quotationValues.optionsValues.price').validate(function (p
 quotationSchema.path('quotationValues.quotationSpecificationsValues.price').validate(function (propValue) {
     return Math.trunc(propValue) === propValue
 })
+
+quotationSpecificationSchema.path('price').validate(function (propValue) {
+    console.log(propValue)
+    return Math.trunc(propValue) === propValue
+})
+// name must be unique, you may assume propValue is different from its original value
+quotationSpecificationSchema.path('name').validate(async function (propValue) {
+    const arr = await quotationSpecificationModel.find({}, {name: 1}).exec()
+    return !arr.includes(propValue)
+})
+
 
 /*******************************************************************   methods  *********************************************************************************/
 
