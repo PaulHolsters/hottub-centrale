@@ -113,12 +113,14 @@ export class QuotationSpecificationsComponent implements OnInit,OnDestroy {
   }
 
   reset() {
-    // todo fix bug / debug!
+    // todo fix bug / debug! => initiële waarde wordt gewijzigd wat niet mag
     this.storage.setClickConsumed(true)
     if (this.quotation && this.quotation.quotationSpecifications) {
       if(this.route.snapshot.params['id']){
         this.storage.getAvailableQuotationSpecifications().subscribe(quotspecs => {
-          this.quotation.quotationSpecifications = this.initialQuotation?.quotationSpecifications || quotspecs
+          console.log(this.quotation.quotationSpecifications,this.initialQuotation?.quotationSpecifications)
+          if(this.initialQuotation?.quotationSpecifications)
+          this.quotation.quotationSpecifications = [...this.initialQuotation?.quotationSpecifications] || []
           if(this.quotation.quotationSpecifications.length>0){
             this.availableQuotationSpecifications = quotspecs.filter(quotspec=>{
               return !this.quotation.quotationSpecifications.map(qs=>{
@@ -128,7 +130,8 @@ export class QuotationSpecificationsComponent implements OnInit,OnDestroy {
           } else{
             this.availableQuotationSpecifications = quotspecs
           }
-          console.log('available',this.availableQuotationSpecifications,'now',this.quotation.quotationSpecifications,'initial',this.initialQuotation?.quotationSpecifications)
+          //console.log('available',this.availableQuotationSpecifications,'now',this.quotation.quotationSpecifications,'initial',this.initialQuotation?.quotationSpecifications)
+          console.log(this.availableQuotationSpecifications)
           this.storage.setAvailableQuotationSpecifications([...this.availableQuotationSpecifications])
         })
       } else{
