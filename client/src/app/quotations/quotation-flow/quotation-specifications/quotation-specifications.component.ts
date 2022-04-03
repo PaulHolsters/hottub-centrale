@@ -4,7 +4,7 @@ import {QuotationStorageService} from "../../../services/quotation.storage.servi
 import {OptionModel} from "../../../models/product/option.model";
 import {QuotationSpecificationModel} from "../../../models/quotation/quotation-specification.model";
 import {DataService} from "../../../services/data.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {Subscription} from "rxjs";
 
 @Component({
@@ -14,6 +14,7 @@ import {Subscription} from "rxjs";
 })
 export class QuotationSpecificationsComponent implements OnInit,OnDestroy {
   quotation:QuotationModel
+  initialQuotation:QuotationModel|undefined
   newQuotationSpecificationName: string|undefined
   newQuotationSpecificationPrice: number|undefined
   nextSub:Subscription
@@ -22,7 +23,7 @@ export class QuotationSpecificationsComponent implements OnInit,OnDestroy {
   resetSub:Subscription
   availableQuotationSpecifications: QuotationSpecificationModel[]
   loading: boolean
-  constructor(private storage:QuotationStorageService,private dataService:DataService,private router:Router) {
+  constructor(private route: ActivatedRoute,private storage:QuotationStorageService,private dataService:DataService,private router:Router) {
     this.nextSub = this.storage.nextClicked.subscribe(()=>{
       if(this.storage.getStep()==='specifications' && !this.storage.getClickConsumed()){
         this.next()
@@ -44,14 +45,11 @@ export class QuotationSpecificationsComponent implements OnInit,OnDestroy {
       }
     })
     this.quotation = this.storage.getQuotation()
+    this.initialQuotation = this.storage.getInitialQuotation()
     this.newQuotationSpecificationName = this.storage.getQuotationSpecificationNameInput()
     this.newQuotationSpecificationPrice = this.storage.getQuotationSpecificationPriceInput()
-    this.availableQuotationSpecifications= []
-    this.loading = true
-    this.storage.getAvailableQuotationSpecifications().subscribe(quotSpecList => {
-      this.availableQuotationSpecifications = quotSpecList
-      this.loading = false
-    })
+    this.availableQuotationSpecifications= this.storage.getAvailableQuotationSpecificationsNoSub()||[]
+    this.loading = false
   }
 
   ngOnInit(): void {
@@ -79,11 +77,7 @@ export class QuotationSpecificationsComponent implements OnInit,OnDestroy {
   reload(lists:{source:QuotationSpecificationModel[],target:QuotationSpecificationModel[]}) {
     this.store(lists)
     this.quotation = this.storage.getQuotation()
-    this.loading = true
-    this.storage.getAvailableQuotationSpecifications().subscribe(quotSpecList => {
-      this.availableQuotationSpecifications = quotSpecList
-      this.loading = false
-    })
+    this.availableQuotationSpecifications= this.storage.getAvailableQuotationSpecificationsNoSub()||[]
   }
 
   addQuotationSpecification() {
@@ -119,16 +113,34 @@ export class QuotationSpecificationsComponent implements OnInit,OnDestroy {
   }
 
   reset() {
+    // todo fix bug / debug!
     this.storage.setClickConsumed(true)
     if (this.quotation && this.quotation.quotationSpecifications) {
-      this.quotation.quotationSpecifications = []
-      this.availableQuotationSpecifications = []
-      this.storage.resetAvailableQuotationSpecifications()
-      this.storage.getAvailableQuotationSpecifications().subscribe(quotspecs => {
-        this.availableQuotationSpecifications = quotspecs
-        this.newQuotationSpecificationName = undefined
-        this.newQuotationSpecificationPrice = undefined
-      })
+      if(this.route.snapshot.params['id']){
+        this.storage.getAvailableQuotationSpecifications().subscribe(quotspecs => {
+          this.quotation.quotationSpecifications = this.initialQuotation?.quotationSpecifications || quotspecs
+          if(this.quotation.quotationSpecifications.length>0){
+            this.availableQuotationSpecifications = quotspecs.filter(quotspec=>{
+              return !this.quotation.quotationSpecifications.map(qs=>{
+                return qs._id
+              }).includes(quotspec._id)
+            })
+          } else{
+            this.availableQuotationSpecifications = quotspecs
+          }
+          console.log('available',this.availableQuotationSpecifications,'now',this.quotation.quotationSpecifications,'initial',this.initialQuotation?.quotationSpecifications)
+          this.storage.setAvailableQuotationSpecifications([...this.availableQuotationSpecifications])
+        })
+      } else{
+        this.quotation.quotationSpecifications = []
+        this.availableQuotationSpecifications = []
+        this.storage.resetAvailableQuotationSpecifications()
+        this.storage.getAvailableQuotationSpecifications().subscribe(quotspecs => {
+          this.availableQuotationSpecifications = quotspecs
+        })
+      }
+      this.newQuotationSpecificationName = undefined
+      this.newQuotationSpecificationPrice = undefined
     }
   }
 

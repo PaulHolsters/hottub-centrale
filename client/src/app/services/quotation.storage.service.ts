@@ -64,6 +64,12 @@ export class QuotationStorageService {
     return init
   }
 
+  getAvailableQuotationSpecificationsNoSub():QuotationSpecificationModel[]|undefined{
+    if(this.availableQuotationSpecifications)
+      return [...this.availableQuotationSpecifications]
+    return undefined
+  }
+
   getStep() {
     return this.step
   }
@@ -134,13 +140,7 @@ export class QuotationStorageService {
   }
 
   getAvailableQuotationSpecifications():Observable<QuotationSpecificationModel[]> {
-    if (!this.availableQuotationSpecifications) {
-      return this.dataService.getQuotationSpecifications()
-    }
-    return new Observable((observer)=>{
-      if(this.availableQuotationSpecifications)
-        observer.next([...this.availableQuotationSpecifications])
-    })
+    return this.dataService.getQuotationSpecifications()
   }
 
   setAvailableQuotationSpecifications(newList:QuotationSpecificationModel[]){

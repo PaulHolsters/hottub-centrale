@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {QuotationModel} from "../../../models/quotation/quotation.model";
 import {QuotationStorageService} from "../../../services/quotation.storage.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {ProductModel} from "../../../models/product/product.model";
 import {DataService} from "../../../services/data.service";
 import {Subscription} from "rxjs";
@@ -20,7 +20,7 @@ export class QuotationProductComponent implements OnInit,OnDestroy {
   cancelSub:Subscription
   resetSub:Subscription
   destroyed:boolean|undefined
-  constructor(private storage:QuotationStorageService, private router: Router,private dataService:DataService) {
+  constructor(private route: ActivatedRoute,private storage:QuotationStorageService, private router: Router,private dataService:DataService) {
     console.log('constr prod')
     this.nextSub = this.storage.nextClicked.subscribe(()=>{
       if(this.storage.getStep()==='product' && !this.storage.getClickConsumed()){
@@ -43,6 +43,7 @@ export class QuotationProductComponent implements OnInit,OnDestroy {
       }
     })
     this.quotation = this.storage.getQuotation()
+    this.initialQuotation = this.storage.getInitialQuotation()
     this.products = []
     this.dataService.getProducts().subscribe(res=>{
       this.products = res
@@ -50,7 +51,6 @@ export class QuotationProductComponent implements OnInit,OnDestroy {
   }
 
   ngOnInit(): void {
-    this.initialQuotation = this.storage.getInitialQuotation()
     console.log('init product quot')
   }
 
@@ -80,8 +80,16 @@ export class QuotationProductComponent implements OnInit,OnDestroy {
 
   reset(){
     this.storage.setClickConsumed(true)
-    if(this.quotation){
-
+    if(this.quotation && this.initialQuotation){
+      if(this.route.snapshot.params['id']){
+        this.quotation.product = this.initialQuotation.product
+        this.quotation.VAT = this.initialQuotation.VAT
+        this.quotation.discount = this.initialQuotation.discount
+      } else{
+        this.quotation.product = undefined
+        this.quotation.VAT = 21
+        this.quotation.discount = 0
+      }
     }
   }
 
