@@ -88,6 +88,7 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
 
   ngOnDestroy(): void {
     this.storage.resetProduct()
+    this.storage.resetInitialProduct()
     this.storage.resetAvailableSpecifications()
     this.storage.resetAvailableOptions()
     this.storage.resetStep()

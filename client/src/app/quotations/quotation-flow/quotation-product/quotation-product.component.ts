@@ -21,7 +21,6 @@ export class QuotationProductComponent implements OnInit,OnDestroy {
   resetSub:Subscription
   destroyed:boolean|undefined
   constructor(private route: ActivatedRoute,private storage:QuotationStorageService, private router: Router,private dataService:DataService) {
-    console.log('constr prod')
     this.nextSub = this.storage.nextClicked.subscribe(()=>{
       if(this.storage.getStep()==='product' && !this.storage.getClickConsumed()){
         this.next()
@@ -51,19 +50,13 @@ export class QuotationProductComponent implements OnInit,OnDestroy {
   }
 
   ngOnInit(): void {
-    console.log('init product quot')
   }
 
   ngOnDestroy() {
-      if(this.nextSub)
         this.nextSub.unsubscribe()
-      if(this.previousSub)
         this.previousSub.unsubscribe()
-      if(this.cancelSub)
         this.cancelSub.unsubscribe()
-      if(this.resetSub)
         this.resetSub.unsubscribe()
-      console.log('destr prod')
     }
 
   previous() {
@@ -82,7 +75,8 @@ export class QuotationProductComponent implements OnInit,OnDestroy {
     this.storage.setClickConsumed(true)
     if(this.quotation && this.initialQuotation){
       if(this.route.snapshot.params['id']){
-        this.quotation.product = this.initialQuotation.product
+        if(this.initialQuotation.product)
+        this.quotation.product = this.copy(this.initialQuotation.product)
         this.quotation.VAT = this.initialQuotation.VAT
         this.quotation.discount = this.initialQuotation.discount
       } else{
@@ -91,6 +85,13 @@ export class QuotationProductComponent implements OnInit,OnDestroy {
         this.quotation.discount = 0
       }
     }
+  }
+
+  copy(product:ProductModel){
+    const productCopy = {...product}
+    productCopy.specifications = [...product.specifications]
+    productCopy.options = [...product.options]
+    return productCopy
   }
 
   cancel(){

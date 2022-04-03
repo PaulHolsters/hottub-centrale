@@ -1,4 +1,4 @@
-import {EventEmitter, Injectable} from "@angular/core";
+import {EventEmitter, Injectable, OnDestroy} from "@angular/core";
 import {ProductModel} from "../models/product/product.model";
 import {SpecificationModel} from "../models/product/specification.model";
 import {OptionModel} from "../models/product/option.model";
@@ -9,8 +9,7 @@ import {QuotationSpecificationModel} from "../models/quotation/quotation-specifi
 import {QuotationGetModel} from "../models/quotation/quotation.get.model";
 
 @Injectable()
-export class QuotationStorageService {
-
+export class QuotationStorageService implements OnDestroy{
   message:string|undefined
   step:string|undefined
   stepChange:EventEmitter<string|undefined>
@@ -44,10 +43,23 @@ export class QuotationStorageService {
     }, 21, 0, undefined)
   }
 
+  ngOnDestroy(): void {
+    console.log('destroyng storage')
+  }
+
+  resetInitialQuotation(){
+    this.initialQuotation = new QuotationModel(1, undefined, [], [], {
+      firstName: undefined,
+      lastName: undefined,
+      email: undefined
+    }, 21, 0, undefined)
+  }
+
+
   setInitialQuotation(quotation:QuotationModel){
     const init = {...quotation}
     init.customerInfo = {...quotation.customerInfo}
-    init.options = {...quotation.options}
+    init.options = [...quotation.options]
     if(quotation.product)
       init.product = {...quotation.product}
     init.quotationSpecifications = [...quotation.quotationSpecifications]
@@ -57,7 +69,7 @@ export class QuotationStorageService {
   getInitialQuotation():QuotationModel{
     const init = {...this.initialQuotation}
     init.customerInfo = {...this.initialQuotation.customerInfo}
-    init.options = {...this.initialQuotation.options}
+    init.options = [...this.initialQuotation.options]
     if(this.initialQuotation.product)
     init.product = {...this.initialQuotation.product}
     init.quotationSpecifications = [...this.initialQuotation.quotationSpecifications]
@@ -152,6 +164,7 @@ export class QuotationStorageService {
 
   resetAvailableQuotationSpecifications(){
     this.availableQuotationSpecifications = undefined
+    console.log('resetted aos')
   }
 
   getStateAvailableQuotationSpecifications():boolean{

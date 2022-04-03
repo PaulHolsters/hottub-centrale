@@ -144,16 +144,30 @@ quotationSchema.path('selectedQuotationSpecifications').validate(function (propV
 },'Ids offerte specs niet uniek.')
 quotationSchema.path('selectedQuotationSpecifications').validate(async function (propValue) {
     const arr = await quotationSpecificationModel.find({},{_id:1}).exec()
+    let mapping
+    if(this.previousVersionId){
+        const quotationId = this.previousVersionId.toString()
+        const quotValues = await quotationModel.findById({_id:quotationId}, {quotationValues: 1})
+        mapping = quotValues.quotationValues.quotationSpecificationValues.map(val=>{
+            return val._id.toString()
+        })
+    }
     let ok = true
-    propValue.forEach(id=>{
+    for (const id of propValue) {
         let includes = false
         arr.forEach(obj=>{
-            if(obj._id.toString()===id.toString()) includes = true
+            if(obj._id.toString()===id.toString()){
+                includes = true
+            }
         })
-        if(!includes) ok = false
-    })
+        if(!includes && (mapping && !(mapping.includes(id.toString()))||!mapping)){
+            // de id is niet gekend in de database
+            // het is nog mogelijk dat het om een oud id gaat
+            ok = false
+        }
+    }
     return ok
-},'Ongeldige offeret spec ids')
+},'Ongeldige offerte specificatie Id"s')
 // todo sanitize userinput => er mag geen javascript als voornaam meegegeven kunnen worden
 quotationSchema.path('customerInfo').validate(function(propValue){
     return propValue.firstName.substr(0,1).toUpperCase()===propValue.firstName.substr(0,1)
@@ -236,8 +250,29 @@ quotationSchema.pre('save',async function (next) {
     this.quotationValues.quotationSpecificationValues = []
     const quotSpecs = await quotationSpecificationModel.find({}, {__v:0}).exec()
     quotSpecs.forEach(quotSpec => {
-        if (this.selectedQuotationSpecifications.includes(quotSpec._id)) this.quotationValues.quotationSpecificationValues.push({...quotSpec})
+        if (this.selectedQuotationSpecifications.includes(quotSpec._id)) {
+            this.quotationValues.quotationSpecificationValues.push({...quotSpec})
+        }
     })
+    const values = []
+    if(this.previousVersionId){
+        const quotationId = this.previousVersionId.toString()
+        const quotValues = await quotationModel.findById({_id:quotationId}, {quotationValues: 1})
+        const previousValues = quotValues.quotationValues.quotationSpecificationValues
+        // todo fix bug in method
+        this.selectedQuotationSpecifications.filter(id=>{
+            return !this.quotationValues.quotationSpecificationValues.map(val=>{return val._id}).includes(id)
+        }).forEach(val=>{
+            // get the raw values from previousVersion
+            const value = previousValues.find(val2=>{
+                return val2._id.toString()===val
+            })
+            if(value) values.push({...value})
+        })
+        console.log(values)
+        this.quotationValues.quotationSpecificationValues.concat(values)
+    }
+    //console.log(this.quotationValues.quotationSpecificationValues)
 })
 
 /* LOGICA omtrent offertes

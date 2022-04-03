@@ -16,19 +16,15 @@ export class QuotationCustomerComponent implements OnInit,OnDestroy {
   resetSub:Subscription
   initialQuotation: QuotationModel
   constructor(private route: ActivatedRoute,private storage:QuotationStorageService, private router: Router) {
-    console.log('constr cus')
     this.quotation = this.storage.getQuotation()
     this.initialQuotation = this.storage.getInitialQuotation()
-    console.log(this.initialQuotation,'init cust')
     this.storage.quotationFetched.subscribe(res=>{
       this.quotation = {...res}
       if(!this.initialQuotation._id){
-        console.log({...res},'res')
         this.storage.setInitialQuotation({...res})
         this.initialQuotation = this.storage.getInitialQuotation()
       }
     })
-
     this.nextSub = this.storage.nextClicked.subscribe(()=>{
       if(this.storage.getStep()==='customer' && !this.storage.getClickConsumed()){
         this.next()
@@ -48,21 +44,17 @@ export class QuotationCustomerComponent implements OnInit,OnDestroy {
   }
 
   ngOnInit(): void {
-    console.log('init cust')
+
   }
 
   ngOnDestroy(): void {
     this.nextSub.unsubscribe()
     this.cancelSub.unsubscribe()
     this.resetSub.unsubscribe()
-    console.log('on destroy: de waarde van de initiele offerte ophalen geeft niet de waarde ' +
-        'van de initiële quotatie',this.storage.getInitialQuotation(),'**',this.initialQuotation)
   }
 
   next(){
-    console.log('initial quotation when going to the next page',this.storage.getInitialQuotation())
     this.storage.setQuotation(this.quotation)
-    console.log('initial quotation after setting the edited quotation',this.initialQuotation)
     this.storage.setStep('product')
     this.storage.setClickConsumed(true)
   }
@@ -74,7 +66,6 @@ export class QuotationCustomerComponent implements OnInit,OnDestroy {
         this.quotation.customerInfo.firstName = this.initialQuotation.customerInfo.firstName
         this.quotation.customerInfo.lastName = this.initialQuotation.customerInfo.lastName
         this.quotation.customerInfo.email = this.initialQuotation.customerInfo.email
-        console.log('rest',this.quotation)
       } else{
         this.quotation.customerInfo.firstName = undefined
         this.quotation.customerInfo.lastName = undefined

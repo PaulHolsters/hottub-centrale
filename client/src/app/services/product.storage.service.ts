@@ -1,4 +1,4 @@
-import {EventEmitter, Injectable} from "@angular/core";
+import {EventEmitter, Injectable, OnDestroy} from "@angular/core";
 import {ProductModel} from "../models/product/product.model";
 import {SpecificationModel} from "../models/product/specification.model";
 import {OptionModel} from "../models/product/option.model";
@@ -6,7 +6,7 @@ import {DataService} from "./data.service";
 import {Observable} from "rxjs";
 
 @Injectable()
-export class ProductStorageService {
+export class ProductStorageService implements OnDestroy{
 
   constructor(private dataService: DataService) {
   }
@@ -27,6 +27,14 @@ export class ProductStorageService {
   resetClicked = new EventEmitter<null>()
   saveClicked = new EventEmitter<null>()
   private message:string|undefined
+
+  ngOnDestroy(): void {
+    console.log('destroyng storage')
+  }
+
+  resetInitialProduct(){
+    this.initialProduct = new ProductModel(undefined, 'hottub', undefined, [], [])
+  }
 
   setMessage(msg:string){
     this.message = msg

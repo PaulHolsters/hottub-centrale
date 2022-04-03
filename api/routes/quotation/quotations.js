@@ -60,13 +60,17 @@ router.put('/:groupId/:previous', check('customerInfo.email').isEmail() ,async (
         )
     }).catch(err => {
         let failedProp = ''
-        if (err.errors.hasOwnProperty('customerInfo')) {
+        if (err.errors && err.errors.hasOwnProperty('customerInfo')) {
             failedProp = 'customerInfo'
+            res.status(500).json({
+                error: err.errors.customerInfo.message
+            })
+        } else{
+            //console.log(err)
+            res.status(500).json({
+                error: err.toString().substr(err.toString().lastIndexOf(':')+1)
+            })
         }
-        res.status(500).json({
-            // todo fix messaging here => it is undefined sometimes!
-            error: err.errors.customerInfo.message
-        })
     })
 })
 

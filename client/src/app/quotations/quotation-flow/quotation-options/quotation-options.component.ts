@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {QuotationModel} from "../../../models/quotation/quotation.model";
 import {ProductModel} from "../../../models/product/product.model";
 import {QuotationStorageService} from "../../../services/quotation.storage.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {DataService} from "../../../services/data.service";
 import {Subscription} from "rxjs";
 
@@ -13,11 +13,12 @@ import {Subscription} from "rxjs";
 })
 export class QuotationOptionsComponent implements OnInit,OnDestroy {
   quotation: QuotationModel
+  initialQuotation: QuotationModel
   nextSub:Subscription
   previousSub:Subscription
   cancelSub:Subscription
   resetSub:Subscription
-  constructor(private storage:QuotationStorageService, private router: Router,private dataService:DataService) {
+  constructor(private route:ActivatedRoute,private storage:QuotationStorageService, private router: Router,private dataService:DataService) {
     this.nextSub = this.storage.nextClicked.subscribe(()=>{
       if(this.storage.getStep()==='options' && !this.storage.getClickConsumed()){
         this.next()
@@ -39,10 +40,9 @@ export class QuotationOptionsComponent implements OnInit,OnDestroy {
       }
     })
     this.quotation = this.storage.getQuotation()
+    this.initialQuotation = this.storage.getInitialQuotation()
+    // todo in product zit onder bepaalde omstandigheden niks van opties
     console.log(this.quotation.product?.options)
-    this.storage.quotationFetched.subscribe(res=>{
-      this.quotation = res
-    })
   }
 
   ngOnInit(): void {
@@ -71,7 +71,15 @@ export class QuotationOptionsComponent implements OnInit,OnDestroy {
   reset(){
     this.storage.setClickConsumed(true)
     if(this.quotation){
-
+      if(this.route.snapshot.params['id']){
+        console.log(this.quotation.options,this.initialQuotation.options)
+        this.quotation.options = []
+        this.initialQuotation.options.forEach(opt=>{
+          this.quotation.options.push(opt)
+        })
+      } else{
+        this.quotation.options = []
+      }
     }
   }
 

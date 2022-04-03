@@ -31,6 +31,7 @@ export class QuotationFlowComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // todo check this method
     this.storage.stepChange.subscribe(step=>{
       this.step = step
       this.index = this.getIndex()
@@ -47,9 +48,12 @@ export class QuotationFlowComponent implements OnInit {
         if(this.storage.getStateAvailableQuotationSpecifications()){
           this.storage.getAvailableQuotationSpecifications().subscribe(quotSpecs=>{
             res.selectedQuotationSpecifications.forEach(specId=>{
-              quotSpecs.splice(quotSpecs.findIndex(specQuot=>{
+              const index = quotSpecs.findIndex(specQuot=>{
                 return specQuot._id===specId
-              }),1)
+              })
+              if(index > -1){
+                quotSpecs.splice(index,1)
+              }
             })
             this.storage.setAvailableQuotationSpecifications(quotSpecs)
           })
@@ -80,6 +84,7 @@ export class QuotationFlowComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.storage.resetQuotation()
+    this.storage.resetInitialQuotation()
     this.storage.resetQuotationGet()
     this.storage.resetAvailableQuotationSpecifications()
     this.storage.resetStep()

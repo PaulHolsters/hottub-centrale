@@ -65,7 +65,6 @@ export class QuotationSpecificationsComponent implements OnInit,OnDestroy {
   store(lists: { source: QuotationSpecificationModel[], target: QuotationSpecificationModel[] } | null) {
     if (lists) {
       this.quotation.quotationSpecifications = lists.target
-      console.log('targrte = ',this.quotation.quotationSpecifications )
       this.availableQuotationSpecifications = lists.source
     }
     this.storage.setQuotation(this.quotation)
@@ -90,7 +89,6 @@ export class QuotationSpecificationsComponent implements OnInit,OnDestroy {
       }
       this.loading = true
       this.dataService.createQuotationSpecification(newQuotationSpecification).subscribe(quotspec=> {
-        console.log('created')
         this.quotation.quotationSpecifications?.push(quotspec)
         this.newQuotationSpecificationName = undefined
         this.newQuotationSpecificationPrice = undefined
@@ -113,12 +111,10 @@ export class QuotationSpecificationsComponent implements OnInit,OnDestroy {
   }
 
   reset() {
-    // todo fix bug / debug! => initiële waarde wordt gewijzigd wat niet mag
     this.storage.setClickConsumed(true)
     if (this.quotation && this.quotation.quotationSpecifications) {
       if(this.route.snapshot.params['id']){
         this.storage.getAvailableQuotationSpecifications().subscribe(quotspecs => {
-          console.log(this.quotation.quotationSpecifications,this.initialQuotation?.quotationSpecifications)
           if(this.initialQuotation?.quotationSpecifications)
           this.quotation.quotationSpecifications = [...this.initialQuotation?.quotationSpecifications] || []
           if(this.quotation.quotationSpecifications.length>0){
@@ -130,8 +126,6 @@ export class QuotationSpecificationsComponent implements OnInit,OnDestroy {
           } else{
             this.availableQuotationSpecifications = quotspecs
           }
-          //console.log('available',this.availableQuotationSpecifications,'now',this.quotation.quotationSpecifications,'initial',this.initialQuotation?.quotationSpecifications)
-          console.log(this.availableQuotationSpecifications)
           this.storage.setAvailableQuotationSpecifications([...this.availableQuotationSpecifications])
         })
       } else{
