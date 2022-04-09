@@ -108,6 +108,7 @@ quotationSchema.path('productId').validate(async function (propValue) {
     })
     return valid
 },'Geen geldig productId')
+
 quotationSchema.path('selectedOptions').validate(function (propValue) {
     let ok = true
     propValue.forEach(id=>{
@@ -119,6 +120,7 @@ quotationSchema.path('selectedOptions').validate(function (propValue) {
     })
     return ok
 },'Ids opties niet uniek.')
+
 quotationSchema.path('selectedOptions').validate(async function (propValue) {
     const arr = await productSchemas.optionModel.find({},{_id:1}).exec()
     let ok = true
@@ -131,6 +133,7 @@ quotationSchema.path('selectedOptions').validate(async function (propValue) {
     })
     return ok
 },'Ongeldige optie ids')
+
 quotationSchema.path('selectedQuotationSpecifications').validate(function (propValue) {
     let ok = true
     propValue.forEach(id=>{
@@ -142,6 +145,7 @@ quotationSchema.path('selectedQuotationSpecifications').validate(function (propV
     })
     return ok
 },'Ids offerte specs niet uniek.')
+
 quotationSchema.path('selectedQuotationSpecifications').validate(async function (propValue) {
     const arr = await quotationSpecificationModel.find({},{_id:1}).exec()
     let mapping
@@ -168,7 +172,7 @@ quotationSchema.path('selectedQuotationSpecifications').validate(async function 
     }
     return ok
 },'Ongeldige offerte specificatie Id"s')
-// todo sanitize userinput => er mag geen javascript als voornaam meegegeven kunnen worden
+
 quotationSchema.path('customerInfo').validate(function(propValue){
     return propValue.firstName.substr(0,1).toUpperCase()===propValue.firstName.substr(0,1)
 }, 'Een voornaam moet beginnen met een hoofdletter')
@@ -254,25 +258,37 @@ quotationSchema.pre('save',async function (next) {
             this.quotationValues.quotationSpecificationValues.push({...quotSpec})
         }
     })
-    const values = []
     if(this.previousVersionId){
+        // wanneer je hier bent zijn alle id's van een offerte spec ok
+        // het kan echter zijn dat er nog een id in zit van een vorige versie
+        // dit moet bij het bewaren nu dan ook blijven
+        // als je de vorige versie ophaalt zou previousValues deze moeten bevatten
+        // bij hte bewaren echter wordt momenteel = bug een spec die niet langer in de db zit verwijderd uit de offerte wat niet mag
+        // this.quotationValues.quotationSpecificationValues => dit bevat de textuele waarden van dit onderdeel voor de vorige versie
         const quotationId = this.previousVersionId.toString()
         const quotValues = await quotationModel.findById({_id:quotationId}, {quotationValues: 1})
         const previousValues = quotValues.quotationValues.quotationSpecificationValues
-        // todo fix bug in method
-        this.selectedQuotationSpecifications.filter(id=>{
-            return !this.quotationValues.quotationSpecificationValues.map(val=>{return val._id}).includes(id)
-        }).forEach(val=>{
-            // get the raw values from previousVersion
-            const value = previousValues.find(val2=>{
-                return val2._id.toString()===val
-            })
-            if(value) values.push({...value})
+        // this.quotationValues.quotationSpecificationValues bevat blijkbaar enkel 1 en 2 en
+        // dat is logisch enkel diegene die in de db zitten zit er momenteel in
+        // en dan is values leeg, dit komt omdat selected ook de id's bevat die niet langer bestaan
+        const mapping = this.quotationValues.quotationSpecificationValues.map(val=>{
+            return val._doc._id
         })
-        console.log(values)
-        this.quotationValues.quotationSpecificationValues.concat(values)
+        // mapping bevat de id's die ook in de db zitten en die ook in selected zitten
+        this.selectedQuotationSpecifications.filter(id=>{
+            return !(mapping.find(v=>{
+                return v.toString()===id.toString()
+            }))
+        }).forEach(val=>{
+            // val is een id dat niet in de db zit
+            // get the raw values from previousVersion
+
+            const value = previousValues.find(val2=>{
+                return val2._id.toString()===val.toString()
+            })
+            if(value) this.quotationValues.quotationSpecificationValues.push({...value})
+        })
     }
-    //console.log(this.quotationValues.quotationSpecificationValues)
 })
 
 /* LOGICA omtrent offertes
