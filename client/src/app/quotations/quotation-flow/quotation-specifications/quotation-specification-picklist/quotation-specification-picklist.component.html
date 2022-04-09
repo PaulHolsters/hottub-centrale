@@ -1,4 +1,4 @@
-<p-pickList class="" (onMoveToTarget)="store()" filterBy="name" (onMoveToSource)="store()"
+<p-pickList class="" (onMoveToTarget)="onMoveToTarget($event)" filterBy="name" (onMoveToSource)="onMoveToSource($event)"
             [responsive]="true"
             sourceHeader="Beschikbare extra diensten" targetHeader="Aan het product toegekende extra diensten"
             [source]="source" [target]="target"
@@ -32,12 +32,14 @@
 
 
 <p-confirmDialog
-        header="Offerte specificatie verwijderen?"
+        header="{{header}}"
         icon="pi pi-exclamation-triangle"
         acceptLabel="Ja"
         rejectLabel="Nee">
 </p-confirmDialog>
+
 <p-toast></p-toast>
+
 <p-dialog header="Offerte specificatie" [(visible)]="displayEditQuotationSpecificationDialog" [style]="{width: '50vw'}">
   <form class="grid">
     <div class="formField col-12 grid">
