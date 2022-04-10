@@ -85,7 +85,7 @@ export class QuotationSpecificationsComponent implements OnInit,OnDestroy {
       if(this.newQuotationSpecificationPrice){
         newQuotationSpecification = new QuotationSpecificationModel(this.newQuotationSpecificationName.trim(),this.newQuotationSpecificationPrice)
       } else{
-        newQuotationSpecification = new QuotationSpecificationModel(this.newQuotationSpecificationName.trim())
+        newQuotationSpecification = new QuotationSpecificationModel(this.newQuotationSpecificationName.trim(),0)
       }
       this.loading = true
       this.dataService.createQuotationSpecification(newQuotationSpecification).subscribe(quotspec=> {
