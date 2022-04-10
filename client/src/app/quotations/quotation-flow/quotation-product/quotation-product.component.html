@@ -4,7 +4,7 @@
       <label class="label">Product</label>
     </div>
     <div class="col">
-      <p-dropdown [options]="products" [(ngModel)]="quotation.product" optionLabel="name" [placeholder]="quotation?.product?.name||'Selecteer een product'"
+      <p-dropdown [options]="products" [(ngModel)]="quotation.product" (onChange)="onProductChange()" optionLabel="name" [placeholder]="quotation?.product?.name||'Selecteer een product'"
                   name="selectedProduct"></p-dropdown>
     </div>
   </div>

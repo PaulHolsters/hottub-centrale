@@ -5,7 +5,7 @@
 
     <div style="" class="">
         <app-quotation-customer *ngIf="step==='customer'"></app-quotation-customer>
-        <app-quotation-product *ngIf="step==='product'"></app-quotation-product>
+        <app-quotation-product (productChanged)="onProductChanged($event)" *ngIf="step==='product'"></app-quotation-product>
         <app-quotation-specifications *ngIf="step==='specifications'"></app-quotation-specifications>
         <app-quotation-options *ngIf="step==='options'"></app-quotation-options>
         <app-quotation-summary (afterSave)="blocked=false" *ngIf="step==='summary'"></app-quotation-summary>
@@ -17,7 +17,7 @@
         <button *ngIf="step!=='summary' && !id" (click)="reset()" pButton type="button" label="Leegmaken"
                 class="p-button-warning"
                 icon="pi pi-trash"></button>
-                <button *ngIf="step!=='summary' && id && !(orphans && step==='specifications')" (click)="reset()" pButton type="button" label="Initiële waarde"
+                <button *ngIf="step!=='summary' && id && !(orphans && step==='specifications') && !(productChanged && step==='options')" (click)="reset()" pButton type="button" label="Initiële waarde"
                         class="p-button-warning"
                         icon="pi pi-trash"></button>
                         <button *ngIf="step!=='customer'" (click)="previous()" pButton type="button" label="Vorige"

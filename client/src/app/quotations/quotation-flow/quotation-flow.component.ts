@@ -14,11 +14,13 @@ import {ProductModel} from "../../models/product/product.model";
 export class QuotationFlowComponent implements OnInit {
   id: string|undefined
   orphans:boolean
+  productChanged:boolean
   step: string|undefined
   index: number
   items: MenuItem[]
   blocked: boolean
   constructor(private storage:QuotationStorageService,private route:ActivatedRoute,private dataService:DataService) {
+    this.productChanged = false
     this.orphans = false
     this.blocked = false
     this.step = this.storage.getStep()
@@ -30,6 +32,10 @@ export class QuotationFlowComponent implements OnInit {
       {label: 'Opties'},
       {label: 'Samenvatting'},
     ]
+  }
+
+  onProductChanged(productId:string){
+    this.productChanged = productId !== this.storage.getInitialQuotation().product?._id
   }
 
   ngOnInit(): void {

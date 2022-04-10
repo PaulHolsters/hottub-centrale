@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {QuotationModel} from "../../../models/quotation/quotation.model";
 import {QuotationStorageService} from "../../../services/quotation.storage.service";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -12,6 +12,7 @@ import {Subscription} from "rxjs";
   styleUrls: ['./quotation-product.component.css']
 })
 export class QuotationProductComponent implements OnInit,OnDestroy {
+  @Output() productChanged = new EventEmitter<string>()
   quotation: QuotationModel
   initialQuotation:QuotationModel|undefined
   products:ProductModel[]
@@ -58,6 +59,10 @@ export class QuotationProductComponent implements OnInit,OnDestroy {
         this.cancelSub.unsubscribe()
         this.resetSub.unsubscribe()
     }
+
+  onProductChange(){
+    this.productChanged.emit(this.quotation.product?._id)
+  }
 
   previous() {
     this.storage.setStep('customer')
