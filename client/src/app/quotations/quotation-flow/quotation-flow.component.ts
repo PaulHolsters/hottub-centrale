@@ -13,11 +13,13 @@ import {ProductModel} from "../../models/product/product.model";
 })
 export class QuotationFlowComponent implements OnInit {
   id: string|undefined
+  orphans:boolean
   step: string|undefined
   index: number
   items: MenuItem[]
   blocked: boolean
   constructor(private storage:QuotationStorageService,private route:ActivatedRoute,private dataService:DataService) {
+    this.orphans = false
     this.blocked = false
     this.step = this.storage.getStep()
     this.index = this.getIndex()
@@ -31,7 +33,6 @@ export class QuotationFlowComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // todo check this method
     this.storage.stepChange.subscribe(step=>{
       this.step = step
       this.index = this.getIndex()
@@ -53,6 +54,8 @@ export class QuotationFlowComponent implements OnInit {
               })
               if(index > -1){
                 quotSpecs.splice(index,1)
+              } else if(!this.orphans){
+                this.orphans = true
               }
             })
             this.storage.setAvailableQuotationSpecifications(quotSpecs)

@@ -17,7 +17,7 @@
         <button *ngIf="step!=='summary' && !id" (click)="reset()" pButton type="button" label="Leegmaken"
                 class="p-button-warning"
                 icon="pi pi-trash"></button>
-                <button *ngIf="step!=='summary' && id" (click)="reset()" pButton type="button" label="Initiële waarde"
+                <button *ngIf="step!=='summary' && id && !(orphans && step==='specifications')" (click)="reset()" pButton type="button" label="Initiële waarde"
                         class="p-button-warning"
                         icon="pi pi-trash"></button>
                         <button *ngIf="step!=='customer'" (click)="previous()" pButton type="button" label="Vorige"
