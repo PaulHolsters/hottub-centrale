@@ -69,9 +69,10 @@ export class QuotationSpecificationPicklistComponent implements OnInit {
       if(deletedIds.length>0){
         this.header = 'Speciaal verwijderen'
         let msg = 'De specificatie die u uit de lijst verwijdert, bestaat niet langer in de database.' +
-            ' Indien u op ja klikt wordt de specificatie ook definitief verwijderd uit huidige offerte.'
-        if(deletedIds.length>1) msg = 'Er bevinden zich '+ deletedIds.length +' specificaties die niet langer in de database bestaan. Indien u op ja klikt' +
-            ' worden deze ook definitief verwijderd uit huidige offerte.'
+            ' Indien u op ja klikt wordt de specificatie ook definitief verwijderd uit huidige offerte wanneer u op het einde ' +
+            'de aanpassing bewaart.'
+        if(deletedIds.length>1) msg = 'In de selectie bevinden zich '+ deletedIds.length +' specificaties die niet langer in de database bestaan. Indien u op ja klikt' +
+            ' worden deze ook definitief verwijderd uit huidige offerte wanneer u op het einde de offerte bewaart.'
         this.confirmationService.confirm({
           message: msg,
           accept: ()=>{
@@ -82,8 +83,7 @@ export class QuotationSpecificationPicklistComponent implements OnInit {
               })
               this.source.splice(index,1)
             })
-            // todo should be a reload event instead
-            this.storeEvent.emit({source:this.source,target:this.target})
+            this.listChanged.emit({source:this.source,target:this.target})
           },
           reject: ()=>{
             this.header = undefined
