@@ -15,6 +15,7 @@ import {Subscription} from "rxjs";
 export class ProductSpecificationsComponent implements OnInit,OnDestroy {
   @ViewChild('pickList') pickList: PickList | undefined
   newSpecification: string|undefined
+  displayNewSpecificationDialog: boolean
   product: ProductModel
   initialProduct:ProductModel
   availableSpecifications: SpecificationModel[]
@@ -23,8 +24,16 @@ export class ProductSpecificationsComponent implements OnInit,OnDestroy {
   previousSub:Subscription
   cancelSub:Subscription
   resetSub:Subscription
+  newItemSub: Subscription
 
   constructor(private router: Router, private storage: ProductStorageService, private dataService: DataService,private route: ActivatedRoute) {
+    this.displayNewSpecificationDialog = false
+    this.newItemSub = this.storage.newItemClicked.subscribe((itemType)=>{
+      if(this.storage.getStep()==='specifications' && !this.storage.getClickConsumed() && itemType === 'specification'){
+        this.displayNewSpecificationDialog = true
+        this.storage.setClickConsumed(true)
+      }
+    })
     this.nextSub = this.storage.nextClicked.subscribe(()=>{
       if(this.storage.getStep()==='specifications' && !this.storage.getClickConsumed()){
         this.next()
@@ -45,7 +54,8 @@ export class ProductSpecificationsComponent implements OnInit,OnDestroy {
         this.previous()
       }
     })
-    this.newSpecification = this.storage.getSpecificationInput()
+    // todo remove specification input data save
+
     this.product = this.storage.getProduct()
     this.initialProduct = this.storage.getInitialProduct()
     this.availableSpecifications = this.storage.getAvailableSpecificationsNoSub()||[]
@@ -60,7 +70,7 @@ export class ProductSpecificationsComponent implements OnInit,OnDestroy {
     this.previousSub.unsubscribe()
     this.cancelSub.unsubscribe()
     this.resetSub.unsubscribe()
-    console.log('destr specs')
+    this.newItemSub.unsubscribe()
   }
 
   store(lists: { source: SpecificationModel[], target: SpecificationModel[] } | null) {
@@ -70,7 +80,7 @@ export class ProductSpecificationsComponent implements OnInit,OnDestroy {
     }
     this.storage.setProduct(this.product)
     this.storage.setAvailableSpecifications(this.availableSpecifications)
-    this.storage.setSpecificationInput(this.newSpecification)
+
   }
 
   reload(lists:{source:SpecificationModel[],target:SpecificationModel[]}) {
@@ -138,4 +148,11 @@ export class ProductSpecificationsComponent implements OnInit,OnDestroy {
     this.storage.setClickConsumed(true)
   }
 
+  cancelAdding(){
+    this.displayNewSpecificationDialog = false
+  }
+
+  isDisabled(){
+    return false
+  }
 }

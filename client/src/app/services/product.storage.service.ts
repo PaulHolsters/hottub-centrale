@@ -15,12 +15,12 @@ export class ProductStorageService implements OnDestroy{
   private availableSpecifications:SpecificationModel[]|undefined
   private availableOptions:OptionModel[]|undefined
   private step = 'info'
-  private newSpecification:string|undefined
   private newOptionName:string|undefined
   private newOptionPrice:number|undefined
   stepChange = new EventEmitter<string>()
   private clickConsumed = true
   productFetched = new EventEmitter<ProductModel>()
+  newItemClicked = new EventEmitter<string>()
   nextClicked = new EventEmitter<null>()
   previousClicked = new EventEmitter<null>()
   cancelClicked = new EventEmitter<null>()
@@ -29,7 +29,6 @@ export class ProductStorageService implements OnDestroy{
   private message:string|undefined
 
   ngOnDestroy(): void {
-    console.log('destroyng storage')
   }
 
   resetInitialProduct(){
@@ -112,14 +111,6 @@ export class ProductStorageService implements OnDestroy{
 
   resetAvailableOptions(){
     this.availableOptions = undefined
-  }
-
-  setSpecificationInput(newSpecification:string|undefined){
-    this.newSpecification = newSpecification
-  }
-
-  getSpecificationInput(){
-    return this.newSpecification
   }
 
   setOptionNameInput(newOptionName:string|undefined){

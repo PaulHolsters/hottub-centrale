@@ -42,6 +42,11 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
     return 0
   }
 
+  newItem(type:string){
+    this.storage.setClickConsumed(false)
+    this.storage.newItemClicked.emit(type)
+  }
+
   ngOnInit() {
     this.storage.stepChange.subscribe(step=>{
       this.step = step
