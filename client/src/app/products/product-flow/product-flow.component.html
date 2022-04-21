@@ -10,7 +10,8 @@
   </div>
   <div>
     <p-divider class="col-12 grid p-0 mt-2 mb-2"></p-divider>
-    <div class="col-12 grid p-0 d-flex justify-content-start">
+      <div class="col-12 ml-1 grid p-0 mt-2 mb-2">
+          <div class="col-4 grid p-0 d-flex justify-content-start">
         <span class="p-buttonset m-0">
             <button *ngIf="step === 'specifications'"
                     (click)="newItem('specification')" pButton type="button" label="Nieuwe specificatie aanmaken" class="p-button-success">
@@ -19,8 +20,8 @@
                     (click)="newItem('option')" pButton type="button" label="Nieuwe optie aanmaken" class="p-button-success">
             </button>
         </span>
-    </div>
-    <div class="col-12 grid p-0 d-flex justify-content-end">
+          </div>
+          <div class="grid ml-0 col-8 p-0 d-flex justify-content-end">
     <span class="p-buttonset m-0">
         <button *ngIf="step!=='summary' && !id" (click)="reset()" pButton type="button" label="Leegmaken" class="p-button-warning"
                 icon="pi pi-trash"></button>
@@ -41,7 +42,8 @@
                               class="p-button-success"
                       ></button>
     </span>
-    </div>
+          </div>
+      </div>
   </div>
 </div>
 <p-blockUI [blocked]="blocked">
