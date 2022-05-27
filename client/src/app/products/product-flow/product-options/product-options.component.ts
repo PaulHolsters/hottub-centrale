@@ -16,6 +16,7 @@ export class ProductOptionsComponent implements OnInit,OnDestroy {
   @ViewChild('pickList') pickList: PickList | undefined
   newOptionName: string|undefined
   newOptionPrice: number|undefined
+  displayNewOptionDialog: boolean | undefined
   product: ProductModel
   initialProduct: ProductModel
   availableOptions: OptionModel[]
@@ -24,7 +25,15 @@ export class ProductOptionsComponent implements OnInit,OnDestroy {
   previousSub:Subscription
   cancelSub:Subscription
   resetSub:Subscription
+  newItemSub: Subscription
   constructor(private router: Router, private storage: ProductStorageService, private dataService: DataService,private route: ActivatedRoute) {
+    this.newItemSub = this.storage.newItemClicked.subscribe((itemType)=>{
+      if(this.storage.getStep()==='options' && !this.storage.getClickConsumed() && itemType === 'option'){
+        this.displayNewOptionDialog = true
+        this.storage.setClickConsumed(true)
+      }
+    })
+    this.displayNewOptionDialog = false
     this.nextSub = this.storage.nextClicked.subscribe(()=>{
       if(this.storage.getStep()==='options' && !this.storage.getClickConsumed()){
         this.next()
@@ -63,6 +72,7 @@ export class ProductOptionsComponent implements OnInit,OnDestroy {
     this.previousSub.unsubscribe()
     this.cancelSub.unsubscribe()
     this.resetSub.unsubscribe()
+    this.newItemSub.unsubscribe()
   }
 
   store(lists: { source: OptionModel[], target: OptionModel[] } | null) {
@@ -143,6 +153,14 @@ export class ProductOptionsComponent implements OnInit,OnDestroy {
   cancel() {
     this.router.navigate(['/producten'])
     this.storage.setClickConsumed(true)
+  }
+
+  cancelAdding(){
+    this.displayNewOptionDialog = false
+  }
+
+  isDisabled(){
+    return false
   }
 
 }

@@ -12,30 +12,30 @@
       <div *ngIf="loading">Loading list...</div>
     </div>
   </div>
-  <div class="formField col-12 grid m-0 p-0 mt-5 ml-2">
-    <div class="col-12 grid">
-      <div class="col-fixed" style="width:max-content">
-        <label for="newOptionName" class="label">Naam optie</label>
-      </div>
-      <div class="col-7">
-        <input id="newOptionName" name="newOptionName" type="text" pInputText [(ngModel)]="newOptionName">
-      </div>
-    </div>
-    <div class="col-12 grid">
-      <div class="col-fixed" style="width:max-content">
-        <label for="newOptionPrice" class="label">Prijs optie</label>
-      </div>
-      <div class="col-7">
-        <div class="">
-          <p-inputNumber mode="currency" currency="EUR" [maxFractionDigits]="0" [(ngModel)]="newOptionPrice" name="newOptionPrice"
-                         id="newOptionPrice" ></p-inputNumber>
-        </div>
-      </div>
-      <div class="col">
-        <button (click)="addOption()" pButton type="button" label="Toevoegen" class=""
-                icon="pi pi-plus"></button>
-      </div>
-    </div>
-  </div>
 </form>
 
+<p-dialog header="Nieuwe optie" [(visible)]="displayNewOptionDialog" [style]="{width: '50vw'}">
+  <form class="grid">
+    <div class="formField col-12 grid">
+      <label class="col-12">Optie</label>
+      <input class="col-12 ml-2 mt-2" id="newOptionName" name="newOptionName" type="text"
+             pInputText [(ngModel)]="newOptionName">
+    </div>
+    <div class="formField col-12 grid">
+      <label class="col-12">Prijs</label>
+      <p-inputNumber class="col-12" mode="currency" currency="EUR" [maxFractionDigits]="0" [(ngModel)]="newOptionPrice" name="newOptionPrice"
+                     id="newOptionPrice" ></p-inputNumber>
+    </div>
+  </form>
+  <p-divider class="col-12 grid p-0 mt-2 mb-2"></p-divider>
+  <div class="col-12 grid p-0 d-flex justify-content-end">
+    <span class="p-buttonset m-0">
+        <button (click)="cancelAdding()" pButton type="button" label="Annuleren" class="p-button-outlined"
+                icon="pi pi-times"></button>
+        <button *ngIf="isDisabled()" [style]="{'cursor':'not-allowed'}" [disabled]="true" pButton type="button" label="Bewaren" class="p-button-success"
+                icon="pi pi-check"></button>
+              <button *ngIf="!isDisabled()" (click)="addOption()" pButton type="button" label="Bewaren" class="p-button-success"
+                      icon="pi pi-check"></button>
+    </span>
+  </div>
+</p-dialog>
