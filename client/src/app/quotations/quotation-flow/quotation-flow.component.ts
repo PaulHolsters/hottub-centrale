@@ -38,6 +38,11 @@ export class QuotationFlowComponent implements OnInit {
     this.productChanged = productId !== this.storage.getInitialQuotation().product?._id
   }
 
+  newItem(type:string){
+    this.storage.setClickConsumed(false)
+    this.storage.newItemClicked.emit(type)
+  }
+
   ngOnInit(): void {
     this.storage.stepChange.subscribe(step=>{
       this.step = step

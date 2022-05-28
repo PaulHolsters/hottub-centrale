@@ -21,9 +21,17 @@ export class QuotationSpecificationsComponent implements OnInit,OnDestroy {
   previousSub:Subscription
   cancelSub:Subscription
   resetSub:Subscription
+  newItemSub:Subscription
   availableQuotationSpecifications: QuotationSpecificationModel[]
   loading: boolean
+  displayNewQuotationSpecificationDialog: boolean
   constructor(private route: ActivatedRoute,private storage:QuotationStorageService,private dataService:DataService,private router:Router) {
+    this.newItemSub = this.storage.newItemClicked.subscribe((itemType)=>{
+      if(this.storage.getStep()==='specifications' && !this.storage.getClickConsumed() && itemType === 'specification'){
+        this.displayNewQuotationSpecificationDialog = true
+        this.storage.setClickConsumed(true)
+      }
+    })
     this.nextSub = this.storage.nextClicked.subscribe(()=>{
       if(this.storage.getStep()==='specifications' && !this.storage.getClickConsumed()){
         this.next()
@@ -50,6 +58,7 @@ export class QuotationSpecificationsComponent implements OnInit,OnDestroy {
     this.newQuotationSpecificationPrice = this.storage.getQuotationSpecificationPriceInput()
     this.availableQuotationSpecifications= this.storage.getAvailableQuotationSpecificationsNoSub()||[]
     this.loading = false
+    this.displayNewQuotationSpecificationDialog = false
   }
 
   ngOnInit(): void {
@@ -144,6 +153,14 @@ export class QuotationSpecificationsComponent implements OnInit,OnDestroy {
   cancel() {
     this.storage.setClickConsumed(true)
     this.router.navigate(['/offertes'])
+  }
+
+  cancelAdding(){
+    this.displayNewQuotationSpecificationDialog = false
+  }
+
+  isDisabled(){
+    return false
   }
 
 }

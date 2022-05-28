@@ -19,6 +19,7 @@ export class QuotationStorageService implements OnDestroy{
   cancelClicked = new EventEmitter<null>()
   resetClicked = new EventEmitter<null>()
   saveClicked = new EventEmitter<null>()
+  newItemClicked = new EventEmitter<string>()
   private clickConsumed = true
   quotation:QuotationModel
   initialQuotation:QuotationModel
@@ -44,7 +45,7 @@ export class QuotationStorageService implements OnDestroy{
   }
 
   ngOnDestroy(): void {
-    console.log('destroyng storage')
+
   }
 
   resetInitialQuotation(){
