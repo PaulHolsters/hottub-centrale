@@ -140,13 +140,14 @@ export class QuotationSpecificationsComponent implements OnInit,OnDestroy {
       } else{
         this.quotation.quotationSpecifications = []
         this.availableQuotationSpecifications = []
+        this.newQuotationSpecificationName = undefined
+        this.newQuotationSpecificationPrice = undefined
         this.storage.resetAvailableQuotationSpecifications()
         this.storage.getAvailableQuotationSpecifications().subscribe(quotspecs => {
-          this.availableQuotationSpecifications = quotspecs
+          this.storage.setAvailableQuotationSpecifications(quotspecs)
+          this.availableQuotationSpecifications = this.storage.getAvailableQuotationSpecificationsNoSub()||[]
         })
       }
-      this.newQuotationSpecificationName = undefined
-      this.newQuotationSpecificationPrice = undefined
     }
   }
 

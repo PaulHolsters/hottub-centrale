@@ -139,13 +139,17 @@ export class ProductOptionsComponent implements OnInit,OnDestroy {
         this.newOptionPrice = undefined
         this.storage.setClickConsumed(true)
       } else{
+        // als je een optie neemt dan wordt dit aangepast in de storage!
+        this.storage.setClickConsumed(true)
         this.product.options = []
         this.availableOptions = []
         this.storage.resetAvailableOptions()
         this.newOptionName = undefined
         this.newOptionPrice = undefined
-        this.availableOptions = this.storage.getAvailableOptionsNoSub()||[]
-        this.storage.setClickConsumed(true)
+        this.storage.getAvailableOptions().subscribe(avOps=>{
+          this.storage.setAvailableOptions(avOps)
+          this.availableOptions = this.storage.getAvailableOptionsNoSub()||[]
+        })
       }
     }
   }

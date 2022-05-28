@@ -118,7 +118,6 @@ export class ProductSpecificationsComponent implements OnInit,OnDestroy {
     if (this.product && this.product.specifications) {
       if(this.route.snapshot.params['id']){
         this.storage.getAvailableSpecifications().subscribe(specs=>{
-          console.log(specs)
           this.product.specifications = [...this.initialProduct.specifications]
           if(this.product.specifications.length>0){
             this.availableSpecifications = specs.filter(spec=>{
@@ -134,11 +133,15 @@ export class ProductSpecificationsComponent implements OnInit,OnDestroy {
         this.newSpecification = undefined
         this.storage.setClickConsumed(true)
       } else{
+        // als je een spec neemt dan wordt dit aangepast in de storage!
+        this.storage.setClickConsumed(true)
         this.product.specifications = []
         this.storage.resetAvailableSpecifications()
         this.newSpecification = undefined
-        this.availableSpecifications = this.storage.getAvailableSpecificationsNoSub()||[]
-        this.storage.setClickConsumed(true)
+        this.storage.getAvailableSpecifications().subscribe(avSpecs=>{
+          this.storage.setAvailableSpecifications(avSpecs)
+          this.availableSpecifications = this.storage.getAvailableSpecificationsNoSub()||[]
+        })
       }
     }
   }
