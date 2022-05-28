@@ -18,6 +18,7 @@ export class ProductSummaryComponent implements OnInit,OnDestroy {
   previousSub:Subscription
   cancelSub:Subscription
   saveSub:Subscription
+  productInfo = 'Product info'
 
   constructor(private storage:ProductStorageService,
               private router:Router,

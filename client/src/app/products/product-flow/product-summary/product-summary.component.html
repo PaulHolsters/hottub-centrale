@@ -1,10 +1,10 @@
 <p-toast key="errorMsg"></p-toast>
 <p-toast key="successMsg"></p-toast>
-<div class="grid m-0" style="overflow-y: auto; max-height: 55vh;">
-  <p-card class="col-12">
+<div class="grid" style="overflow-x: hidden;overflow-y:auto; max-height: 55vh;">
+  <p-card class="col-12 ml-0 mb-1" header="Product">
     <ul>
-      <li class="grid m-0">
-        <div class="grid m-0 col-12">
+      <li>
+        <div class="grid">
           <div class="col-2">
             <label class="label">Naam</label>
           </div>
@@ -14,16 +14,16 @@
           <div *ngIf="!product.name" style="color:red" class="col">Product heeft nog geen naam!</div>
         </div>
       </li>
-      <li class="grid m-0">
-        <div *ngIf="product.cat" class="grid m-0 col-12">
+      <li>
+        <div *ngIf="product.cat" class="grid">
           <div class="col-2">
             <label class="label">Type</label>
           </div>
           <div class="col">{{product.cat}}</div>
         </div>
       </li>
-      <li class="grid m-0">
-        <div class="grid m-0 col-12">
+      <li>
+        <div class="grid">
           <div class="col-2">
             <label class="label">Prijs</label>
           </div>
@@ -33,19 +33,12 @@
       </li>
     </ul>
   </p-card>
-  <p-card class="col-12">
+  <p-card class="col-12 ml-0 mb-1" header="Specificaties">
     <ul *ngIf="product.specifications.length>0">
-      <li class="grid m-0">
-        <div class="grid m-0 col-12">
-          <div class="col-2">
-            <label class="label">Specificaties</label>
-          </div>
-        </div>
-      </li>
       <li class="grid m-0" *ngFor="let spec of product.specifications">
         <div class="grid m-0 col-12">
           <div>
-            <span style="padding-left: 1.3rem">{{spec.name}}</span>
+            <span>{{spec.name}}</span>
           </div>
         </div>
       </li>
@@ -54,20 +47,15 @@
       specificaties!
     </div>
   </p-card>
-  <p-card class="col-12">
+  <p-card class="col-12 ml-0 mb-1" header="Opties">
     <ul *ngIf="product.options.length > 0">
-      <li class="grid m-0">
-        <div class="grid m-0 col-12">
-          <div class="col-2">
-            <label class="label">Opties</label>
-          </div>
-        </div>
-      </li>
       <li class="grid m-0" *ngFor="let opt of product.options">
         <div class="grid m-0 col-12">
-          <div>
-            <span style="padding-left: 1.3rem">{{opt.name}}</span><span
-            style="padding-left: 1.3rem">{{opt.price}}</span>
+          <div class="col-8">
+            <span>{{opt.name}}</span>
+          </div>
+          <div class="col">
+            <span>{{opt.price | currency:'EUR'}}</span>
           </div>
         </div>
       </li>
