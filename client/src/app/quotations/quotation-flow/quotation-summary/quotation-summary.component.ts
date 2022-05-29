@@ -50,6 +50,28 @@ export class QuotationSummaryComponent implements OnInit,OnDestroy {
   ngOnInit(): void {
   }
 
+  totalPrice(options:boolean,vat:boolean):number{
+    if(options && vat){
+      let optionsPrice = 0
+      if(this.selectedOptions){
+        optionsPrice = this.selectedOptions.map(opt=>opt.price||0).reduce((x,y)=>( x + y),0)
+      }
+      return ((this.quotation.product?.price || 0) + optionsPrice) + ((this.quotation.product?.price || 0) + optionsPrice)
+          * (this.quotation.VAT/100)
+    } else if(vat){
+      return ((this.quotation.product?.price || 0)) + ((this.quotation.product?.price || 0))
+          * (this.quotation.VAT/100)
+    } else if(options){
+      let optionsPrice = 0
+      if(this.selectedOptions){
+        optionsPrice = this.selectedOptions.map(opt=>opt.price||0).reduce((x,y)=>(x+y),0)
+      }
+      return ((this.quotation.product?.price || 0) + optionsPrice)
+    } else{
+      return (this.quotation.product?.price || 0)
+    }
+  }
+
   ngOnDestroy() {
     this.previousSub.unsubscribe()
     this.cancelSub.unsubscribe()

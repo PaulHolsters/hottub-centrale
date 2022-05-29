@@ -1,0 +1,10 @@
+ul{list-style-type: none}
+
+p-card ::ng-deep .p-card-content{
+    margin:0;
+    padding:0;
+}
+
+p-card ::ng-deep .p-card-title{
+    font-size: 1.2rem;
+}

@@ -165,7 +165,6 @@ export class QuotationStorageService implements OnDestroy{
 
   resetAvailableQuotationSpecifications(){
     this.availableQuotationSpecifications = undefined
-    console.log('resetted aos')
   }
 
   getStateAvailableQuotationSpecifications():boolean{

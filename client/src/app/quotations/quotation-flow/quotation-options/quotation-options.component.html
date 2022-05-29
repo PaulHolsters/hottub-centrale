@@ -2,15 +2,24 @@
   <!-- todo when screen smaller => adjust col-number -->
   <div class="formField col-10 col-offset-1 grid">
     <div class="col-12">
-      <label for="options" class="label">Selecteer de opties gewenst door de klant</label>
+      <label for="availableOptions" class="label">Gekozen opties</label>
     </div>
-    <div class="col-12 grid" *ngIf="quotation.product">
-      <div class="col-12"  id="options"  *ngFor="let option of quotation.product.options">
+    <!-- todo : het kan zijn dat geen opties beschikbaar zijn omdat quotation.product.options.length === 0 -->
+    <div class="col-12 grid" *ngIf="quotation.product && !availableOptions">
+      <div class="col-12"  id="productOptions"  *ngFor="let option of quotation.product.options">
         <p-checkbox name="options" [(ngModel)]="quotation.options" label="{{option.name}}" value="{{option._id}}"></p-checkbox>
       </div>
     </div>
     <div *ngIf="!quotation.product">
       Gelieve een product te selecteren bij stap 2.
+    </div>
+    <div class="col-12" *ngIf="quotation.product && availableOptions">
+      <label for="availableOptions" class="label">Selecteer de opties gewenst door de klant</label>
+    </div>
+    <div class="col-12 grid" *ngIf="quotation.product && availableOptions">
+      <div class="col-12"  id="availableOptions"  *ngFor="let option of availableOptions">
+        <p-checkbox name="options" [(ngModel)]="quotation.options" label="{{option.name}}" value="{{option._id}}"></p-checkbox>
+      </div>
     </div>
   </div>
 </form>

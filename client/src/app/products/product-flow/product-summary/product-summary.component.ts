@@ -41,7 +41,6 @@ export class ProductSummaryComponent implements OnInit,OnDestroy {
         this.save()
       }
     })
-    console.log('getting product from summary 1')
     this.product = this.storage.getProduct()
   }
 
@@ -54,6 +53,8 @@ export class ProductSummaryComponent implements OnInit,OnDestroy {
     this.cancelSub.unsubscribe()
     this.saveSub.unsubscribe()
   }
+
+
 
   save(){
     if(this.route.snapshot.params['id']){

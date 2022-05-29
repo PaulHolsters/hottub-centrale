@@ -1,71 +1,126 @@
 <p-toast></p-toast>
-<div class="grid m-0" style="overflow-y: auto; max-height: 55vh;">
-  <p-card class="col-12">
-    <ul>
-      <li class="grid m-0">
-        <div class="grid m-0 col-12">
-          <div class="col-2">
-            <label class="label">Naam klant</label>
-          </div>
-          <div *ngIf="quotation.customerInfo.firstName||quotation.customerInfo.lastName" class="col">
-            {{quotation.customerInfo.firstName}} {{ quotation.customerInfo.lastName}}
-          </div>
-          <div *ngIf="!(quotation.customerInfo.firstName||quotation.customerInfo.lastName)" style="color:red" class="col">
-            Klant heeft nog geen naam!</div>
-        </div>
-      </li>
-      <li class="grid m-0">
-        <div class="col-2">
-          <label class="label">E-mail klant</label>
-        </div>
-        <div *ngIf="quotation.customerInfo.email" class="grid m-0 col-12">
-          <div class="col">{{quotation.customerInfo.email}}</div>
-        </div>
-        <div *ngIf="!quotation.customerInfo.email" style="color:red" class="col">
-          Klant heeft nog geen e-mailadres!</div>
-      </li>
-      <li class="grid m-0">
-        <div class="grid m-0 col-12">
-          <div class="col-2">
-            <label class="label">Product</label>
-          </div>
-          <div *ngIf="quotation.product" class="grid m-0 col-12">
-            <div *ngIf="quotation.product" class="col">{{quotation.product.name}}</div>
-          </div>
-          <div *ngIf="quotation.product" class="grid m-0 col-12">
-            <div  class="col" *ngFor="let spec of quotation.product.specifications">
-              <div>{{spec.name}}</div>
-            </div>
-          </div>
-          <div *ngIf="!quotation.product" style="color:red" class="col">
-            Er is nog geen product geselecteerd!
-          </div>
-        </div>
-      </li>
-      <li class="grid m-0">
-        <div class="grid m-0 col-12">
-          <div class="col-2">
-            <label class="label">Extra diensten</label>
-          </div>
-          <div *ngIf="quotation.quotationSpecifications" class="grid m-0 col-12">
-            <div class="col" *ngFor="let quotspec of quotation.quotationSpecifications">
-              <div><span>{{quotspec.name}}</span><span> </span> <span>{{quotspec.price | currency:'EUR'}}</span></div>
-            </div>
-          </div>
-        </div>
-      </li>
-      <li class="grid m-0">
-        <div class="grid m-0 col-12">
-          <div class="col-2">
-            <label class="label">Geselecteerde opties</label>
-          </div>
-          <div *ngIf="quotation.options" class="grid m-0 col-12">
-            <div class="col" *ngFor="let opt of selectedOptions">
-              <div><span>{{opt.name}}</span> <span>{{opt.price | currency:'EUR'}}</span></div>
-            </div>
-          </div>
-        </div>
-      </li>
-    </ul>
-  </p-card>
+<div class="grid" style="overflow-y: auto; max-height: 55vh;">
+    <p-card class="col-12 ml-0 mb-1" header="Klantgegevens">
+        <ul>
+            <li>
+                <div class="grid">
+                    <div class="col-2">
+                        <label class="label">Naam klant</label>
+                    </div>
+                    <div *ngIf="quotation.customerInfo.firstName||quotation.customerInfo.lastName" class="col">
+                        {{quotation.customerInfo.firstName}} {{ quotation.customerInfo.lastName}}
+                    </div>
+                    <div *ngIf="!(quotation.customerInfo.firstName||quotation.customerInfo.lastName)" style="color:red"
+                         class="col">
+                        Klant heeft nog geen naam!
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="grid">
+                    <div class="col-2">
+                        <label class="label">E-mail klant</label>
+                    </div>
+                    <div *ngIf="quotation.customerInfo.email" class="col">
+                        {{quotation.customerInfo.email}}
+                    </div>
+                    <div *ngIf="!quotation.customerInfo.email" style="color:red" class="col">
+                        Klant heeft nog geen e-mailadres!
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </p-card>
+    <p-card class="col-12 ml-0 mb-1" header="Offerte gegevens">
+        <ul>
+            <li>
+                <div class="grid">
+                    <div class="col-4">
+                        <label class="label">Product</label>
+                    </div>
+                    <div *ngIf="quotation.product" class="col">
+                        {{quotation.product.name}}
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="grid">
+                    <div class="col-4">
+                        <label class="label">Korting</label>
+                    </div>
+                    <div class="col">
+                        {{quotation.discount}}%
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="grid">
+                    <div class="col-4">
+                        <label class="label">BTW</label>
+                    </div>
+                    <div class="col">
+                        {{quotation.VAT}}%
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="grid">
+                    <div class="col-4">
+                        <label class="label">Totaal zonder opties excl.BTW</label>
+                    </div>
+                    <div class="col">
+                        {{totalPrice(false,false) | currency: 'EUR'}}
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="grid">
+                    <div class="col-4">
+                        <label class="label">Totaal mét opties excl.BTW</label>
+                    </div>
+                    <div class="col">
+                        {{totalPrice(true,false) | currency: 'EUR'}}
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="grid">
+                    <div class="col-4">
+                        <label class="label">Totaal mét opties incl.BTW</label>
+                    </div>
+                    <div class="col">
+                        {{totalPrice(true,true) | currency: 'EUR'}}
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </p-card>
+    <p-card class="col-12 ml-0 mb-1" header="Extra diensten">
+        <ul>
+            <li *ngIf="quotation.quotationSpecifications">
+                        <div class="grid col" *ngFor="let quotspec of quotation.quotationSpecifications">
+                           <div class="col-8"><span>{{quotspec.name}}</span></div>
+                                <div class="col"><span>{{quotspec.price | currency:'EUR'}}</span></div>
+                        </div>
+            </li></ul></p-card>
+    <p-card class="col-12 ml-0 mb-1" header="Product specificaties">
+        <ul>
+            <li *ngIf="quotation.product">
+                <div *ngFor="let spec of quotation.product.specifications" class="col">
+                    {{spec.name}}</div>
+            </li>
+            <li *ngIf="!quotation.product" style="color:red" class="col">
+                Er is nog geen product geselecteerd!
+            </li>
+        </ul>
+    </p-card>
+    <p-card class="col-12 ml-0 mb-1" header="Product opties">
+        <ul>
+            <li *ngIf="quotation.options">
+                        <div class="col grid" *ngFor="let opt of selectedOptions">
+                            <div class="col-8"><span>{{opt.name}}</span></div> <div class="col"><span>{{opt.price | currency:'EUR'}}</span></div>
+                        </div>
+            </li>
+        </ul>
+    </p-card>
 </div>

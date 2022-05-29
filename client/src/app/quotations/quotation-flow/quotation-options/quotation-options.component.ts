@@ -5,6 +5,8 @@ import {QuotationStorageService} from "../../../services/quotation.storage.servi
 import {ActivatedRoute, Router} from "@angular/router";
 import {DataService} from "../../../services/data.service";
 import {Subscription} from "rxjs";
+import {QuotationGetModel} from "../../../models/quotation/quotation.get.model";
+import {OptionModel} from "../../../models/product/option.model";
 
 @Component({
   selector: 'app-quotation-options',
@@ -18,6 +20,7 @@ export class QuotationOptionsComponent implements OnInit,OnDestroy {
   previousSub:Subscription
   cancelSub:Subscription
   resetSub:Subscription
+  availableOptions: OptionModel[]|undefined
   constructor(private route:ActivatedRoute,private storage:QuotationStorageService, private router: Router,private dataService:DataService) {
     this.nextSub = this.storage.nextClicked.subscribe(()=>{
       if(this.storage.getStep()==='options' && !this.storage.getClickConsumed()){
@@ -41,8 +44,15 @@ export class QuotationOptionsComponent implements OnInit,OnDestroy {
     })
     this.quotation = this.storage.getQuotation()
     this.initialQuotation = this.storage.getInitialQuotation()
-    // todo in product zit onder bepaalde omstandigheden niks van opties
-    console.log(this.quotation.product?.options)
+    if(this.quotation.product?._id) this.dataService.getProduct(this.quotation.product?._id).subscribe(product=>{
+      let available = true
+      this.quotation.options.forEach(option=>{
+        if(!product.options.map(opt=>opt._id).includes(option)){
+          available = false
+        }
+      })
+      if(available) this.availableOptions = [...product.options]
+    })
   }
 
   ngOnInit(): void {
