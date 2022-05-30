@@ -10,7 +10,7 @@
                     <div *ngIf="product.name" class="col">
                         {{product.name}}
                     </div>
-                    <div *ngIf="!product.name" style="color:red" class="col">Product heeft nog geen naam!</div>
+                    <div *ngIf="!product.name" class="col">Product wordt geladen...</div>
                 </div>
             </li>
             <li>
@@ -26,8 +26,8 @@
                     <div class="col-2">
                         <label class="label">Prijs</label>
                     </div>
-                    <div *ngIf="product.price" class="col">{{product.price}}</div>
-                    <div *ngIf="!product.price" style="color:orangered" class="col">Product heeft nog geen prijs!</div>
+                    <div *ngIf="product.price" class="col">{{product.price | currency: 'EUR'}}</div>
+                    <div *ngIf="!product.price" class="col">Product wordt geladen...</div>
                 </div>
             </li>
         </ul>
@@ -42,8 +42,7 @@
                 </div>
             </li>
         </ul>
-        <div *ngIf="product.specifications.length===0" style="color:orangered" class="col">Product heeft nog geen
-            specificaties!
+        <div *ngIf="product.specifications.length===0" class="col">Product wordt geladen...
         </div>
     </p-card>
     <p-card class="col-12 ml-0 mb-1" header="Opties">
@@ -59,7 +58,8 @@
                 </div>
             </li>
         </ul>
-        <div *ngIf="product.options.length === 0" style="color:dodgerblue" class="col">Product heeft geen opties.</div>
+        <div *ngIf="!product" class="col">Product wordt geladen...</div>
+        <div *ngIf="product && product.options.length === 0" style="color:dodgerblue" class="col">Product heeft geen opties.</div>
     </p-card>
     </div>
     <div style="height:10%;" class="grid col-12 ml-0">
