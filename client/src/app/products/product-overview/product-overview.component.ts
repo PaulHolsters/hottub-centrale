@@ -52,7 +52,7 @@ export class ProductOverviewComponent implements OnInit,AfterViewChecked {
   handleClick(event:any,id:string){
     switch (event.target.innerText){
       case 'Bekijken':
-        this.router.navigate(['offertes/details/'+id])
+        this.router.navigate(['producten/details/'+id])
         break
       case 'Verwijderen':
         this.deleteProduct(id)
@@ -75,6 +75,7 @@ export class ProductOverviewComponent implements OnInit,AfterViewChecked {
   }
 
   productDetails(id:string){
+    console.log('press')
     this.router.navigate(['producten','details',id])
   }
 

@@ -169,6 +169,7 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
         })
         break
       case 'Bekijken':
+        console.log('offerets geklikt')
         this.router.navigate(['offertes/details/'+id])
         break
       case 'Versturen':

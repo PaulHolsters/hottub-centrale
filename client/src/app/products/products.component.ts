@@ -28,8 +28,6 @@ export class ProductsComponent implements OnInit, AfterViewChecked {
     this.router.navigate(['/producten/overzicht'])
   }
 
-
-
   newProduct(){
     this.router.navigate(['/producten/nieuw'])
   }

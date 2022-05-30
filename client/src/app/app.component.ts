@@ -11,7 +11,6 @@ import {ActivatedRoute, Router} from "@angular/router";
 
 
 export class AppComponent implements OnInit{
-  display = true
   items:MenuItem[] = [
     {
       label: 'Producten',routerLink: 'producten'
