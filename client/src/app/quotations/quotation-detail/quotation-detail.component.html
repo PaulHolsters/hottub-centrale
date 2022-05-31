@@ -1,0 +1,152 @@
+
+<div class="grid" style="overflow-y: auto; overflow-x:hidden; height: 100%;">
+    <div class="grid col-12 ml-0" style="height:90%; overflow:auto">
+    <p-card class="col-12 ml-0 mb-1" header="Klantgegevens">
+        <ul>
+            <li>
+                <div class="grid">
+                    <div class="col-2">
+                        <label class="label">Naam klant</label>
+                    </div>
+                    <div *ngIf="quotation.customerInfo.firstName||quotation.customerInfo.lastName" class="col">
+                        {{quotation.customerInfo.firstName}} {{ quotation.customerInfo.lastName}}
+                    </div>
+                    <div *ngIf="!(quotation.customerInfo.firstName||quotation.customerInfo.lastName)"
+                         class="col">
+                        Offerte wordt geladen...
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="grid">
+                    <div class="col-2">
+                        <label class="label">E-mail klant</label>
+                    </div>
+                    <div *ngIf="quotation.customerInfo.email" class="col">
+                        {{quotation.customerInfo.email}}
+                    </div>
+                    <div *ngIf="!quotation.customerInfo.email" class="col">
+                        Offerte wordt geladen...
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </p-card>
+    <p-card class="col-12 ml-0 mb-1" header="Offerte gegevens">
+        <ul>
+            <li>
+                <div class="grid">
+                    <div class="col-4">
+                        <label class="label">Product</label>
+                    </div>
+                    <div *ngIf="quotation.product" class="col">
+                        {{quotation.product.name}}
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="grid">
+                    <div class="col-4">
+                        <label class="label">Korting</label>
+                    </div>
+                    <div class="col">
+                        {{quotation.discount}}%
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="grid">
+                    <div class="col-4">
+                        <label class="label">BTW</label>
+                    </div>
+                    <div class="col">
+                        {{quotation.VAT}}%
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="grid">
+                    <div class="col-4">
+                        <label class="label">Totaal zonder opties excl.BTW</label>
+                    </div>
+                    <div class="col">
+                        {{totalPrice(false,false) | currency: 'EUR'}}
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="grid">
+                    <div class="col-4">
+                        <label class="label">Totaal mét opties excl.BTW</label>
+                    </div>
+                    <div class="col">
+                        {{totalPrice(true,false) | currency: 'EUR'}}
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="grid">
+                    <div class="col-4">
+                        <label class="label">Totaal mét opties incl.BTW</label>
+                    </div>
+                    <div class="col">
+                        {{totalPrice(true,true) | currency: 'EUR'}}
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </p-card>
+    <p-card class="col-12 ml-0 mb-1" header="Extra diensten">
+        <ul *ngIf="quotation.quotationSpecifications && quotation.quotationSpecifications.length>0">
+            <li class="grid m-0" *ngFor="let quotspec of quotation.quotationSpecifications">
+                <div class="grid m-0 col-12">
+                    <div class="col-8"><span>{{quotspec.name}}</span></div>
+                    <div class="col"><span>{{quotspec.price | currency:'EUR'}}</span></div>
+                </div>
+            </li>
+        </ul>
+        <div *ngIf="quotation.quotationSpecifications && quotation.quotationSpecifications.length===0" class="col">Offerte heeft geen extra diensten.
+        </div>
+        <div *ngIf="!quotation.quotationSpecifications" class="col">Offerte wordt geladen...
+        </div>
+    </p-card>
+    <p-card class="col-12 ml-0 mb-1" header="Product specificaties">
+        <ul *ngIf="quotation.product">
+            <li *ngFor="let spec of quotation.product.specifications">
+                <div  class="grid m-0 col-12">
+                    <div class="col-8">
+                        <span>{{spec.name}}</span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div *ngIf="!quotation.product" class="col">Offerte wordt geladen...
+        </div>
+    </p-card>
+    <p-card class="col-12 ml-0 mb-1" header="Product opties">
+        <ul *ngIf="quotation.options && quotation.options.length>0">
+            <li class="grid m-0" *ngFor="let opt of selectedOptions">
+                <div class="grid m-0 col-12">
+                    <div class="col-8"><span>{{opt.name}}</span></div>
+                    <div class="col"><span>{{opt.price | currency:'EUR'}}</span></div>
+                </div>
+            </li>
+        </ul>
+        <div *ngIf="quotation.options && quotation.options.length===0" class="col">Er werden geen opties gekozen.
+        </div>
+        <div *ngIf="!quotation.options" class="col">Offerte wordt geladen...
+        </div>
+    </p-card>
+    </div>
+    <div style="height:10%;" class="grid col-12 ml-0">
+        <p-divider class="col-12 grid p-0 mt-0 mb-2 ml-0"></p-divider>
+        <div class="col-12 ml-1 grid p-0 mt-2 mb-2">
+            <div class="grid ml-0 col-12 p-0 d-flex justify-content-end">
+    <span class="p-buttonset m-0 mr-1">
+                <button (click)="previous()" pButton type="button" label="Vorige" class="p-button-outlined"
+                        icon="pi pi-times"></button>
+    </span>
+            </div>
+        </div>
+    </div>
+</div>
