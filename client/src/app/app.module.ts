@@ -52,6 +52,7 @@ import {DialogModule} from "primeng/dialog";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {BlockUIModule} from "primeng/blockui";
 import {InputNumberModule} from "primeng/inputnumber";
+import { QuotationDetailComponent } from './quotations/quotation-detail/quotation-detail.component';
 
 const appRoutes: Routes = [
   {path: 'producten', component: ProductsComponent},
@@ -63,6 +64,7 @@ const appRoutes: Routes = [
   {path: 'offertes/nieuw', component: QuotationFlowComponent},
   {path: 'offertes/overzicht', component: QuotationOverviewComponent},
   {path: 'offertes/nieuwe-versie/:id', component: QuotationFlowComponent},
+  {path: 'offertes/details/:id', component: QuotationDetailComponent},
 ]
 
 @NgModule({
@@ -87,7 +89,8 @@ const appRoutes: Routes = [
     QuotationOptionsComponent,
     QuotationSummaryComponent,
     QuotationSpecificationsComponent,
-    QuotationSpecificationPicklistComponent
+    QuotationSpecificationPicklistComponent,
+    QuotationDetailComponent
   ],
     imports: [
         BrowserModule,

@@ -82,7 +82,6 @@ export class QuotationOptionsComponent implements OnInit,OnDestroy {
     this.storage.setClickConsumed(true)
     if(this.quotation){
       if(this.route.snapshot.params['id']){
-        console.log(this.quotation.options,this.initialQuotation.options)
         this.quotation.options = []
         this.initialQuotation.options.forEach(opt=>{
           this.quotation.options.push(opt)
