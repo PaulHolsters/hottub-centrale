@@ -146,14 +146,12 @@ responseType:"blob"
   }
 
   createOption(option:OptionModel):Observable<OptionModel>{
-    console.log('creating option')
     return this.http.post<{option:OptionModel}>('http://localhost:3000/product-options',option).pipe(map(res=>{
       return res.option
     }))
   }
 
   createQuotationSpecification(quotationSpecification:QuotationSpecificationModel):Observable<QuotationSpecificationModel>{
-    console.log('creating quotspec')
     return this.http.post<{quotationSpecification:QuotationSpecificationModel}>('http://localhost:3000/quotation-specifications',quotationSpecification)
       .pipe(map(res=>{
       return res.quotationSpecification

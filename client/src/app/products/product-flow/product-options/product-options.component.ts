@@ -123,7 +123,6 @@ export class ProductOptionsComponent implements OnInit,OnDestroy {
       if(this.route.snapshot.params['id']){
         this.storage.getAvailableOptions().subscribe(options=>{
           this.product.options = [...this.initialProduct.options]
-          console.log(this.product.options,options)
           if(this.product.options.length>0){
             this.availableOptions = options.filter(opt=>{
               return !this.product.options.map(option=>{

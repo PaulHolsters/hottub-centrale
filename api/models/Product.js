@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 
 const productSchema = new mongoose.Schema({
     name: {
-        type: String, required: true, lowercase: true, trim: true,
+        type: String, required: true, trim: true,
         minlength: [2, 'Een productnaam dient minimaal 2 karakters lang te zijn.'], alias: 'productName'
     },
     cat: {type: String, enum: ['hottub', 'sauna', 'tiny house'], required: true, alias: 'category', default: 'hottub'},
@@ -16,12 +16,12 @@ const productSchema = new mongoose.Schema({
 }, {})
 
 const productSpecificationSchema = new mongoose.Schema({
-    name: {type: String, required: true, lowercase: true, minlength:[2,'Een specificatie dient minimaal 2 karakters lang te zijn.'],
+    name: {type: String, required: true, minlength:[2,'Een specificatie dient minimaal 2 karakters lang te zijn.'],
         trim: true, alias: 'productSpecification'}
 },{})
 
 const productOptionSchema = new mongoose.Schema({
-    name: {type: String, required: [true,'U dient een optie in te voeren'], lowercase: true, minlength:[2,'Een optie dient minimaal 2 karakters lang te zijn.'],
+    name: {type: String, required: [true,'U dient een optie in te voeren'], minlength:[2,'Een optie dient minimaal 2 karakters lang te zijn.'],
         trim: true, alias: 'productOption'},
     price: {type: Number, required: [true, 'Prijs is verplicht'], min: 0}
 },{})
