@@ -114,7 +114,7 @@ router.get('/action/:id', async (req, res, next) => {
             pdfDoc.end()
             const sendEmail = async options =>{
                 const transporter = nodemailer.createTransport({
-                    // todo: gmail laat geen onbeveiligde toegang meer toe
+
                     service: 'Gmail',
                     auth: {
                         user: 'hottub.centrale.test@gmail.com',
@@ -128,19 +128,26 @@ router.get('/action/:id', async (req, res, next) => {
                     text: options.message,
                     attachments: options.attachments
                 }
-                await transporter.sendMail(mailOptions).catch(err=>{
-                    console.log(err)
-                })
-                Schema.quotationModel.updateOne({_id:quotationId},{status:'verstuurd'},{runValidators:true}).exec().then(result => {
-                    res.status(201).json(
-                    )
-                }).catch(err => {
+                // todo: gmail laat geen onbeveiligde toegang meer toe
+                await transporter.sendMail(mailOptions).then(
+                    ()=>{
+                        Schema.quotationModel.updateOne({_id:quotationId},{status:'verstuurd'},{runValidators:true}).exec().then(result => {
+                            res.status(201).json(
+                            )
+                        }).catch(err => {
+                            res.status(500).json({
+                                error: err.error
+                            })
+                        })
+                    }
+                ).catch(err=>{
                     res.status(500).json({
-                        error: err.error
+                        error: 'email verzenden mislukt'
                     })
                 })
             }
             sendEmail({email:doc?.customerInfo.email,
+            //sendEmail({email:'NOT GOOD',
                 subject:'offerte sauna',
                 message:'graag uw goedkeuring of nieuw voorstel...',
                 attachments: [
