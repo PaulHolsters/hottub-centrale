@@ -90,7 +90,6 @@ router.get('/action/:id', async (req, res, next) => {
     const action = req.query.action
     if(action==='pdf'){
         const quotationId = req.params.id
-        console.log(quotationId)
         Schema.quotationModel.findById({_id:quotationId},{__v:0}).exec().then(doc=>{
             console.log('pdf send')
             res.setHeader('Content-Type', 'application/pdf')
@@ -115,13 +114,13 @@ router.get('/action/:id', async (req, res, next) => {
             pdfDoc.end()
             const sendEmail = async options =>{
                 const transporter = nodemailer.createTransport({
+                    // todo: gmail laat geen onbeveiligde toegang meer toe
                     service: 'Gmail',
                     auth: {
                         user: 'hottub.centrale.test@gmail.com',
                         pass: 'Vistaline123;'
                     }
                 })
-                console.log(options.email)
                 const mailOptions = {
                     from: 'hottub.centrale.test@gmail.com',
                     to: options.email,
@@ -132,7 +131,6 @@ router.get('/action/:id', async (req, res, next) => {
                 await transporter.sendMail(mailOptions).catch(err=>{
                     console.log(err)
                 })
-                console.log(quotationId)
                 Schema.quotationModel.updateOne({_id:quotationId},{status:'verstuurd'},{runValidators:true}).exec().then(result => {
                     res.status(201).json(
                     )
@@ -142,8 +140,7 @@ router.get('/action/:id', async (req, res, next) => {
                     })
                 })
             }
-
-            sendEmail({email:'ph.29@hotmail.com',
+            sendEmail({email:doc?.customerInfo.email,
                 subject:'offerte sauna',
                 message:'graag uw goedkeuring of nieuw voorstel...',
                 attachments: [

@@ -43,7 +43,6 @@ const quotationSchema = new mongoose.Schema({
                     name: {
                         type: String,
                         required: true,
-                        lowercase: true,
                         minLength: [2, 'Een optie dient minimaal 2 karakters lang te zijn.'],
                         trim: true,
                         alias: 'productOption'
@@ -57,7 +56,6 @@ const quotationSchema = new mongoose.Schema({
                     name: {
                         type: String,
                         required: true,
-                        lowercase: true,
                         minLength: [2, 'Een specificatie dient minimaal 2 karakters lang te zijn.'],
                         trim: true,
                         alias: 'productSpecification'
