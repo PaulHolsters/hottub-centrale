@@ -114,15 +114,14 @@ router.get('/action/:id', async (req, res, next) => {
             pdfDoc.end()
             const sendEmail = async options =>{
                 const transporter = nodemailer.createTransport({
-
-                    service: 'Gmail',
+                    service: `${process.env.emailProvider}`,
                     auth: {
-                        user: 'hottub.centrale.test@gmail.com',
-                        pass: 'Vistaline123;'
+                        user: `${process.env.emailUser}`,
+                        pass: `${process.env.emailPassword}`
                     }
                 })
                 const mailOptions = {
-                    from: 'hottub.centrale.test@gmail.com',
+                    from: `${process.env.emailUser}`,
                     to: options.email,
                     subject: options.subject,
                     text: options.message,
@@ -141,13 +140,13 @@ router.get('/action/:id', async (req, res, next) => {
                         })
                     }
                 ).catch(err=>{
+                    console.log(err)
                     res.status(500).json({
-                        error: 'email verzenden mislukt'
+                        error: `email verzenden mislukt`
                     })
                 })
             }
             sendEmail({email:doc?.customerInfo.email,
-            //sendEmail({email:'NOT GOOD',
                 subject:'offerte sauna',
                 message:'graag uw goedkeuring of nieuw voorstel...',
                 attachments: [

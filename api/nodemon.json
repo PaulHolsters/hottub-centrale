@@ -1,0 +1,11 @@
+{
+  "env": {
+    "MONGO_ATLAS_PW": "NvM4ti9ppVSkv45",
+    "MONGO_ATLAS_USER": "ph",
+    "MONGO_ATLAS_DB": "@administry-1.nnow2.mongodb.net/vitaline-db?retryWrites=true&w=majority",
+    "emailProvider": "Gmail",
+    "emailUser": "hottub.centrale.test@gmail.com",
+    "emailPassword": "Vistaline123;"
+  }
+}
+
