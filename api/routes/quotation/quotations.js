@@ -3,6 +3,7 @@ const router = express.Router()
 const {check, validationResult} = require('express-validator')
 
 const nodemailer = require('nodemailer')
+const sendgridTransport = require('nodemailer-sendgrid-transport')
 
 const PDFDocument = require('pdfkit')
 
@@ -113,13 +114,18 @@ router.get('/action/:id', async (req, res, next) => {
             pdfDoc.text(doc?.quotationValues.productName)
             pdfDoc.end()
             const sendEmail = async options =>{
-                const transporter = nodemailer.createTransport({
+/*                const transporter = nodemailer.createTransport({
                     service: `${process.env.emailProvider}`,
                     auth: {
                         user: `${process.env.emailUser}`,
                         pass: `${process.env.emailPassword}`
                     }
-                })
+                })*/
+                    const transporter = nodemailer.createTransport(sendgridTransport({
+                        auth: {
+                            api_key: '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'
+                        }
+                    }))
                 const mailOptions = {
                     from: `${process.env.emailUser}`,
                     to: options.email,
@@ -127,7 +133,6 @@ router.get('/action/:id', async (req, res, next) => {
                     text: options.message,
                     attachments: options.attachments
                 }
-                // todo: gmail laat geen onbeveiligde toegang meer toe
                 await transporter.sendMail(mailOptions).then(
                     ()=>{
                         Schema.quotationModel.updateOne({_id:quotationId},{status:'verstuurd'},{runValidators:true}).exec().then(result => {
@@ -140,7 +145,6 @@ router.get('/action/:id', async (req, res, next) => {
                         })
                     }
                 ).catch(err=>{
-                    console.log(err)
                     res.status(500).json({
                         error: `email verzenden mislukt`
                     })
