@@ -123,7 +123,7 @@ router.get('/action/:id', async (req, res, next) => {
                 })*/
                     const transporter = nodemailer.createTransport(sendgridTransport({
                         auth: {
-                            api_key: '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'
+                            api_key:  `${process.env.apiKey}`
                         }
                     }))
                 const mailOptions = {
