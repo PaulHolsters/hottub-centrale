@@ -45,6 +45,12 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
 
         })
         return filteredQuotGets.every(quot => quot.version <= quotGet.version)
+      }).sort((a,b)=>{
+        if(a.creationDate>b.creationDate){
+          return -1
+        } else if(a.creationDate==b.creationDate){
+          return 0
+        } else return 1
       })
     })
   }

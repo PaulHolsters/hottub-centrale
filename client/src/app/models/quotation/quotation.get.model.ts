@@ -22,8 +22,8 @@ export class QuotationGetModel {
           productSpecifications:SpecificationModel[],
           quotationSpecificationValues:QuotationSpecificationModel[]
       },
-              public _id: string,
-
+      public _id: string,
+      public creationDate: Date
   ) {
   }
 }

@@ -178,6 +178,7 @@ router.get('/action/:id', async (req, res, next) => {
 
 router.get('/', (req, res, next) => {
     Schema.quotationModel.find({}, {__v: 0}).then(result => {
+        console.log(result[result.length-1])
         res.status(200).json(
             {
                 quotations: result
