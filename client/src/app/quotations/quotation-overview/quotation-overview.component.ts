@@ -15,7 +15,6 @@ import {interval} from "rxjs";
 })
 export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
   quotations:QuotationGetModel[]
-  latestVersionQuotations:QuotationGetModel[]
   activatedActionsMenu:string|undefined
   selectedFileBLOB:any|undefined
   displayDialog:boolean
@@ -35,23 +34,9 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
               private cd: ChangeDetectorRef, private router:Router,private messageService:MessageService,private sanitizer: DomSanitizer) {
     this.displayDialog = false
     this.quotations = []
-    this.latestVersionQuotations = []
     this.blocked = false
     this.dataService.getQuotations().subscribe(res=>{
       this.quotations = res
-      this.latestVersionQuotations = this.quotations.filter(quotGet=>{
-        const filteredQuotGets = this.quotations.filter(quotGetGroupId=>{
-          return quotGetGroupId.groupId === quotGet.groupId
-
-        })
-        return filteredQuotGets.every(quot => quot.version <= quotGet.version)
-      }).sort((a,b)=>{
-        if(a.creationDate>b.creationDate){
-          return -1
-        } else if(a.creationDate==b.creationDate){
-          return 0
-        } else return 1
-      })
     })
   }
 
@@ -80,29 +65,7 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
     window.open(this.selectedFileBLOB.changingThisBreaksApplicationSecurity);
   }
 
-  totalPrice(id:string):number|undefined{
-    const quot = this.latestVersionQuotations.find(quot=>{return quot._id===id})
-    if(quot){
-      const productPrice = quot.quotationValues.productPrice
-      const options = quot.quotationValues.optionValues.map(val=>{
-        return val.price||0
-      })
-      let optionsPrice = 0
-      let quotSpecsPrice = 0
-      if(options.length>0){
-        optionsPrice = options.reduce((x,y)=>(x+y))
-      }
-      const quotSpecs = quot.quotationValues.quotationSpecificationValues.map(quotspec=>{
-        return quotspec.price||0
-      })
-      if(quotSpecs.length>0){
-        quotSpecsPrice = quotSpecs.reduce((x,y)=>(x+y))
-      }
-      const subTotal = productPrice+optionsPrice+quotSpecsPrice
-      return subTotal-(quot.discount*subTotal/100)
-    }
-    return undefined
-  }
+
 
   showDialog(id:string|undefined){
     const selectedQuot = this.quotations.find(quot=>{
@@ -151,13 +114,6 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
       this.dataService.editStatusQuotation(this.idOfStatusChanged,this.selectedStatus).subscribe(res=>{
         this.dataService.getQuotations().subscribe(res=>{
           this.quotations = res
-          this.latestVersionQuotations = this.quotations.filter(quotGet=>{
-            const filteredQuotGets = this.quotations.filter(quotGetGroupId=>{
-              return quotGetGroupId.groupId === quotGet.groupId
-
-            })
-            return filteredQuotGets.every(quot => quot.version <= quotGet.version)
-          })
         })
         this.displayDialog = false
         this.messageService.add({severity:'success', summary: 'Statuswijziging doorgevoerd', life:3000});

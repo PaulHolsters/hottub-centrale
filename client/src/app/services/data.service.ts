@@ -23,8 +23,49 @@ export class DataService {
 
   getQuotations():Observable<QuotationGetModel[]>{
     return this.http.get<{quotations:QuotationGetModel[]}>('http://localhost:3000/quotations').pipe(map(result=>{
-      return result.quotations
+      const latestVersionQuotations = result.quotations.filter(quotGet=>{
+        const filteredQuotGets = result.quotations.filter(quotGetGroupId=>{
+          return quotGetGroupId.groupId === quotGet.groupId
+
+        })
+        return filteredQuotGets.every(quot => quot.version <= quotGet.version)
+      }).sort((a,b)=>{
+        if(a.creationDate>b.creationDate){
+          return -1
+        } else if(a.creationDate==b.creationDate){
+          return 0
+        } else return 1
+      })
+      latestVersionQuotations.forEach(q=>{
+        q.customer = q.customerInfo.firstName + ' ' + q.customerInfo.lastName
+        q.totalPrice = this.totalPrice(q._id,result.quotations)
+      })
+      return latestVersionQuotations
     }))
+  }
+
+  totalPrice(id:string,quots:QuotationGetModel[]):number|undefined{
+    const quot = quots.find(quot=>{return quot._id===id})
+    if(quot){
+      const productPrice = quot.quotationValues.productPrice
+      const options = quot.quotationValues.optionValues.map(val=>{
+        return val.price||0
+      })
+      let optionsPrice = 0
+      let quotSpecsPrice = 0
+      if(options.length>0){
+        optionsPrice = options.reduce((x,y)=>(x+y))
+      }
+      const quotSpecs = quot.quotationValues.quotationSpecificationValues.map(quotspec=>{
+        return quotspec.price||0
+      })
+      if(quotSpecs.length>0){
+        quotSpecsPrice = quotSpecs.reduce((x,y)=>(x+y))
+      }
+      const subTotal = productPrice+optionsPrice+quotSpecsPrice
+      return subTotal-(quot.discount*subTotal/100)
+    }
+    return undefined
   }
 
   getProduct(id:string):Observable<ProductModel>{

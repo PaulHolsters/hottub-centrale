@@ -23,7 +23,9 @@ export class QuotationGetModel {
           quotationSpecificationValues:QuotationSpecificationModel[]
       },
       public _id: string,
-      public creationDate: Date
+      public creationDate: Date,
+      public customer: string,
+      public totalPrice: number |undefined
   ) {
   }
 }

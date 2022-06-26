@@ -1,23 +1,33 @@
 
 <p-toast></p-toast>
 <div style="border: 1px solid red; height:100%;">
-  <p-table [value]="latestVersionQuotations" [scrollable]="true" scrollHeight="85vh">
+  <p-table [value]="quotations" [scrollable]="true" scrollHeight="85vh" sortMode="multiple">
     <ng-template pTemplate="header">
       <tr>
-        <th>Klant</th>
-        <th>Product</th>
-        <th>Korting</th>
-        <th>Totaalprijs (excl. BTW)</th>
-        <th>Status</th>
+        <th pSortableColumn="customer">Klant <p-sortIcon field="customer"></p-sortIcon>
+          <p-columnFilter type="text" field="customer" display="menu"></p-columnFilter>
+        </th>
+        <th pSortableColumn="quotationValues.productName">Product <p-sortIcon field="quotationValues.productName"></p-sortIcon>
+          <p-columnFilter type="text" field="quotationValues.productName" display="menu"></p-columnFilter>
+        </th>
+        <th pSortableColumn="discount">Korting <p-sortIcon field="discount"></p-sortIcon>
+          <p-columnFilter type="numeric" field="discount" display="menu"></p-columnFilter>
+        </th>
+        <th pSortableColumn="totalPrice">Totaalprijs (excl. BTW) <p-sortIcon field="totalPrice"></p-sortIcon>
+          <p-columnFilter type="numeric" field="totalPrice" display="menu"></p-columnFilter>
+        </th>
+        <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon>
+          <p-columnFilter type="text" field="status" display="menu"></p-columnFilter>
+        </th>
         <th>Acties</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-quotation>
       <tr>
-        <td>{{quotation.customerInfo.firstName}} {{quotation.customerInfo.lastName}} </td>
+        <td>{{quotation['customer']}} </td>
         <td>{{quotation.quotationValues.productName}}</td>
         <td>{{quotation['discount']}} %</td>
-        <td>{{totalPrice(quotation._id) | currency:'EUR'}}</td>
+        <td>{{quotation['totalPrice'] | currency:'EUR'}}</td>
         <td>{{quotation['status']}}</td>
         <td (mouseleave)="hideMenu()" >
           <i *ngIf="isIcon(quotation._id)" style="cursor:pointer" class="pi pi-ellipsis-h" (click)="showMenu(quotation._id)"></i>
