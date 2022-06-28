@@ -5,6 +5,7 @@ import {ActivatedRoute} from "@angular/router";
 import {DataService} from "../../services/data.service";
 import {QuotationModel} from "../../models/quotation/quotation.model";
 import {ProductModel} from "../../models/product/product.model";
+import {QuotationSpecificationModel} from "../../models/quotation/quotation-specification.model";
 
 @Component({
   selector: 'app-quotation-flow',
@@ -130,9 +131,39 @@ export class QuotationFlowComponent implements OnInit {
     this.storage.saveClicked.emit()
   }
 
+  includesQuotSpec(arr:QuotationSpecificationModel[],quotSpec:QuotationSpecificationModel){
+    const quots = arr.find(qs=>{
+      return qs._id === quotSpec._id
+    })
+    return quots?.name === quotSpec.name && quots.price === quotSpec.price
+  }
+
+  equalArray(arr1:string[],arr2:string[]){
+    return arr1.every(x=>arr2.includes(x)) && arr2.every(x=>arr1.includes(x))
+  }
+
+  equalQuotSpecs(arr1:QuotationSpecificationModel[],arr2:QuotationSpecificationModel[]){
+    return arr1.every(x=>this.includesQuotSpec(arr2,x)) && arr2.every(x=>this.includesQuotSpec(arr1,x))
+  }
+
+
+  equalQuotation(quot1:QuotationModel,quot2:QuotationModel){
+    return (quot1.VAT===quot2.VAT
+        && quot1.product?._id===quot2.product?._id
+        &&  quot1.customerInfo.firstName?.trim()===quot2.customerInfo.firstName?.trim()
+        &&  quot1.customerInfo.lastName?.trim()===quot2.customerInfo.lastName?.trim()
+        &&  quot1.customerInfo.email?.trim()===quot2.customerInfo.email?.trim()
+        &&  quot1.discount===quot2.discount
+        && this.equalArray(quot1.options,quot2.options)
+        && this.equalQuotSpecs(quot1.quotationSpecifications,quot2.quotationSpecifications)
+    )
+  }
+
   isDisabled():boolean{
     const quot = this.storage.getQuotation()
+    const init = this.storage.getInitialQuotation()
     return !quot.product || !quot.customerInfo.firstName || !quot.customerInfo.lastName|| !quot.customerInfo.email
+    || (this.equalQuotation(quot,init))
   }
 
 }
