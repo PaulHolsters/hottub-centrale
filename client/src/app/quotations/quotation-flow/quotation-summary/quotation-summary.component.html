@@ -116,10 +116,13 @@
     </p-card>
     <p-card class="col-12 ml-0 mb-1" header="Product opties">
         <ul>
-            <li *ngIf="quotation.options">
+            <li *ngIf="quotation.options && quotation.product && quotation.product.options.length>0">
                         <div class="col grid" *ngFor="let opt of selectedOptions">
                             <div class="col-8"><span>{{opt.name}}</span></div> <div class="col"><span>{{opt.price | currency:'EUR'}}</span></div>
                         </div>
+            </li>
+            <li *ngIf="quotation.product && quotation.product.options.length===0">
+                    <div class="col">Product heeft geen opties.</div>
             </li>
         </ul>
     </p-card>
