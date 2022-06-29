@@ -3,6 +3,7 @@ import {Router} from "@angular/router";
 import {DataService} from "../services/data.service";
 import {ProductStorageService} from "../services/product.storage.service";
 import {MessageService} from "primeng/api";
+import {BreadcrumbStorageService} from "../services/breadcrumb.storage.service";
 
 @Component({
   selector: 'app-products',
@@ -12,16 +13,17 @@ import {MessageService} from "primeng/api";
 })
 export class ProductsComponent implements OnInit, AfterViewChecked {
 
-
-
   constructor(private messageService:MessageService,
-              private router: Router,private dataService:DataService,private storage:ProductStorageService,
+              private router: Router,
+              private dataService:DataService,
+              private storage:ProductStorageService,
+              private breadcrumbStorage:BreadcrumbStorageService,
               private cd: ChangeDetectorRef) {
 
   }
 
   ngOnInit(): void {
-
+      this.breadcrumbStorage.routeChange.emit([{label:'Home', routerLink:'/'},{label:'Producten',routerLink:'producten'}])
   }
 
   products(){

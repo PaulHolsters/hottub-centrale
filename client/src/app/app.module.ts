@@ -53,6 +53,8 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {BlockUIModule} from "primeng/blockui";
 import {InputNumberModule} from "primeng/inputnumber";
 import { QuotationDetailComponent } from './quotations/quotation-detail/quotation-detail.component';
+import {BreadcrumbModule} from "primeng/breadcrumb";
+import {BreadcrumbStorageService} from "./services/breadcrumb.storage.service";
 
 const appRoutes: Routes = [
   {path: 'producten', component: ProductsComponent},
@@ -118,9 +120,10 @@ const appRoutes: Routes = [
         ConfirmDialogModule,
         BlockUIModule,
         InputNumberModule,
+        BreadcrumbModule,
     ],
   exports: [BrowserAnimationsModule],
-  providers: [DataService,ProductStorageService,QuotationStorageService,BrowserAnimationsModule,MessageService,ConfirmationService],
+  providers: [DataService,ProductStorageService,BreadcrumbStorageService,QuotationStorageService,BrowserAnimationsModule,MessageService,ConfirmationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
