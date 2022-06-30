@@ -4,6 +4,7 @@ import {ProductStorageService} from "../../services/product.storage.service";
 import {ActivatedRoute} from "@angular/router";
 import {DataService} from "../../services/data.service";
 import {Observable} from "rxjs";
+import {BreadcrumbStorageService} from "../../services/breadcrumb.storage.service";
 
 @Component({
   selector: 'app-product-flow',
@@ -18,7 +19,8 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
   id:string|undefined
   constructor(private dataService:DataService,
               private storage:ProductStorageService,
-              private route:ActivatedRoute) {
+              private route:ActivatedRoute,
+              private breadcrumbStorage:BreadcrumbStorageService) {
     this.blocked = false
     this.step = this.storage.getStep()
     this.index = this.getIndex()
@@ -54,6 +56,11 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
     })
     this.id = this.route.snapshot.params['id']
     if(this.id){
+      this.breadcrumbStorage.routeChange.emit([
+        {label:'Home', routerLink:'/'},
+        {label:'Producten',routerLink:'producten'},
+        {label:'Product aanpassen'}
+      ])
       this.dataService.getProduct(this.id).subscribe(res=>{
         this.storage.productFetched.emit(res)
         if(this.storage.getStateAvailableSpecifications()){
@@ -78,6 +85,11 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
         }
       })
     } else{
+      this.breadcrumbStorage.routeChange.emit([
+        {label:'Home', routerLink:'/'},
+        {label:'Producten',routerLink:'producten'},
+        {label:'Nieuw product'}
+      ])
       if(this.storage.getStateAvailableSpecifications()){
         this.storage.getAvailableSpecifications().subscribe(avSpecs=>{
           this.storage.setAvailableSpecifications(avSpecs)

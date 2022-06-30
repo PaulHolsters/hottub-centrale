@@ -7,6 +7,7 @@ import {QuotationGetModel} from "../../models/quotation/quotation.get.model";
 import {DomSanitizer, SafeHtml, SafeUrl, SafeValue} from '@angular/platform-browser';
 import {QuotationStorageService} from "../../services/quotation.storage.service";
 import {interval} from "rxjs";
+import {BreadcrumbStorageService} from "../../services/breadcrumb.storage.service";
 
 @Component({
   selector: 'app-quotation-overview',
@@ -31,7 +32,8 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
     {label: 'Statuswijziging',icon: 'pi pi-info-circle'}
   ];
   constructor(private dataService:DataService,private storage:QuotationStorageService,
-              private cd: ChangeDetectorRef, private router:Router,private messageService:MessageService,private sanitizer: DomSanitizer) {
+              private cd: ChangeDetectorRef, private router:Router,private messageService:MessageService,private sanitizer: DomSanitizer,
+              private breadcrumbStorage:BreadcrumbStorageService) {
     this.displayDialog = false
     this.quotations = []
     this.blocked = false
@@ -41,6 +43,11 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
   }
 
   ngOnInit(): void {
+    this.breadcrumbStorage.routeChange.emit([
+      {label:'Home', routerLink:'/'},
+      {label:'Offertes',routerLink:'offertes'},
+      {label:'Overzicht'}
+    ])
   }
 
   isMenu(id:string):boolean{

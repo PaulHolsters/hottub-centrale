@@ -4,6 +4,7 @@ import {DataService} from "../../services/data.service";
 import {Router} from "@angular/router";
 import {MessageService} from "primeng/api";
 import {ProductStorageService} from "../../services/product.storage.service";
+import {BreadcrumbStorageService} from "../../services/breadcrumb.storage.service";
 
 @Component({
   selector: 'app-product-overview',
@@ -23,7 +24,8 @@ export class ProductOverviewComponent implements OnInit,AfterViewChecked {
               private router:Router,
               private messageService:MessageService,
               private storage:ProductStorageService,
-              private cd: ChangeDetectorRef) {
+              private cd: ChangeDetectorRef,
+              private breadcrumbStorage:BreadcrumbStorageService) {
     this.products = []
     this.dataService.getProducts().subscribe(res=>{
       this.products = res
@@ -31,6 +33,11 @@ export class ProductOverviewComponent implements OnInit,AfterViewChecked {
   }
 
   ngOnInit(): void {
+    this.breadcrumbStorage.routeChange.emit([
+        {label:'Home', routerLink:'/'},
+      {label:'Producten',routerLink:'producten'},
+      {label:'Overzicht'}
+    ])
   }
 
   isMenu(id:string):boolean{

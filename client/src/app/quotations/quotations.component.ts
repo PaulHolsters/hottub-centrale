@@ -3,6 +3,7 @@ import {MessageService} from "primeng/api";
 import {Router} from "@angular/router";
 import {DataService} from "../services/data.service";
 import {QuotationStorageService} from "../services/quotation.storage.service";
+import {BreadcrumbStorageService} from "../services/breadcrumb.storage.service";
 
 @Component({
   selector: 'app-quotations',
@@ -13,12 +14,13 @@ export class QuotationsComponent implements OnInit,AfterViewChecked {
 
   constructor(private messageService:MessageService,
               private router: Router,private dataService:DataService,private storage:QuotationStorageService,
-              private cd: ChangeDetectorRef) {
+              private cd: ChangeDetectorRef,
+              private breadcrumbStorage:BreadcrumbStorageService) {
 
   }
 
   ngOnInit(): void {
-
+    this.breadcrumbStorage.routeChange.emit([{label:'Home', routerLink:'/'},{label:'Offertes'}])
   }
 
   quotations(){

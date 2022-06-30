@@ -4,6 +4,7 @@ import {DataService} from "../../services/data.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ProductModel} from "../../models/product/product.model";
 import {OptionModel} from "../../models/product/option.model";
+import {BreadcrumbStorageService} from "../../services/breadcrumb.storage.service";
 
 @Component({
   selector: 'app-quotation-detail',
@@ -13,7 +14,8 @@ import {OptionModel} from "../../models/product/option.model";
 export class QuotationDetailComponent implements OnInit {
   quotation:QuotationModel
   selectedOptions:OptionModel[]|undefined
-  constructor(private dataService:DataService,private route:ActivatedRoute,private router:Router) {
+  constructor(private dataService:DataService,private route:ActivatedRoute,private router:Router,
+              private breadcrumbStorage:BreadcrumbStorageService) {
     this.quotation = new QuotationModel(1, undefined, [], [], {
       firstName: undefined,
       lastName: undefined,
@@ -33,6 +35,11 @@ export class QuotationDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.breadcrumbStorage.routeChange.emit([
+      {label:'Home', routerLink:'/'},
+      {label:'Offertes',routerLink:'offertes'},
+      {label:'Detail offerte'}
+    ])
   }
 
   totalPrice(options:boolean,vat:boolean):number{

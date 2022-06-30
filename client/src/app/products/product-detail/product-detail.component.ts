@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ProductModel} from "../../models/product/product.model";
 import {ActivatedRoute, Router} from "@angular/router";
 import {DataService} from "../../services/data.service";
+import {BreadcrumbStorageService} from "../../services/breadcrumb.storage.service";
 
 @Component({
   selector: 'app-product-detail',
@@ -11,9 +12,10 @@ import {DataService} from "../../services/data.service";
 export class ProductDetailComponent implements OnInit {
 
   product:ProductModel
-
+  id:string|undefined
   constructor(private route:ActivatedRoute,private dataService:DataService,
-              private router:Router) {
+              private router:Router,
+              private breadcrumbStorage:BreadcrumbStorageService) {
     this.product = new ProductModel(undefined, 'hottub', undefined, [], [])
     this.dataService.getProduct(this.route.snapshot.params['id']).subscribe(product=>{
       this.product = {...product}
@@ -21,6 +23,11 @@ export class ProductDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.breadcrumbStorage.routeChange.emit([
+      {label:'Home', routerLink:'/'},
+      {label:'Producten',routerLink:'producten'},
+      {label:'Detail product'}
+    ])
   }
 
   previous(){

@@ -6,6 +6,7 @@ import {DataService} from "../../services/data.service";
 import {QuotationModel} from "../../models/quotation/quotation.model";
 import {ProductModel} from "../../models/product/product.model";
 import {QuotationSpecificationModel} from "../../models/quotation/quotation-specification.model";
+import {BreadcrumbStorageService} from "../../services/breadcrumb.storage.service";
 
 @Component({
   selector: 'app-quotation-flow',
@@ -20,7 +21,8 @@ export class QuotationFlowComponent implements OnInit {
   index: number
   items: MenuItem[]
   blocked: boolean
-  constructor(private storage:QuotationStorageService,private route:ActivatedRoute,private dataService:DataService) {
+  constructor(private storage:QuotationStorageService,private route:ActivatedRoute,private dataService:DataService,
+              private breadcrumbStorage:BreadcrumbStorageService) {
     this.productChanged = false
     this.orphans = false
     this.blocked = false
@@ -51,6 +53,11 @@ export class QuotationFlowComponent implements OnInit {
     })
     this.id = this.route.snapshot.params['id']
     if(this.id){
+      this.breadcrumbStorage.routeChange.emit([
+        {label:'Home', routerLink:'/'},
+        {label:'Offertes',routerLink:'offertes'},
+        {label:'Nieuwe versie'}
+      ])
       this.dataService.getQuotation(this.id).subscribe(res=>{
         this.storage.setQuotationGet(res)
         const product = new ProductModel(res.quotationValues.productName,res.quotationValues.productCat,res.quotationValues.productPrice,
@@ -75,6 +82,11 @@ export class QuotationFlowComponent implements OnInit {
         }
       })
     } else{
+      this.breadcrumbStorage.routeChange.emit([
+        {label:'Home', routerLink:'/'},
+        {label:'Offertes',routerLink:'offertes'},
+        {label:'Nieuwe offerte'}
+      ])
       if(this.storage.getStateAvailableQuotationSpecifications()){
         this.storage.getAvailableQuotationSpecifications().subscribe(quotSpecs=>{
           this.storage.setAvailableQuotationSpecifications(quotSpecs)

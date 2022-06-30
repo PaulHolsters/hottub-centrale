@@ -23,7 +23,7 @@ export class ProductsComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit(): void {
-      this.breadcrumbStorage.routeChange.emit([{label:'Home', routerLink:'/'},{label:'Producten',routerLink:'producten'}])
+      this.breadcrumbStorage.routeChange.emit([{label:'Home', routerLink:'/'},{label:'Producten'}])
   }
 
   products(){
