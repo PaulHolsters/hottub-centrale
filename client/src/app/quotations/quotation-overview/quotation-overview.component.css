@@ -7,3 +7,7 @@
     margin-bottom: 20px;
 }
 
+.notAllowed{
+    cursor:not-allowed;
+}
+

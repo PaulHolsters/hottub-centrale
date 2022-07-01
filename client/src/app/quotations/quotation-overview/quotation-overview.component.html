@@ -31,8 +31,8 @@
         <td>{{quotation['status']}}</td>
         <td (mouseleave)="hideMenu()" >
           <i *ngIf="isIcon(quotation._id)" style="cursor:pointer" class="pi pi-ellipsis-h" (click)="showMenu(quotation._id)"></i>
-          <p-menu (click)="handleClick($event,quotation._id)" [style]="{'position':'absolute','z-index': '50','right':'4rem' }"
-                  *ngIf="isMenu(quotation._id)" [model]="items" (mouseleave)="hideMenu()"
+          <p-menu [style]="{'position':'absolute','z-index': '50','right':'4rem' }"
+                  *ngIf="isMenu(quotation._id)" [model]="getItems(quotation._id)" (mouseleave)="hideMenu()"
           #menu>
           </p-menu>
         </td>
@@ -73,7 +73,7 @@
         <button (click)="cancel()" pButton type="button" label="Annuleren" class="p-button-outlined"
                 icon="pi pi-times"></button>
                         <button *ngIf="isDisabled()" [style]="{'cursor':'not-allowed'}" [disabled]="true"
-                                (click)="save()" iconPos="left" icon="pi pi-check" label="Bewaar" pButton type="button"
+                                iconPos="left" icon="pi pi-check" label="Bewaar" pButton type="button"
                                 class="p-button-success"
                         ></button>
                       <button *ngIf="!isDisabled()"
@@ -85,6 +85,8 @@
     </div>
   </form>
 </p-dialog>
+
+<p-confirmDialog header="Verwijderen offerte" icon="pi pi-exclamation-triangle"></p-confirmDialog>
 
 <p-blockUI [blocked]="blocked">
   <p style="color:lightyellow;font-size: 1.2rem">Offerte wordt verstuurd. Even geduld...</p>

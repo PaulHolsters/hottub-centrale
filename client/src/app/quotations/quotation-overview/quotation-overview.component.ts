@@ -1,12 +1,11 @@
 
-import {AfterViewChecked, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {AfterViewChecked, ChangeDetectorRef, Component,  OnInit} from '@angular/core';
 import {DataService} from "../../services/data.service";
 import {Router} from "@angular/router";
-import {MessageService} from "primeng/api";
+import {ConfirmationService, MessageService} from "primeng/api";
 import {QuotationGetModel} from "../../models/quotation/quotation.get.model";
-import {DomSanitizer, SafeHtml, SafeUrl, SafeValue} from '@angular/platform-browser';
+import {DomSanitizer} from '@angular/platform-browser';
 import {QuotationStorageService} from "../../services/quotation.storage.service";
-import {interval} from "rxjs";
 import {BreadcrumbStorageService} from "../../services/breadcrumb.storage.service";
 
 @Component({
@@ -16,6 +15,7 @@ import {BreadcrumbStorageService} from "../../services/breadcrumb.storage.servic
 })
 export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
   quotations:QuotationGetModel[]
+  quotationsMenuHandler:{id:string,items:any}[]
   activatedActionsMenu:string|undefined
   selectedFileBLOB:any|undefined
   displayDialog:boolean
@@ -23,22 +23,109 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
   selectedStatus:string|undefined
   initialStatus:string|undefined
   blocked:boolean
-  items = [
-    {label: 'Bekijken', icon: 'pi pi-fw pi-eye'
-    },
-    {label: 'Nieuwe versie', icon: 'pi pi-fw pi-pencil'},
-    {label: 'Toon pdf', icon: 'pi pi-fw pi-download' },
-    {label: 'Versturen', icon: 'pi pi-fw pi-trash'},
-    {label: 'Statuswijziging',icon: 'pi pi-info-circle'}
-  ];
+
   constructor(private dataService:DataService,private storage:QuotationStorageService,
               private cd: ChangeDetectorRef, private router:Router,private messageService:MessageService,private sanitizer: DomSanitizer,
-              private breadcrumbStorage:BreadcrumbStorageService) {
+              private breadcrumbStorage:BreadcrumbStorageService,
+              private confirmationService: ConfirmationService) {
     this.displayDialog = false
     this.quotations = []
+    this.quotationsMenuHandler = []
     this.blocked = false
     this.dataService.getQuotations().subscribe(res=>{
       this.quotations = res
+      this.quotationsMenuHandler = this.quotations.map(quot=>{
+        if(quot.status!=='goedgekeurd'){
+          return  {id:quot._id, items: [
+              {label: 'Bekijken', icon: 'pi pi-fw pi-eye',
+                command:()=>{
+                  this.router.navigate(['offertes/details/'+quot._id])
+                  this.hideMenu()
+                }
+              },
+              {label: 'Nieuwe versie', icon: 'pi pi-fw pi-pencil',
+                command:()=>{
+                  this.router.navigate(['offertes','nieuwe-versie',quot._id])
+                  this.hideMenu()
+                }},
+              {label: 'Toon pdf', icon: 'pi pi-fw pi-download' ,
+                command:()=>{
+                  this.dataService.downloadQuotation(quot._id).subscribe(res=>{
+                    this.showPdf(res)
+                    this.hideMenu()
+                  })
+                }},
+              {label: 'Versturen', icon: 'pi pi-fw pi-send',
+                command:()=>{
+                  this.blocked = true
+                  this.dataService.sendQuotation(quot._id).subscribe(res=>{
+                    this.blocked = false
+                    this.storage.setMessage('Offerte verstuurd')
+                    location.reload()
+                  },err=>{
+                    this.blocked = false
+                    this.messageService.add({severity:'error', summary: err.error.error, life:3000});
+                  })
+                  this.hideMenu()
+                }},
+              {label: 'Statuswijziging',icon: 'pi pi-info-circle',
+                command:()=>{
+                  this.showDialog(this.activatedActionsMenu)
+                  this.hideMenu()
+                }},
+              {label: 'Verwijderen',icon: 'pi pi-fw pi-trash',
+                command:()=>{
+                  this.confirmationService.confirm({
+                    message: 'Ben je zeker dat je deze offerte wenst te verwijderen',
+                    accept: () => {
+                      // todo remove quotation
+                    }
+                  })
+                  this.hideMenu()
+                }}
+            ]}
+        } else{
+          return {id:quot._id, items: [
+              {label: 'Bekijken', icon: 'pi pi-fw pi-eye',
+                command:()=>{
+                  this.router.navigate(['offertes/details/'+quot._id])
+                  this.hideMenu()
+                }
+              },
+              {label: 'Nieuwe versie', icon: 'pi pi-fw pi-pencil',
+                command:()=>{
+                  this.router.navigate(['offertes','nieuwe-versie',quot._id])
+                  this.hideMenu()
+                }},
+              {label: 'Toon pdf', icon: 'pi pi-fw pi-download',
+                command:()=>{
+                  this.dataService.downloadQuotation(quot._id).subscribe(res=>{
+                    this.showPdf(res)
+                    this.hideMenu()
+                  })
+                } },
+              {label: 'Versturen', icon: 'pi pi-fw pi-send',
+                command:()=>{
+                  this.blocked = true
+                  this.dataService.sendQuotation(quot._id).subscribe(res=>{
+                    this.blocked = false
+                    this.storage.setMessage('Offerte verstuurd')
+                    location.reload()
+                  },err=>{
+                    this.blocked = false
+                    this.messageService.add({severity:'error', summary: err.error.error, life:3000});
+                  })
+                  this.hideMenu()
+                }},
+              {label: 'Statuswijziging',icon: 'pi pi-info-circle',
+                command:()=>{
+                  this.showDialog(this.activatedActionsMenu)
+                  this.hideMenu()
+                }},
+              {label: 'Verwijderen',icon: 'pi pi-fw pi-trash',disabled:true,iconStyle:{'cursor':'not-allowed'}, style:{'cursor':'not-allowed'}}
+            ]}
+        }
+      })
     })
   }
 
@@ -49,6 +136,15 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
       {label:'Overzicht'}
     ])
   }
+
+  getItems(id:string){
+    console.log('getting items')
+    return this.quotationsMenuHandler.find(handler=>{
+      return handler.id === id
+    })?.items || []
+  }
+
+
 
   isMenu(id:string):boolean{
     return this.activatedActionsMenu === id;
@@ -121,6 +217,98 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
       this.dataService.editStatusQuotation(this.idOfStatusChanged,this.selectedStatus).subscribe(res=>{
         this.dataService.getQuotations().subscribe(res=>{
           this.quotations = res
+          this.quotationsMenuHandler = this.quotations.map(quot=>{
+            if(quot.status!=='goedgekeurd'){
+              return  {id:quot._id, items: [
+                  {label: 'Bekijken', icon: 'pi pi-fw pi-eye',
+                    command:()=>{
+                      this.router.navigate(['offertes/details/'+quot._id])
+                      this.hideMenu()
+                    }
+                  },
+                  {label: 'Nieuwe versie', icon: 'pi pi-fw pi-pencil',
+                    command:()=>{
+                      this.router.navigate(['offertes','nieuwe-versie',quot._id])
+                      this.hideMenu()
+                    }},
+                  {label: 'Toon pdf', icon: 'pi pi-fw pi-download' ,
+                    command:()=>{
+                      this.dataService.downloadQuotation(quot._id).subscribe(res=>{
+                        this.showPdf(res)
+                        this.hideMenu()
+                      })
+                    }},
+                  {label: 'Versturen', icon: 'pi pi-fw pi-send',
+                    command:()=>{
+                      this.blocked = true
+                      this.dataService.sendQuotation(quot._id).subscribe(res=>{
+                        this.blocked = false
+                        this.storage.setMessage('Offerte verstuurd')
+                        location.reload()
+                      },err=>{
+                        this.blocked = false
+                        this.messageService.add({severity:'error', summary: err.error.error, life:3000});
+                      })
+                      this.hideMenu()
+                    }},
+                  {label: 'Statuswijziging',icon: 'pi pi-info-circle',
+                    command:()=>{
+                      this.showDialog(this.activatedActionsMenu)
+                      this.hideMenu()
+                    }},
+                  {label: 'Verwijderen',icon: 'pi pi-fw pi-trash',
+                    command:()=>{
+                      this.confirmationService.confirm({
+                        message: 'Ben je zeker dat je deze offerte wenst te verwijderen',
+                        accept: () => {
+                          // todo remove quotation
+                        }
+                      })
+                      this.hideMenu()
+                    }}
+                ]}
+            } else{
+              return {id:quot._id, items: [
+                  {label: 'Bekijken', icon: 'pi pi-fw pi-eye',
+                    command:()=>{
+                      this.router.navigate(['offertes/details/'+quot._id])
+                      this.hideMenu()
+                    }
+                  },
+                  {label: 'Nieuwe versie', icon: 'pi pi-fw pi-pencil',
+                    command:()=>{
+                      this.router.navigate(['offertes','nieuwe-versie',quot._id])
+                      this.hideMenu()
+                    }},
+                  {label: 'Toon pdf', icon: 'pi pi-fw pi-download',
+                    command:()=>{
+                      this.dataService.downloadQuotation(quot._id).subscribe(res=>{
+                        this.showPdf(res)
+                        this.hideMenu()
+                      })
+                    } },
+                  {label: 'Versturen', icon: 'pi pi-fw pi-send',
+                    command:()=>{
+                      this.blocked = true
+                      this.dataService.sendQuotation(quot._id).subscribe(res=>{
+                        this.blocked = false
+                        this.storage.setMessage('Offerte verstuurd')
+                        location.reload()
+                      },err=>{
+                        this.blocked = false
+                        this.messageService.add({severity:'error', summary: err.error.error, life:3000});
+                      })
+                      this.hideMenu()
+                    }},
+                  {label: 'Statuswijziging',icon: 'pi pi-info-circle',
+                    command:()=>{
+                      this.showDialog(this.activatedActionsMenu)
+                      this.hideMenu()
+                    }},
+                  {label: 'Verwijderen',icon: 'pi pi-fw pi-trash',disabled:true,iconStyle:{'cursor':'not-allowed'}, style:{'cursor':'not-allowed'}}
+                ]}
+            }
+          })
         })
         this.displayDialog = false
         this.messageService.add({severity:'success', summary: 'Statuswijziging doorgevoerd', life:3000});
@@ -128,37 +316,6 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
         this.messageService.add({severity:'error', summary: err.error.error, life:3000});
       })
     }
-  }
-
-  handleClick(event:any,id:string){
-    switch (event.target.innerText){
-      case 'Toon pdf':
-        this.dataService.downloadQuotation(id).subscribe(res=>{
-          this.showPdf(res)
-        })
-        break
-      case 'Bekijken':
-        this.router.navigate(['offertes/details/'+id])
-        break
-      case 'Versturen':
-        this.blocked = true
-        this.dataService.sendQuotation(id).subscribe(res=>{
-          this.blocked = false
-          this.storage.setMessage('Offerte verstuurd')
-          location.reload()
-        },err=>{
-          this.blocked = false
-          this.messageService.add({severity:'error', summary: err.error.error, life:3000});
-        })
-        break
-      case 'Statuswijziging':
-        this.showDialog(this.activatedActionsMenu)
-        break
-      case 'Nieuwe versie':
-        this.router.navigate(['offertes','nieuwe-versie',id])
-        break
-    }
-    this.hideMenu()
   }
 
   ngAfterViewChecked(): void {
