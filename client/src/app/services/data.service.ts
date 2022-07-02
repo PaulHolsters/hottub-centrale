@@ -180,6 +180,14 @@ responseType:"blob"
     }))
   }
 
+  deleteQuotation(id:string):Observable<any>{
+    return this.http.delete('http://localhost:3000/quotations/'+id).pipe(map((res)=>{
+      return res
+    }),catchError(err=>{
+      return throwError(err)
+    }))
+  }
+
   createSpecification(specification:SpecificationModel):Observable<SpecificationModel>{
     return this.http.post<{specification:SpecificationModel}>('http://localhost:3000/product-specifications',specification).pipe(map(res=>{
       return res.specification

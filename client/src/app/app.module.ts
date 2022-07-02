@@ -123,7 +123,7 @@ const appRoutes: Routes = [
         BreadcrumbModule,
     ],
   exports: [BrowserAnimationsModule],
-  providers: [DataService,ProductStorageService,BreadcrumbStorageService,QuotationStorageService,BrowserAnimationsModule,MessageService,ConfirmationService],
+  providers: [DataService,ProductStorageService,QuotationStorageService,BrowserAnimationsModule,MessageService,ConfirmationService, BreadcrumbStorageService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

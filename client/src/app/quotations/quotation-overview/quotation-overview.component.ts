@@ -78,7 +78,13 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
                   this.confirmationService.confirm({
                     message: 'Ben je zeker dat je deze offerte wenst te verwijderen',
                     accept: () => {
-                      // todo remove quotation
+                      console.log('deketing')
+                      this.dataService.deleteQuotation(quot._id).subscribe(res=>{
+                        this.messageService.add({severity:'success', summary: 'Offerte verwijderd', life:3000});
+                        location.reload()
+                      },err=>{
+                        this.messageService.add({severity:'error', summary: err.error.error, life:3000});
+                      })
                     }
                   })
                   this.hideMenu()
@@ -258,16 +264,19 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
                     }},
                   {label: 'Verwijderen',icon: 'pi pi-fw pi-trash',
                     command:()=>{
-                      this.confirmationService.confirm({
-                        message: 'Ben je zeker dat je deze offerte wenst te verwijderen',
-                        accept: () => {
-                          // todo remove quotation
-                        }
-                      })
-                      this.hideMenu()
-                    }}
-                ]}
-            } else{
+                          this.confirmationService.confirm({
+                            message: 'Ben je zeker dat je deze offerte wenst te verwijderen',
+                            accept: () => {
+                              console.log('deketing')
+                              this.dataService.deleteQuotation(quot._id).subscribe(res=>{
+                                this.messageService.add({severity:'success', summary: 'Offerte verwijderd', life:3000})
+                                location.reload()
+                              },err=>{
+                                this.messageService.add({severity:'error', summary: err.error.error, life:3000});
+                              })
+                            }
+                          })
+            }}]}}else{
               return {id:quot._id, items: [
                   {label: 'Bekijken', icon: 'pi pi-fw pi-eye',
                     command:()=>{
