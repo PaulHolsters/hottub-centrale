@@ -44,6 +44,22 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
     return 0
   }
 
+  changeStep(newIndex:number){
+    switch (newIndex) {
+      case 1:
+        this.storage.setStep('specifications')
+        break
+      case 2:
+        this.storage.setStep('options')
+        break
+      case 3:
+        this.storage.setStep('summary')
+        break
+      default:
+        this.storage.setStep('info')
+    }
+  }
+
   newItem(type:string){
     this.storage.setClickConsumed(false)
     this.storage.newItemClicked.emit(type)

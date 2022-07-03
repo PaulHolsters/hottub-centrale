@@ -1,6 +1,7 @@
 <div style="height:100%;" class="pt-1 pl-3 pr-3 pb-3 m-0 flex flex-column justify-content-between">
   <div class="">
-    <p-steps *ngIf="items" [model]="items" [activeIndex]="index"></p-steps>
+    <p-steps *ngIf="items" [model]="items" [activeIndex]="index"
+    [readonly]="false" (activeIndexChange)="changeStep($event)"></p-steps>
   </div>
   <div  style="" class="">
     <app-product-info *ngIf="step==='info'"></app-product-info>

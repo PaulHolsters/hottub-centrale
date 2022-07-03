@@ -132,6 +132,26 @@ export class QuotationFlowComponent implements OnInit {
     this.storage.previousClicked.emit()
   }
 
+  changeStep(newIndex:number){
+    this.storage.setClickConsumed(false)
+    switch (newIndex) {
+      case 1:
+        this.storage.setStep('product')
+        break
+      case 2:
+        this.storage.setStep('specifications')
+        break
+      case 3:
+        this.storage.setStep('options')
+        break
+      case 4:
+        this.storage.setStep('summary')
+        break
+      default:
+        this.storage.setStep('customer')
+    }
+  }
+
   reset(){
     this.storage.setClickConsumed(false)
     this.storage.resetClicked.emit()
