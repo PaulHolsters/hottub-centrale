@@ -47,17 +47,18 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
   changeStep(newIndex:number){
     switch (newIndex) {
       case 1:
-        this.storage.setStep('specifications')
+        this.storage.setStepChange('specifications')
         break
       case 2:
-        this.storage.setStep('options')
+        this.storage.setStepChange('options')
         break
       case 3:
-        this.storage.setStep('summary')
+        this.storage.setStepChange('summary')
         break
       default:
-        this.storage.setStep('info')
+        this.storage.setStepChange('info')
     }
+    this.storage.stepChange.emit()
   }
 
   newItem(type:string){

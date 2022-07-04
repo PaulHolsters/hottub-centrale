@@ -18,6 +18,7 @@ export class ProductSummaryComponent implements OnInit,OnDestroy {
   previousSub:Subscription
   cancelSub:Subscription
   saveSub:Subscription
+  stepChangedSub:Subscription
 
   constructor(private storage:ProductStorageService,
               private router:Router,
@@ -30,6 +31,9 @@ export class ProductSummaryComponent implements OnInit,OnDestroy {
         this.previous()
       }
     })
+    this.stepChangedSub = this.storage.stepChange.subscribe(()=>{
+
+    })
     this.cancelSub = this.storage.cancelClicked.subscribe(()=>{
       if(this.storage.getStep()==='summary' && !this.storage.getClickConsumed()){
         this.cancel()
@@ -40,6 +44,7 @@ export class ProductSummaryComponent implements OnInit,OnDestroy {
         this.save()
       }
     })
+
     this.product = this.storage.getProduct()
   }
 

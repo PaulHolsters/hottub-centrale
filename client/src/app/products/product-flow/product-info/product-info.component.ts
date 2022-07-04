@@ -15,8 +15,8 @@ export class ProductInfoComponent implements OnInit,OnDestroy,AfterViewInit,DoCh
   nextSub:Subscription
   cancelSub:Subscription
   resetSub:Subscription
+  stepChangedSub:Subscription
   constructor(private router:Router, private storage:ProductStorageService, private route: ActivatedRoute) {
-    console.log('constr prod')
     this.product = this.storage.getProduct()
     this.initialProduct = this.storage.getInitialProduct()
     this.storage.productFetched.subscribe(res=>{
@@ -28,8 +28,13 @@ export class ProductInfoComponent implements OnInit,OnDestroy,AfterViewInit,DoCh
     })
     this.nextSub = this.storage.nextClicked.subscribe(()=>{
       if(this.storage.getStep()==='info' && !this.storage.getClickConsumed()){
-        //console.log('executing next for',this.product)
         this.next()
+      }
+    })
+    this.stepChangedSub = this.storage.stepChange.subscribe(()=>{
+      if(this.storage.getStep()==='info'){
+        this.storage.setProduct(this.product)
+        this.storage.setStep(this.storage.getNewStep())
       }
     })
     this.cancelSub = this.storage.cancelClicked.subscribe(()=>{
@@ -45,7 +50,6 @@ export class ProductInfoComponent implements OnInit,OnDestroy,AfterViewInit,DoCh
   }
 
   ngOnInit(): void {
-    console.log('init info')
   }
 
   ngDoCheck(): void {
@@ -63,12 +67,10 @@ export class ProductInfoComponent implements OnInit,OnDestroy,AfterViewInit,DoCh
   }
 
   next(){
-    //console.log('call from info')
     this.storage.setProduct(this.product)
     this.storage.setStep('specifications')
     this.storage.setClickConsumed(true)
   }
-
 
   reset(){
     if(this.route.snapshot.params['id']){
