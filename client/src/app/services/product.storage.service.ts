@@ -18,7 +18,9 @@ export class ProductStorageService implements OnDestroy{
   private newOptionName:string|undefined
   private newOptionPrice:number|undefined
   stepChange = new EventEmitter<string>()
+  newStepChange = new EventEmitter<string>()
   private newStep = ''
+
   private clickConsumed = true
   productFetched = new EventEmitter<ProductModel>()
   newItemClicked = new EventEmitter<string>()
@@ -138,18 +140,19 @@ export class ProductStorageService implements OnDestroy{
 
   setStep(step: string) {
     this.step = step
-    this.stepChange.emit(this.step)
+    this.stepChange.emit(step)
   }
 
-  setStepChange(stepChange:string){
-    this.newStep = stepChange
-    this.stepChange.emit()
+  setNewStep(newStep: string){
+    this.newStep = newStep
   }
 
   getNewStep(){
-    const newStep = this.newStep
+    return this.newStep
+  }
+
+  resetNewStep(){
     this.newStep = ''
-    return newStep
   }
 
   setProduct(product: ProductModel) {

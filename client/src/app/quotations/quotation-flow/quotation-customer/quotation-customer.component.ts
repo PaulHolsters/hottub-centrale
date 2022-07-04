@@ -15,6 +15,7 @@ export class QuotationCustomerComponent implements OnInit,OnDestroy {
   cancelSub:Subscription
   resetSub:Subscription
   initialQuotation: QuotationModel
+  stepChangedSub: Subscription
   constructor(private route: ActivatedRoute,private storage:QuotationStorageService, private router: Router) {
     this.quotation = this.storage.getQuotation()
     this.initialQuotation = this.storage.getInitialQuotation()
@@ -23,6 +24,13 @@ export class QuotationCustomerComponent implements OnInit,OnDestroy {
       if(!this.initialQuotation._id){
         this.storage.setInitialQuotation({...res})
         this.initialQuotation = this.storage.getInitialQuotation()
+      }
+    })
+    this.stepChangedSub = this.storage.newStepChange.subscribe((newStep)=>{
+      if(this.storage.getStep()==='info'){
+        this.storage.setStep(newStep)
+        this.storage.resetNewStep()
+        this.storage.setQuotation(this.quotation)
       }
     })
     this.nextSub = this.storage.nextClicked.subscribe(()=>{
@@ -51,6 +59,7 @@ export class QuotationCustomerComponent implements OnInit,OnDestroy {
     this.nextSub.unsubscribe()
     this.cancelSub.unsubscribe()
     this.resetSub.unsubscribe()
+    this.stepChangedSub.unsubscribe()
   }
 
   next(){

@@ -3,7 +3,6 @@ import {MenuItem} from "primeng/api";
 import {ProductStorageService} from "../../services/product.storage.service";
 import {ActivatedRoute} from "@angular/router";
 import {DataService} from "../../services/data.service";
-import {Observable} from "rxjs";
 import {BreadcrumbStorageService} from "../../services/breadcrumb.storage.service";
 
 @Component({
@@ -47,18 +46,18 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
   changeStep(newIndex:number){
     switch (newIndex) {
       case 1:
-        this.storage.setStepChange('specifications')
+        this.storage.setNewStep('specifications')
         break
       case 2:
-        this.storage.setStepChange('options')
+        this.storage.setNewStep('options')
         break
       case 3:
-        this.storage.setStepChange('summary')
+        this.storage.setNewStep('summary')
         break
       default:
-        this.storage.setStepChange('info')
+        this.storage.setNewStep('info')
     }
-    this.storage.stepChange.emit()
+    this.storage.newStepChange.emit(this.storage.getNewStep())
   }
 
   newItem(type:string){

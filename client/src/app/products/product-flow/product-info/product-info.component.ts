@@ -31,10 +31,11 @@ export class ProductInfoComponent implements OnInit,OnDestroy,AfterViewInit,DoCh
         this.next()
       }
     })
-    this.stepChangedSub = this.storage.stepChange.subscribe(()=>{
+    this.stepChangedSub = this.storage.newStepChange.subscribe((newStep)=>{
       if(this.storage.getStep()==='info'){
         this.storage.setProduct(this.product)
-        this.storage.setStep(this.storage.getNewStep())
+        this.storage.setStep(newStep)
+        this.storage.resetNewStep()
       }
     })
     this.cancelSub = this.storage.cancelClicked.subscribe(()=>{
@@ -64,6 +65,7 @@ export class ProductInfoComponent implements OnInit,OnDestroy,AfterViewInit,DoCh
     this.nextSub.unsubscribe()
     this.cancelSub.unsubscribe()
     this.resetSub.unsubscribe()
+    this.stepChangedSub.unsubscribe()
   }
 
   next(){

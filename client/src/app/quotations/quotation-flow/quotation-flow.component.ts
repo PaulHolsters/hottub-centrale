@@ -133,7 +133,6 @@ export class QuotationFlowComponent implements OnInit {
   }
 
   changeStep(newIndex:number){
-    this.storage.setClickConsumed(false)
     switch (newIndex) {
       case 1:
         this.storage.setStep('product')
@@ -150,6 +149,7 @@ export class QuotationFlowComponent implements OnInit {
       default:
         this.storage.setStep('customer')
     }
+    this.storage.newStepChange.emit(this.storage.getNewStep())
   }
 
   reset(){

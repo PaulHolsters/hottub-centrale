@@ -22,6 +22,7 @@ export class QuotationSpecificationsComponent implements OnInit,OnDestroy {
   cancelSub:Subscription
   resetSub:Subscription
   newItemSub:Subscription
+  stepChangedSub:Subscription
   availableQuotationSpecifications: QuotationSpecificationModel[]
   loading: boolean
   displayNewQuotationSpecificationDialog: boolean
@@ -35,6 +36,13 @@ export class QuotationSpecificationsComponent implements OnInit,OnDestroy {
     this.nextSub = this.storage.nextClicked.subscribe(()=>{
       if(this.storage.getStep()==='specifications' && !this.storage.getClickConsumed()){
         this.next()
+      }
+    })
+    this.stepChangedSub = this.storage.newStepChange.subscribe((newStep)=>{
+      if(this.storage.getStep()==='specifications'){
+        this.storage.setStep(newStep)
+        this.storage.resetNewStep()
+        this.store(null)
       }
     })
     this.cancelSub = this.storage.cancelClicked.subscribe(()=>{
@@ -69,6 +77,7 @@ export class QuotationSpecificationsComponent implements OnInit,OnDestroy {
     this.previousSub.unsubscribe()
     this.cancelSub.unsubscribe()
     this.resetSub.unsubscribe()
+    this.stepChangedSub.unsubscribe()
   }
 
   store(lists: { source: QuotationSpecificationModel[], target: QuotationSpecificationModel[] } | null) {

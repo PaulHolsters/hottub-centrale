@@ -19,7 +19,8 @@ export class ProductOverviewComponent implements OnInit,AfterViewChecked {
     },
     {label: 'Aanpassen', icon: 'pi pi-fw pi-pencil'},
     {label: 'Verwijderen', icon: 'pi pi-fw pi-trash'}
-  ];
+  ]
+
   constructor(private dataService:DataService,
               private router:Router,
               private messageService:MessageService,
@@ -32,6 +33,7 @@ export class ProductOverviewComponent implements OnInit,AfterViewChecked {
     })
   }
 
+  // todo als je eerst sorteert en filtert en dan een offerte van status veranderd is de volgorde niet wat de gebruiker verwacht
   ngOnInit(): void {
     this.breadcrumbStorage.routeChange.emit([
         {label:'Home', routerLink:'/'},

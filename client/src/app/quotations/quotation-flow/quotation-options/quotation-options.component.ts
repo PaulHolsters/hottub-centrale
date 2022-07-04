@@ -20,6 +20,7 @@ export class QuotationOptionsComponent implements OnInit,OnDestroy {
   previousSub:Subscription
   cancelSub:Subscription
   resetSub:Subscription
+  stepChangedSub:Subscription
   availableOptions: OptionModel[]|undefined
   constructor(private route:ActivatedRoute,private storage:QuotationStorageService, private router: Router,private dataService:DataService) {
     this.nextSub = this.storage.nextClicked.subscribe(()=>{
@@ -35,6 +36,13 @@ export class QuotationOptionsComponent implements OnInit,OnDestroy {
     this.resetSub = this.storage.resetClicked.subscribe(()=>{
       if(this.storage.getStep()==='options' && !this.storage.getClickConsumed()){
         this.reset()
+      }
+    })
+    this.stepChangedSub = this.storage.newStepChange.subscribe((newStep)=>{
+      if(this.storage.getStep()==='options'){
+        this.storage.setStep(newStep)
+        this.storage.resetNewStep()
+        this.storage.setQuotation(this.quotation)
       }
     })
     this.previousSub = this.storage.previousClicked.subscribe(()=>{
@@ -64,6 +72,7 @@ export class QuotationOptionsComponent implements OnInit,OnDestroy {
     this.previousSub.unsubscribe()
     this.cancelSub.unsubscribe()
     this.resetSub.unsubscribe()
+    this.stepChangedSub.unsubscribe()
   }
 
   previous() {

@@ -20,6 +20,8 @@ export class QuotationStorageService implements OnDestroy{
   resetClicked = new EventEmitter<null>()
   saveClicked = new EventEmitter<null>()
   newItemClicked = new EventEmitter<string>()
+  newStepChange = new EventEmitter<string>()
+  newStep = ''
   private clickConsumed = true
   quotation:QuotationModel
   initialQuotation:QuotationModel
@@ -54,6 +56,18 @@ export class QuotationStorageService implements OnDestroy{
       lastName: undefined,
       email: undefined
     }, 21, 0, undefined)
+  }
+
+  setNewStep(newStep: string){
+    this.newStep = newStep
+  }
+
+  getNewStep(){
+    return this.newStep
+  }
+
+  resetNewStep(){
+    this.newStep = ''
   }
 
 

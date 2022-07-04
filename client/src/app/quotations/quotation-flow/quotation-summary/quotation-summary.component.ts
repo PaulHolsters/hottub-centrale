@@ -18,6 +18,7 @@ export class QuotationSummaryComponent implements OnInit,OnDestroy {
   cancelSub:Subscription
   saveSub:Subscription
   quotation:QuotationModel
+  stepChangedSub:Subscription
   selectedOptions:OptionModel[]|undefined
   constructor(private storage:QuotationStorageService,
               private router:Router,
@@ -38,6 +39,12 @@ export class QuotationSummaryComponent implements OnInit,OnDestroy {
     this.saveSub = this.storage.saveClicked.subscribe(()=>{
       if(this.storage.getStep()==='summary' && !this.storage.getClickConsumed()){
         this.save()
+      }
+    })
+    this.stepChangedSub = this.storage.newStepChange.subscribe((newStep)=>{
+      if(this.storage.getStep()==='summary'){
+        this.storage.setStep(newStep)
+        this.storage.resetNewStep()
       }
     })
     this.quotation = this.storage.getQuotation()
@@ -76,6 +83,7 @@ export class QuotationSummaryComponent implements OnInit,OnDestroy {
     this.previousSub.unsubscribe()
     this.cancelSub.unsubscribe()
     this.saveSub.unsubscribe()
+    this.stepChangedSub.unsubscribe()
   }
 
   save(){

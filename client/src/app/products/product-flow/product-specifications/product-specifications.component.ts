@@ -25,7 +25,7 @@ export class ProductSpecificationsComponent implements OnInit,OnDestroy {
   cancelSub:Subscription
   resetSub:Subscription
   newItemSub: Subscription
-
+  stepChangedSub: Subscription
   constructor(private router: Router, private storage: ProductStorageService, private dataService: DataService,private route: ActivatedRoute) {
     this.displayNewSpecificationDialog = false
     this.newItemSub = this.storage.newItemClicked.subscribe((itemType)=>{
@@ -54,6 +54,14 @@ export class ProductSpecificationsComponent implements OnInit,OnDestroy {
         this.previous()
       }
     })
+    this.stepChangedSub = this.storage.newStepChange.subscribe((newStep)=>{
+      if(this.storage.getStep()==='specifications'){
+        this.store(null)
+        this.storage.setStep(newStep)
+        this.storage.resetNewStep()
+      }
+    })
+
     // todo remove specification input data save
 
     this.product = this.storage.getProduct()
@@ -71,6 +79,7 @@ export class ProductSpecificationsComponent implements OnInit,OnDestroy {
     this.cancelSub.unsubscribe()
     this.resetSub.unsubscribe()
     this.newItemSub.unsubscribe()
+    this.stepChangedSub.unsubscribe()
   }
 
   store(lists: { source: SpecificationModel[], target: SpecificationModel[] } | null) {
@@ -80,7 +89,6 @@ export class ProductSpecificationsComponent implements OnInit,OnDestroy {
     }
     this.storage.setProduct(this.product)
     this.storage.setAvailableSpecifications(this.availableSpecifications)
-
   }
 
   reload(lists:{source:SpecificationModel[],target:SpecificationModel[]}) {

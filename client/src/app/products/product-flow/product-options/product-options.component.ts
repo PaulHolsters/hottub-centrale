@@ -26,6 +26,7 @@ export class ProductOptionsComponent implements OnInit,OnDestroy {
   cancelSub:Subscription
   resetSub:Subscription
   newItemSub: Subscription
+  stepChangedSub: Subscription
   constructor(private router: Router, private storage: ProductStorageService, private dataService: DataService,private route: ActivatedRoute) {
     this.newItemSub = this.storage.newItemClicked.subscribe((itemType)=>{
       if(this.storage.getStep()==='options' && !this.storage.getClickConsumed() && itemType === 'option'){
@@ -54,6 +55,13 @@ export class ProductOptionsComponent implements OnInit,OnDestroy {
         this.previous()
       }
     })
+    this.stepChangedSub = this.storage.newStepChange.subscribe((newStep)=>{
+      if(this.storage.getStep()==='options'){
+        this.store(null)
+        this.storage.setStep(newStep)
+        this.storage.resetNewStep()
+      }
+    })
     this.newOptionName = this.storage.getOptionNameInput()
     this.newOptionPrice = this.storage.getOptionPriceInput()
     this.product = this.storage.getProduct()
@@ -73,6 +81,7 @@ export class ProductOptionsComponent implements OnInit,OnDestroy {
     this.cancelSub.unsubscribe()
     this.resetSub.unsubscribe()
     this.newItemSub.unsubscribe()
+    this.stepChangedSub.unsubscribe()
   }
 
   store(lists: { source: OptionModel[], target: OptionModel[] } | null) {
