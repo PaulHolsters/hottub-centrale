@@ -206,7 +206,6 @@ quotationSpecificationSchema.path('name').validate(async function (propValue) {
 
 quotationSchema.pre('save',async function (next) {
     this.creationDate = Date.now()
-    console.log('creating date')
     // the save method usually is only used for post requests where a new item is being created
     // in case of quotations however a new quotation is created with its own ObjectId
     // but also with a groupId and a version number to have a way to make different versions of the same quotation

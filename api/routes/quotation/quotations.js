@@ -8,6 +8,7 @@ const sendgridTransport = require('nodemailer-sendgrid-transport')
 const PDFDocument = require('pdfkit')
 
 const Schema = require('../../models/Quotation')
+const mongoose = require("mongoose");
 
 router.post('/', check('customerInfo.email').isEmail() ,async (req, res, next) => {
     const errors = validationResult(req)
@@ -178,7 +179,7 @@ router.get('/action/:id', async (req, res, next) => {
 
 router.get('/', (req, res, next) => {
     Schema.quotationModel.find({}, {__v: 0}).then(result => {
-        console.log(result[result.length-1])
+        console.log(result,'chache here or on client?')
         res.status(200).json(
             {
                 quotations: result
@@ -205,19 +206,27 @@ router.get('/:id', (req, res, next) => {
     })
 })
 
-router.delete('/:id',(req,res,next)=>{
-    Schema.quotationModel.findByIdAndDelete({_id: req.params.id}).then(result => {
-        console.log('oooo',result,'res')
-        res.status(200).json(
-            {
-                quotation: result
-            }
-        )
-    }).catch(err => {
-        res.status(500).json({
-            error: 'something went wrong'
+router.delete('/:id',async (req, res, next) => {
+    const session = await mongoose.startSession()
+    session.startTransaction()
+    try {
+        await Schema.quotationModel.findById({_id:req.params.id}).then(async quotation => {
+            await Schema.quotationModel.find({groupId: quotation.groupId}).then(async results => {
+                for (const result of results) {
+                    await Schema.quotationModel.findByIdAndDelete({_id: result._id}).then(res => {
+                    })
+                }
+            })
         })
-    })
+        await session.commitTransaction()
+        session.endSession()
+        res.status(200).json()
+    } catch (err) {
+        await session.abortTransaction()
+        res.status(500).json({
+            error: err
+        })
+    }
 })
 
 module.exports = router

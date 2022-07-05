@@ -39,8 +39,8 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
   }
 
   reloadPage(){
-    this.dataService.getQuotations().subscribe(res=>{
-      this.quotations = res
+    this.dataService.getQuotations().subscribe(results=>{
+      this.quotations = results
       this.rerenderActionMenus()
       this.messageService.add({severity:'success', summary: 'Offerte verwijderd', life:3000})
     })
