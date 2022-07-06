@@ -69,7 +69,6 @@ router.put('/:groupId/:previous', check('customerInfo.email').isEmail() ,async (
                 error: err.errors.customerInfo.message
             })
         } else{
-            //console.log(err)
             res.status(500).json({
                 error: err.toString().substr(err.toString().lastIndexOf(':')+1)
             })
@@ -93,7 +92,6 @@ router.get('/action/:id', async (req, res, next) => {
     if(action==='pdf'){
         const quotationId = req.params.id
         Schema.quotationModel.findById({_id:quotationId},{__v:0}).exec().then(doc=>{
-            console.log('pdf send')
             res.setHeader('Content-Type', 'application/pdf')
             res.setHeader('Content-Disposition','attachment; filename = "offerte_"'+ doc?.quotationValues.productName +'"')
             const pdfDoc = new PDFDocument()
@@ -136,7 +134,8 @@ router.get('/action/:id', async (req, res, next) => {
                 }
                 await transporter.sendMail(mailOptions).then(
                     ()=>{
-                        Schema.quotationModel.updateOne({_id:quotationId},{status:'verstuurd'},{runValidators:true}).exec().then(result => {
+                        Schema.quotationModel.updateOne({_id:quotationId},
+                            {$set:{status:'verstuurd'},$push: {sendDate: Date.now()}},{runValidators:true}).exec().then(result => {
                             res.status(201).json(
                             )
                         }).catch(err => {

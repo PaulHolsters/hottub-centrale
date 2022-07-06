@@ -81,7 +81,7 @@ const quotationSchema = new mongoose.Schema({
     VAT: {type: Number, required: true, min: 0, default: 21},
     discount: {type: Number, required: true, min: 0, max:100, default: 0},
     creationDate: {type:Date},
-    sendDate: {type: Date}
+    sendDate: {type:[Date]}
 }, {})
 
 const quotationSpecificationSchema = new mongoose.Schema({
@@ -189,7 +189,6 @@ quotationSchema.path('quotationValues.quotationSpecificationsValues.price').vali
 })
 
 quotationSpecificationSchema.path('price').validate(function (propValue) {
-    console.log(propValue)
     return Math.trunc(propValue) === propValue
 })
 // name must be unique, you may assume propValue is different from its original value
