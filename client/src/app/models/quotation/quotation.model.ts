@@ -10,6 +10,8 @@ export class QuotationModel {
               public customerInfo: { firstName: string | undefined; lastName: string | undefined; email: string | undefined },
               public VAT: number,
               public discount: number,
+              public sendDate:string[] | undefined,
+              public creationDate: Date | undefined,
               public status?:string,
               public _id?: string) {
   }

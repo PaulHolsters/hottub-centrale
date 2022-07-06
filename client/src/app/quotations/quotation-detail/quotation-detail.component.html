@@ -30,6 +30,34 @@
                     </div>
                 </div>
             </li>
+            <li>
+                <div class="grid">
+                    <div class="col-2">
+                        <label class="label">Aangemaakt op</label>
+                    </div>
+                    <div *ngIf="quotation.creationDate" class="col">
+                            {{quotation.creationDate}}
+                    </div>
+                    <div *ngIf="!quotation.creationDate" class="col">
+                        Offerte wordt geladen...
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="grid">
+                    <div class="col-2">
+                        <label class="label">Verstuurd op</label>
+                    </div>
+                    <div *ngIf="quotation.sendDate" class="col">
+                        <div class="mb-1" *ngFor="let date of quotation.sendDate">
+                            {{date}}
+                        </div>
+                    </div>
+                    <div *ngIf="!quotation.sendDate" class="col">
+                        Offerte wordt geladen...
+                    </div>
+                </div>
+            </li>
         </ul>
     </p-card>
     <p-card class="col-12 ml-0 mb-1" header="Offerte gegevens">

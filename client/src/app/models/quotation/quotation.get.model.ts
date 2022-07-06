@@ -24,7 +24,7 @@ export class QuotationGetModel {
         },
         public _id: string,
         public creationDate: Date,
-        public sendDate: Date[]|undefined,
+        public sendDate: string[]|undefined,
         public customer: string,
         public totalPrice: number | undefined
     ) {

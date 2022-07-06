@@ -134,15 +134,18 @@ router.get('/action/:id', async (req, res, next) => {
                 }
                 await transporter.sendMail(mailOptions).then(
                     ()=>{
-                        Schema.quotationModel.updateOne({_id:quotationId},
-                            {$set:{status:'verstuurd'},$push: {sendDate: Date.now()}},{runValidators:true}).exec().then(result => {
-                            res.status(201).json(
-                            )
-                        }).catch(err => {
+                        Schema.quotationModel.findOne({_id:quotationId}).then(quot=>{
+                            Schema.quotationModel.updateOne({_id:quotationId},
+                                {$set:{status:'verstuurd'},$push: {sendDate:'verstuurd op '+ new Date() +' naar '+quot.customerInfo.email}},{runValidators:true}).exec().then(result => {
+                                res.status(201).json(
+                                )
+                            })
+                        }).catch(err=>{
                             res.status(500).json({
                                 error: err.error
                             })
                         })
+
                     }
                 ).catch(err=>{
                     res.status(500).json({

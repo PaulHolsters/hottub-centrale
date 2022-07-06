@@ -39,6 +39,7 @@ export class DataService {
       latestVersionQuotations.forEach(q=>{
         q.customer = q.customerInfo.firstName + ' ' + q.customerInfo.lastName
         q.totalPrice = this.totalPrice(q._id,result.quotations)
+        console.log(q.sendDate)
       })
       return latestVersionQuotations
     }))

@@ -81,7 +81,7 @@ const quotationSchema = new mongoose.Schema({
     VAT: {type: Number, required: true, min: 0, default: 21},
     discount: {type: Number, required: true, min: 0, max:100, default: 0},
     creationDate: {type:Date},
-    sendDate: {type:[Date]}
+    sendDate: {type:[String]}
 }, {})
 
 const quotationSpecificationSchema = new mongoose.Schema({

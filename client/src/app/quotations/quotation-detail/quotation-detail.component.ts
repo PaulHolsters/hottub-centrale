@@ -20,12 +20,13 @@ export class QuotationDetailComponent implements OnInit {
       firstName: undefined,
       lastName: undefined,
       email: undefined
-    }, 21, 0, undefined)
+    },
+       21, 0, undefined,undefined)
     this.dataService.getQuotation(this.route.snapshot.params['id']).subscribe(res=>{
       const product = new ProductModel(res.quotationValues.productName,res.quotationValues.productCat,res.quotationValues.productPrice,
           res.quotationValues.productSpecifications,res.quotationValues.optionValues,res.productId)
       this.quotation = new QuotationModel(res.version,product,res.selectedOptions,res.quotationValues.quotationSpecificationValues,
-          res.customerInfo,res.VAT,res.discount,res._id)
+          res.customerInfo,res.VAT,res.discount,res.sendDate,res.creationDate,res._id)
       this.dataService.getOptions().subscribe(options=>{
         this.selectedOptions = options.filter(opt=>{
           return this.quotation.options.includes(opt._id||'')
