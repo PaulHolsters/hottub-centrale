@@ -16,6 +16,7 @@ export class AppComponent implements OnInit, AfterViewChecked, OnDestroy {
     url: string | undefined
     breadcrumbs: MenuItem[]
     breadCrumbSub: Subscription | undefined
+    home: MenuItem
     items: MenuItem[] = [
         {
             label: 'Producten', routerLink: 'producten'
@@ -41,15 +42,16 @@ export class AppComponent implements OnInit, AfterViewChecked, OnDestroy {
     constructor(private router: Router, private route: ActivatedRoute,
                 private breadcrumbStorage: BreadcrumbStorageService,
                 private cd: ChangeDetectorRef) {
-        this.breadcrumbs = []
+
         this.breadcrumbStorage.routeChange.subscribe((breadcrumb) => {
             this.breadcrumbs = breadcrumb
         })
+        this.home = {icon: 'pi pi-home', routerLink: '/'};
+        this.breadcrumbs = [this.home]
     }
 
     ngOnInit(): void {
         this.breadcrumbs = [
-            {label: 'home', routerLink: '/'}
         ]
     }
 
@@ -58,10 +60,10 @@ export class AppComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
 
     changeBreadcrumb(event: any) {
-        switch (event.item.label) {
-            case 'Home':
+        switch (event.item.icon) {
+            case 'pi pi-home':
                 this.breadcrumbs = [
-                    {label: 'home', routerLink: '/'}
+
                 ]
                 break
             default:

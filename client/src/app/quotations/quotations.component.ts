@@ -20,7 +20,7 @@ export class QuotationsComponent implements OnInit,AfterViewChecked {
   }
 
   ngOnInit(): void {
-    this.breadcrumbStorage.routeChange.emit([{label:'Home', routerLink:'/'},{label:'Offertes'}])
+    this.breadcrumbStorage.routeChange.emit([{label:'Offertes'}])
   }
 
   quotations(){

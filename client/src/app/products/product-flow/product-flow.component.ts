@@ -73,7 +73,6 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
     this.id = this.route.snapshot.params['id']
     if(this.id){
       this.breadcrumbStorage.routeChange.emit([
-        {label:'Home', routerLink:'/'},
         {label:'Producten',routerLink:'producten'},
         {label:'Product aanpassen'}
       ])
@@ -102,7 +101,6 @@ export class ProductFlowComponent implements OnInit,OnDestroy {
       })
     } else{
       this.breadcrumbStorage.routeChange.emit([
-        {label:'Home', routerLink:'/'},
         {label:'Producten',routerLink:'producten'},
         {label:'Nieuw product'}
       ])

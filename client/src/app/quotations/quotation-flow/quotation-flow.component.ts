@@ -54,7 +54,6 @@ export class QuotationFlowComponent implements OnInit {
     this.id = this.route.snapshot.params['id']
     if(this.id){
       this.breadcrumbStorage.routeChange.emit([
-        {label:'Home', routerLink:'/'},
         {label:'Offertes',routerLink:'offertes'},
         {label:'Nieuwe versie'}
       ])
@@ -83,7 +82,6 @@ export class QuotationFlowComponent implements OnInit {
       })
     } else{
       this.breadcrumbStorage.routeChange.emit([
-        {label:'Home', routerLink:'/'},
         {label:'Offertes',routerLink:'offertes'},
         {label:'Nieuwe offerte'}
       ])

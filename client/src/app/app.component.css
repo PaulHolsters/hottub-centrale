@@ -1,4 +1,4 @@
-#header > div:first-child:hover{
+#header img:hover{
   cursor: pointer;
 }
 

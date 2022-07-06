@@ -147,7 +147,6 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
 
   ngOnInit(): void {
     this.breadcrumbStorage.routeChange.emit([
-      {label:'Home', routerLink:'/'},
       {label:'Offertes',routerLink:'offertes'},
       {label:'Overzicht'}
     ])
