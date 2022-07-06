@@ -155,7 +155,7 @@ export class ProductSpecificationsComponent implements OnInit,OnDestroy {
   }
 
   cancel() {
-    this.router.navigate(['/producten'])
+    this.router.navigate(['/producten/overzicht'])
     this.storage.setClickConsumed(true)
   }
 

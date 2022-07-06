@@ -132,7 +132,7 @@ export class QuotationSummaryComponent implements OnInit,OnDestroy {
 
   cancel() {
     this.storage.setClickConsumed(true)
-    this.router.navigate(['/offertes'])
+    this.router.navigate(['/offertes/overzicht'])
   }
 
   // todo zorg ervoor dat als je een offerte aanpast enkel geldige waarden gebruikt worden

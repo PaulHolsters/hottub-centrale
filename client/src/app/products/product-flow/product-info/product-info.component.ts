@@ -93,7 +93,7 @@ export class ProductInfoComponent implements OnInit,OnDestroy,AfterViewInit,DoCh
   }
 
   cancel(){
-    this.router.navigate(['/producten'])
+    this.router.navigate(['/producten/overzicht'])
     this.storage.setClickConsumed(true)
   }
 

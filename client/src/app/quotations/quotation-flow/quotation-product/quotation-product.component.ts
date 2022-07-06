@@ -110,7 +110,7 @@ export class QuotationProductComponent implements OnInit,OnDestroy {
 
   cancel(){
     this.storage.setClickConsumed(true)
-    this.router.navigate(['/offertes'])
+    this.router.navigate(['/offertes/overzicht'])
   }
 
 
