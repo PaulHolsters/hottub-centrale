@@ -19,16 +19,19 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
   activatedActionsMenu:string|undefined
   selectedFileBLOB:any|undefined
   displayDialog:boolean
+  displayDialog2:boolean
   idOfStatusChanged:string|undefined
   selectedStatus:string|undefined
   initialStatus:string|undefined
   blocked:boolean
-
+  previousVersions:string[]|undefined
+  selectedVersion:string | undefined
   constructor(private dataService:DataService,private storage:QuotationStorageService,
               private cd: ChangeDetectorRef, private router:Router,private messageService:MessageService,private sanitizer: DomSanitizer,
               private breadcrumbStorage:BreadcrumbStorageService,
               private confirmationService: ConfirmationService) {
     this.displayDialog = false
+    this.displayDialog2 = false
     this.quotations = []
     this.quotationsMenuHandler = []
     this.blocked = false
@@ -48,7 +51,7 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
 
   rerenderActionMenus(){
     this.quotationsMenuHandler = this.quotations.map(quot=>{
-      if(quot.status!=='goedgekeurd'){
+      if(quot.status!=='goedgekeurd' && quot.previousVersions.length>0){
         return  {id:quot._id, items: [
             {label: 'Bekijken', icon: 'pi pi-fw pi-eye',
               command:()=>{
@@ -59,6 +62,13 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
             {label: 'Nieuwe versie', icon: 'pi pi-fw pi-pencil',
               command:()=>{
                 this.router.navigate(['offertes','nieuwe-versie',quot._id])
+                this.hideMenu()
+              }},
+            {label: 'Vorige versies', icon: 'pi pi-fw pi-pencil',
+              command:()=>{
+                // todo open een venster om een vorige versie te kunnen selecteren
+                this.displayDialog2 = true
+                this.previousVersions = quot.previousVersions
                 this.hideMenu()
               }},
             {label: 'Toon pdf', icon: 'pi pi-fw pi-download' ,
@@ -101,6 +111,101 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
                 this.hideMenu()
               }}
           ]}
+      } else if(quot.status!=='goedgekeurd'){
+        return  {id:quot._id, items: [
+            {label: 'Bekijken', icon: 'pi pi-fw pi-eye',
+              command:()=>{
+                this.router.navigate(['offertes/details/'+quot._id])
+                this.hideMenu()
+              }
+            },
+            {label: 'Nieuwe versie', icon: 'pi pi-fw pi-pencil',
+              command:()=>{
+                this.router.navigate(['offertes','nieuwe-versie',quot._id])
+                this.hideMenu()
+              }},
+            {label: 'Vorige versies', icon: 'pi pi-fw pi-pencil',disabled:true,iconStyle:{'cursor':'not-allowed'}, style:{'cursor':'not-allowed'}},
+            {label: 'Toon pdf', icon: 'pi pi-fw pi-download' ,
+              command:()=>{
+                this.dataService.downloadQuotation(quot._id).subscribe(res=>{
+                  this.showPdf(res)
+                  this.hideMenu()
+                })
+              }},
+            {label: 'Versturen', icon: 'pi pi-fw pi-send',
+              command:()=>{
+                this.blocked = true
+                this.dataService.sendQuotation(quot._id).subscribe(res=>{
+                  this.blocked = false
+                  this.storage.setMessage('Offerte verstuurd')
+                  location.reload()
+                },err=>{
+                  this.blocked = false
+                  this.messageService.add({severity:'error', summary: err.error.error, life:3000});
+                })
+                this.hideMenu()
+              }},
+            {label: 'Statuswijziging',icon: 'pi pi-info-circle',
+              command:()=>{
+                this.showDialog(this.activatedActionsMenu)
+                this.hideMenu()
+              }},
+            {label: 'Verwijderen',icon: 'pi pi-fw pi-trash',
+              command:()=>{
+                this.confirmationService.confirm({
+                  message: 'Ben je zeker dat je deze offerte wenst te verwijderen',
+                  accept: () => {
+                    this.dataService.deleteQuotation(quot._id).subscribe(res=>{
+                      this.reloadPage()
+                    },err=>{
+                      this.messageService.add({severity:'error', summary: err.error.error, life:3000})
+                    })
+                  }
+                })
+                this.hideMenu()
+              }}
+          ]}
+      }  else if (quot.previousVersions.length===0){
+        return {id:quot._id, items: [
+            {label: 'Bekijken', icon: 'pi pi-fw pi-eye',
+              command:()=>{
+                this.router.navigate(['offertes/details/'+quot._id])
+                this.hideMenu()
+              }
+            },
+            {label: 'Nieuwe versie', icon: 'pi pi-fw pi-pencil',
+              command:()=>{
+                this.router.navigate(['offertes','nieuwe-versie',quot._id])
+                this.hideMenu()
+              }},
+            {label: 'Vorige versies', icon: 'pi pi-fw pi-pencil',disabled:true,iconStyle:{'cursor':'not-allowed'}, style:{'cursor':'not-allowed'}},
+            {label: 'Toon pdf', icon: 'pi pi-fw pi-download',
+              command:()=>{
+                this.dataService.downloadQuotation(quot._id).subscribe(res=>{
+                  this.showPdf(res)
+                  this.hideMenu()
+                })
+              } },
+            {label: 'Versturen', icon: 'pi pi-fw pi-send',
+              command:()=>{
+                this.blocked = true
+                this.dataService.sendQuotation(quot._id).subscribe(res=>{
+                  this.blocked = false
+                  this.storage.setMessage('Offerte verstuurd')
+                  location.reload()
+                },err=>{
+                  this.blocked = false
+                  this.messageService.add({severity:'error', summary: err.error.error, life:3000});
+                })
+                this.hideMenu()
+              }},
+            {label: 'Statuswijziging',icon: 'pi pi-info-circle',
+              command:()=>{
+                this.showDialog(this.activatedActionsMenu)
+                this.hideMenu()
+              }},
+            {label: 'Verwijderen',icon: 'pi pi-fw pi-trash',disabled:true,iconStyle:{'cursor':'not-allowed'}, style:{'cursor':'not-allowed'}}
+          ]}
       } else{
         return {id:quot._id, items: [
             {label: 'Bekijken', icon: 'pi pi-fw pi-eye',
@@ -112,6 +217,13 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
             {label: 'Nieuwe versie', icon: 'pi pi-fw pi-pencil',
               command:()=>{
                 this.router.navigate(['offertes','nieuwe-versie',quot._id])
+                this.hideMenu()
+              }},
+            {label: 'Vorige versies', icon: 'pi pi-fw pi-pencil',
+              command:()=>{
+                // todo open een venster om een vorige versie te kunnen selecteren
+                this.displayDialog2 = true
+                this.previousVersions = quot.previousVersions
                 this.hideMenu()
               }},
             {label: 'Toon pdf', icon: 'pi pi-fw pi-download',
@@ -143,6 +255,10 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
           ]}
       }
     })
+  }
+
+  convert(){
+
   }
 
   ngOnInit(): void {
@@ -216,6 +332,7 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
 
   cancel(){
     this.displayDialog = false
+    this.displayDialog2 = false
   }
 
   isDisabled(){

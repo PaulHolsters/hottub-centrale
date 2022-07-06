@@ -86,6 +86,30 @@
   </form>
 </p-dialog>
 
+<p-dialog header="Vorige versies" [(visible)]="displayDialog2" [dismissableMask]="true" [modal]="true" [style]="{width: '60vw'}" (onHide)="resetDialog()">
+  <form class="grid">
+    <div class="formField col-12">
+      <p-dropdown [style]="{width: '90%'}"  *ngIf="previousVersions" [options]="previousVersions" [(ngModel)]="selectedVersion" name="previousVersions"></p-dropdown>
+    </div>
+    <p-divider class="col-12 grid p-0 mt-2 mb-2"></p-divider>
+    <div class="col-12 grid p-0 d-flex justify-content-end">
+    <span class="p-buttonset m-0">
+        <button (click)="cancel()" pButton type="button" label="Annuleren" class="p-button-outlined"
+                icon="pi pi-times"></button>
+                        <button *ngIf="isDisabled()" [style]="{'cursor':'not-allowed'}" [disabled]="true"
+                                iconPos="left" icon="pi pi-check" label="Converteer" pButton type="button"
+                                class="p-button-success"
+                        ></button>
+                      <button *ngIf="!isDisabled()"
+                              (click)="convert()" iconPos="left" icon="pi pi-check" label="Converteer" pButton type="button"
+                              class="p-button-success"
+                      ></button>
+
+    </span>
+    </div>
+  </form>
+</p-dialog>
+
 <p-confirmDialog header="Verwijderen offerte" icon="pi pi-exclamation-triangle"
                  acceptLabel="Ja" rejectLabel="Nee"></p-confirmDialog>
 
