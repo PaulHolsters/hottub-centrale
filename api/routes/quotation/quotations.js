@@ -56,12 +56,24 @@ router.put('/:groupId/:previous', check('customerInfo.email').isEmail() ,async (
         VAT: req.body.VAT,
         discount: req.body.discount
     })
-    console.log('selected ids',req.body.selectedQuotationSpecifications)
-    newQuotation.save().then(result => {
-        res.status(201).json(
-            {quotation:result}
-        )
-    }).catch(err => {
+    const session = await mongoose.startSession()
+    session.startTransaction()
+    try {
+        await Schema.quotationModel.findById({_id:req.params.id}).then(async quotation => {
+            await Schema.quotationModel.updateOne({groupId:quotation.groupId,active:true},{active:false}).exec()
+            newQuotation.save().then(result => {
+                res.status(201).json(
+                    {quotation:result}
+                )
+            }).catch(err => {
+
+            })
+        })
+        await session.commitTransaction()
+        session.endSession()
+        res.status(200).json()
+    } catch (err) {
+        await session.abortTransaction()
         let failedProp = ''
         if (err.errors && err.errors.hasOwnProperty('customerInfo')) {
             failedProp = 'customerInfo'
@@ -73,7 +85,10 @@ router.put('/:groupId/:previous', check('customerInfo.email').isEmail() ,async (
                 error: err.toString().substr(err.toString().lastIndexOf(':')+1)
             })
         }
-    })
+        res.status(500).json({
+            error: err
+        })
+    }
 })
 
 router.patch('/:id',async (req, res, next) => {
@@ -85,6 +100,25 @@ router.patch('/:id',async (req, res, next) => {
             error: err.errors
         })
     })
+})
+
+router.patch('/:id/active',async (req, res, next) => {
+    const session = await mongoose.startSession()
+    session.startTransaction()
+    try {
+        await Schema.quotationModel.findById({_id:req.params.id}).then(async quotation => {
+            await Schema.quotationModel.updateOne({groupId:quotation.groupId,active:true},{active:false}).exec()
+            await Schema.quotationModel.updateOne({_id:req.params.id},{active:true},{runValidators:true}).exec()
+        })
+        await session.commitTransaction()
+        session.endSession()
+        res.status(200).json()
+    } catch (err) {
+        await session.abortTransaction()
+        res.status(500).json({
+            error: err
+        })
+    }
 })
 
 router.get('/action/:id', async (req, res, next) => {
@@ -181,7 +215,6 @@ router.get('/action/:id', async (req, res, next) => {
 
 router.get('/', (req, res, next) => {
     Schema.quotationModel.find({}, {__v: 0}).then(result => {
-        console.log(result,'chache here or on client?')
         res.status(200).json(
             {
                 quotations: result

@@ -38,12 +38,12 @@ export class QuotationStorageService implements OnDestroy{
       firstName: undefined,
       lastName: undefined,
       email: undefined
-    }, 21, 0, undefined,undefined)
+    }, 21, 0, undefined,undefined,false)
     this.initialQuotation = new QuotationModel(1, undefined, [], [], {
       firstName: undefined,
       lastName: undefined,
       email: undefined
-    }, 21, 0, undefined,undefined)
+    }, 21, 0, undefined,undefined,false)
   }
 
   ngOnDestroy(): void {
@@ -55,7 +55,7 @@ export class QuotationStorageService implements OnDestroy{
       firstName: undefined,
       lastName: undefined,
       email: undefined
-    }, 21, 0, undefined,undefined)
+    }, 21, 0, undefined,undefined,false)
   }
 
   setNewStep(newStep: string){
@@ -159,7 +159,7 @@ export class QuotationStorageService implements OnDestroy{
       firstName: undefined,
       lastName: undefined,
       email: undefined
-    }, 21, 0, undefined,undefined)
+    }, 21, 0, undefined,undefined,false)
   }
 
   resetQuotationGet(){

@@ -66,7 +66,6 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
               }},
             {label: 'Vorige versies', icon: 'pi pi-fw pi-pencil',
               command:()=>{
-                // todo open een venster om een vorige versie te kunnen selecteren
                 this.displayDialog2 = true
                 this.previousVersions = quot.previousVersions
                 this.hideMenu()
@@ -221,7 +220,6 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
               }},
             {label: 'Vorige versies', icon: 'pi pi-fw pi-pencil',
               command:()=>{
-                // todo open een venster om een vorige versie te kunnen selecteren
                 this.displayDialog2 = true
                 this.previousVersions = quot.previousVersions
                 this.hideMenu()
