@@ -21,7 +21,6 @@ export class QuotationProductComponent implements OnInit,OnDestroy {
   cancelSub:Subscription
   resetSub:Subscription
   stepChangedSub:Subscription
-  destroyed:boolean|undefined
   constructor(private route: ActivatedRoute,private storage:QuotationStorageService, private router: Router,private dataService:DataService) {
     this.nextSub = this.storage.nextClicked.subscribe(()=>{
       if(this.storage.getStep()==='product' && !this.storage.getClickConsumed()){
@@ -39,6 +38,7 @@ export class QuotationProductComponent implements OnInit,OnDestroy {
       }
     })
     this.stepChangedSub = this.storage.newStepChange.subscribe((newStep)=>{
+      console.log('step change')
       if(this.storage.getStep()==='product'){
         this.storage.setStep(newStep)
         this.storage.resetNewStep()

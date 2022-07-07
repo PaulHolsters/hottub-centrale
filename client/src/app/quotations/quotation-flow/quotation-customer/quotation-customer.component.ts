@@ -27,7 +27,7 @@ export class QuotationCustomerComponent implements OnInit,OnDestroy {
       }
     })
     this.stepChangedSub = this.storage.newStepChange.subscribe((newStep)=>{
-      if(this.storage.getStep()==='info'){
+      if(this.storage.getStep()==='customer'){
         this.storage.setStep(newStep)
         this.storage.resetNewStep()
         this.storage.setQuotation(this.quotation)

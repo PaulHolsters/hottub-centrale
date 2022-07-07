@@ -148,6 +148,7 @@ export class QuotationStorageService implements OnDestroy{
 
   setQuotation(quotation:QuotationModel){
     this.quotation = quotation
+    console.log(this.quotation)
   }
 
   setQuotationGet(quotation:QuotationGetModel){

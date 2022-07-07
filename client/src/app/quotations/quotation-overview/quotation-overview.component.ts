@@ -24,8 +24,8 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
   selectedStatus:string|undefined
   initialStatus:string|undefined
   blocked:boolean
-  previousVersions:string[]|undefined
-  selectedVersion:string | undefined
+  previousVersions:{id:string,versionString:string}[]|undefined
+  selectedVersion:{id:string,versionString:string} | undefined
   constructor(private dataService:DataService,private storage:QuotationStorageService,
               private cd: ChangeDetectorRef, private router:Router,private messageService:MessageService,private sanitizer: DomSanitizer,
               private breadcrumbStorage:BreadcrumbStorageService,
@@ -256,7 +256,13 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
   }
 
   convert(){
-
+    this.displayDialog2 = false
+    this.dataService.editActiveQuotation(this.selectedVersion?.id||'').subscribe(res=>{
+      this.dataService.getQuotations().subscribe(res=>{
+        this.quotations = res
+        this.rerenderActionMenus()
+      })
+    })
   }
 
   ngOnInit(): void {
@@ -335,6 +341,10 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
 
   isDisabled(){
     return !(this.selectedStatus && this.initialStatus!==this.selectedStatus)
+  }
+
+  isDisabledPrevVers(){
+    return !(this.selectedVersion)
   }
 
   save(){

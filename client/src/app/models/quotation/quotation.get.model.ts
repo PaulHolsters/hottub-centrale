@@ -14,7 +14,7 @@ export class QuotationGetModel {
         public productId: string,
         public selectedOptions: string[],
         public selectedQuotationSpecifications: string[],
-        public previousVersions: string[],
+        public previousVersions: {id:string,versionString:string}[],
         public quotationValues: {
             optionValues: OptionModel[],
             productCat: string,

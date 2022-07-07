@@ -35,10 +35,11 @@ export class DataService {
             latestVersionQuotations.forEach(q => {
                 q.customer = q.customerInfo.firstName + ' ' + q.customerInfo.lastName
                 q.totalPrice = this.totalPrice(q._id, result.quotations)
+                // todo fix this!
                 q.previousVersions = result.quotations.filter(quot => {
                     return (quot.groupId === q.groupId && q._id !== quot._id)
                 }).map(filteredQuot => {
-                    return 'Aangemaakt op ' + filteredQuot.creationDate + ' - versienummer: ' + filteredQuot.version
+                    return {id:filteredQuot._id,versionString: 'Aangemaakt op ' + filteredQuot.creationDate + ' - versienummer: ' + filteredQuot.version}
                 })
             })
             return latestVersionQuotations

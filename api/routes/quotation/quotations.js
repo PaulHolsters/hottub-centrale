@@ -56,10 +56,11 @@ router.put('/:groupId/:previous', check('customerInfo.email').isEmail() ,async (
         VAT: req.body.VAT,
         discount: req.body.discount
     })
+    // todo fix bug: bij nieuwe versie loopt er na oude versie iets mis
     const session = await mongoose.startSession()
     session.startTransaction()
     try {
-        await Schema.quotationModel.findById({_id:req.params.id}).then(async quotation => {
+        await Schema.quotationModel.findById({_id:req.params.previous}).then(async quotation => {
             await Schema.quotationModel.updateOne({groupId:quotation.groupId,active:true},{active:false}).exec()
             newQuotation.save().then(result => {
                 res.status(201).json(

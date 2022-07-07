@@ -133,19 +133,19 @@ export class QuotationFlowComponent implements OnInit {
   changeStep(newIndex:number){
     switch (newIndex) {
       case 1:
-        this.storage.setStep('product')
+        this.storage.setNewStep('product')
         break
       case 2:
-        this.storage.setStep('specifications')
+        this.storage.setNewStep('specifications')
         break
       case 3:
-        this.storage.setStep('options')
+        this.storage.setNewStep('options')
         break
       case 4:
-        this.storage.setStep('summary')
+        this.storage.setNewStep('summary')
         break
       default:
-        this.storage.setStep('customer')
+        this.storage.setNewStep('customer')
     }
     this.storage.newStepChange.emit(this.storage.getNewStep())
   }
