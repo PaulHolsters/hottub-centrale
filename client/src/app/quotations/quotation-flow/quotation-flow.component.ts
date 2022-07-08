@@ -62,7 +62,7 @@ export class QuotationFlowComponent implements OnInit {
         const product = new ProductModel(res.quotationValues.productName,res.quotationValues.productCat,res.quotationValues.productPrice,
             res.quotationValues.productSpecifications,res.quotationValues.optionValues,res.productId)
         const prefilledQuotation = new QuotationModel(res.version,product,res.selectedOptions,res.quotationValues.quotationSpecificationValues,
-            res.customerInfo,res.VAT,res.discount,res.sendDate,res.creationDate,res.active,res._id)
+            res.customerInfo,res.VAT,res.discount,res.sendDate,res.creationDate,res._id)
         this.storage.quotationFetched.emit(prefilledQuotation)
         if(this.storage.getStateAvailableQuotationSpecifications()){
           this.storage.getAvailableQuotationSpecifications().subscribe(quotSpecs=>{

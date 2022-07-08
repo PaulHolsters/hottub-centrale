@@ -24,7 +24,9 @@ export class DataService {
     getQuotations(): Observable<QuotationGetModel[]> {
         return this.http.get<{ quotations: QuotationGetModel[] }>('http://localhost:3000/quotations').pipe(map(result => {
             const latestVersionQuotations = result.quotations.filter(quotGet => {
-                return quotGet.active === true
+                const filteredQuotGets = result.quotations.filter(quotGetGroupId=>{
+                    return quotGetGroupId.groupId === quotGet.groupId})
+                return filteredQuotGets.every(quot => quot.version <= quotGet.version)
             }).sort((a, b) => {
                 if (a.creationDate > b.creationDate) {
                     return -1
@@ -35,7 +37,6 @@ export class DataService {
             latestVersionQuotations.forEach(q => {
                 q.customer = q.customerInfo.firstName + ' ' + q.customerInfo.lastName
                 q.totalPrice = this.totalPrice(q._id, result.quotations)
-                // todo fix this!
                 q.previousVersions = result.quotations.filter(quot => {
                     return (quot.groupId === q.groupId && q._id !== quot._id)
                 }).map(filteredQuot => {
@@ -132,6 +133,7 @@ export class DataService {
 
     // dit is technisch gezien geen put maar een post echter van een nieuwe versie van dezelfde offerte
     editQuotation(quotation: QuotationGetModel): Observable<any> {
+        console.log('edit',quotation)
         return this.http.put('http://localhost:3000/quotations/' + quotation.groupId + '/' + quotation.previousVersionId, quotation)
             .pipe(map((err, res) => {
                 return res

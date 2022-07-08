@@ -56,25 +56,11 @@ router.put('/:groupId/:previous', check('customerInfo.email').isEmail() ,async (
         VAT: req.body.VAT,
         discount: req.body.discount
     })
-    // todo fix bug: bij nieuwe versie loopt er na oude versie iets mis
-    const session = await mongoose.startSession()
-    session.startTransaction()
-    try {
-        await Schema.quotationModel.findById({_id:req.params.previous}).then(async quotation => {
-            await Schema.quotationModel.updateOne({groupId:quotation.groupId,active:true},{active:false}).exec()
-            newQuotation.save().then(result => {
-                res.status(201).json(
-                    {quotation:result}
-                )
-            }).catch(err => {
-
-            })
-        })
-        await session.commitTransaction()
-        session.endSession()
-        res.status(200).json()
-    } catch (err) {
-        await session.abortTransaction()
+    newQuotation.save().then(result => {
+        res.status(201).json(
+            {quotation:result}
+        )
+    }).catch(err => {
         let failedProp = ''
         if (err.errors && err.errors.hasOwnProperty('customerInfo')) {
             failedProp = 'customerInfo'
@@ -89,7 +75,7 @@ router.put('/:groupId/:previous', check('customerInfo.email').isEmail() ,async (
         res.status(500).json({
             error: err
         })
-    }
+    })
 })
 
 router.patch('/:id',async (req, res, next) => {
@@ -101,25 +87,6 @@ router.patch('/:id',async (req, res, next) => {
             error: err.errors
         })
     })
-})
-
-router.patch('/:id/active',async (req, res, next) => {
-    const session = await mongoose.startSession()
-    session.startTransaction()
-    try {
-        await Schema.quotationModel.findById({_id:req.params.id}).then(async quotation => {
-            await Schema.quotationModel.updateOne({groupId:quotation.groupId,active:true},{active:false}).exec()
-            await Schema.quotationModel.updateOne({_id:req.params.id},{active:true},{runValidators:true}).exec()
-        })
-        await session.commitTransaction()
-        session.endSession()
-        res.status(200).json()
-    } catch (err) {
-        await session.abortTransaction()
-        res.status(500).json({
-            error: err
-        })
-    }
 })
 
 router.get('/action/:id', async (req, res, next) => {

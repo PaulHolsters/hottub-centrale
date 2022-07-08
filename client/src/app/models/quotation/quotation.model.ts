@@ -12,7 +12,6 @@ export class QuotationModel {
               public discount: number,
               public sendDate:string[] | undefined,
               public creationDate: Date | undefined,
-              public active: boolean,
               public status?:string,
               public _id?: string) {
   }

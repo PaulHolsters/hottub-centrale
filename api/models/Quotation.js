@@ -81,8 +81,7 @@ const quotationSchema = new mongoose.Schema({
     VAT: {type: Number, required: true, min: 0, default: 21},
     discount: {type: Number, required: true, min: 0, max:100, default: 0},
     creationDate: {type:Date},
-    sendDate: {type:[String]},
-    active: {type: Boolean, required:true,default: true}
+    sendDate: {type:[String]}
 }, {})
 
 const quotationSpecificationSchema = new mongoose.Schema({
@@ -99,22 +98,6 @@ const quotationSpecificationSchema = new mongoose.Schema({
 /************************************************************   validation functions   **************************************************************************/
 
 // nodige validaties voor beveiliging van de data
-quotationSchema.path('active').validate(
-    async function (propValue) {
-        let valid = true
-        const arr = await quotationModel.find({groupId:this.groupId}).exec()
-        let count = 0
-        arr.forEach(q=>{
-            if(q.active === true){
-                count++
-            }
-        })
-        if(count!==0){
-            valid = false
-        }
-        return valid
-    }
-)
 
 quotationSchema.path('productId').validate(async function (propValue) {
     const arr = await productSchemas.productModel.find({},{_id:1}).exec()
