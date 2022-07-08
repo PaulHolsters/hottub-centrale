@@ -41,11 +41,11 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
     })
   }
 
-  reloadPage(){
+  reloadPage(message:string){
     this.dataService.getQuotations().subscribe(results=>{
       this.quotations = results
       this.rerenderActionMenus()
-      this.messageService.add({severity:'success', summary: 'Offerte verwijderd', life:3000})
+      this.messageService.add({severity:'success', summary: message, life:3000})
     })
   }
 
@@ -101,7 +101,7 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
                   message: 'Ben je zeker dat je deze offerte wenst te verwijderen',
                   accept: () => {
                     this.dataService.deleteQuotation(quot._id).subscribe(res=>{
-                      this.reloadPage()
+                      this.reloadPage('Offerte verwijderd')
                     },err=>{
                       this.messageService.add({severity:'error', summary: err.error.error, life:3000})
                     })
@@ -155,7 +155,7 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
                   message: 'Ben je zeker dat je deze offerte wenst te verwijderen',
                   accept: () => {
                     this.dataService.deleteQuotation(quot._id).subscribe(res=>{
-                      this.reloadPage()
+                      this.reloadPage('Offerte verwijderd')
                     },err=>{
                       this.messageService.add({severity:'error', summary: err.error.error, life:3000})
                     })
@@ -257,12 +257,22 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
 
   convert(){
     this.displayDialog2 = false
-    this.dataService.editActiveQuotation(this.selectedVersion?.id||'').subscribe(res=>{
-      this.dataService.getQuotations().subscribe(res=>{
-        this.quotations = res
-        this.rerenderActionMenus()
+    if(this.selectedVersion){
+      this.dataService.getQuotation(this.selectedVersion.id).subscribe(quotation=>{
+        if(!quotation.previousVersionId) quotation.previousVersionId = quotation._id
+        this.dataService.editQuotation(quotation).subscribe(res=>{
+          this.reloadPage('Oude versie toegepast')
+        },err=>{
+          this.messageService.add({severity:'error', summary: err.error.error, life:3000})
+        })
       })
-    })
+    }
+  }
+
+  read(){
+    this.displayDialog2 = false
+    this.router.navigate(['offertes/details/'+this.selectedVersion?.id])
+    this.hideMenu()
   }
 
   ngOnInit(): void {
@@ -326,6 +336,7 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
     this.idOfStatusChanged = undefined
     this.selectedStatus = undefined
     this.initialStatus = undefined
+    this.selectedVersion = undefined
   }
 
   onStatusChanged(newStatus:string){

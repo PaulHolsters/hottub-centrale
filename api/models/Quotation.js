@@ -220,14 +220,23 @@ quotationSchema.pre('save',async function (next) {
         // an extra check has to be performed first namely - since quotations cannot be deleted -
         // check that the quotationId given has the correct groupId and version number ( the last version number for the given groupId )
         // since only the last version of a quotation is allowed to be updated with a new version
+
         const prevId = this.previousVersionId
+        // hier zoek je de eerste versie terug op in het speciale geval
         const quotation = await quotationModel.findById({_id:prevId.toString()}, {__v: 0}).exec()
+
         if(quotation && quotation.version!==undefined && quotation.groupId.toString()===this.groupId.toString()){
+            // hier geraak je normaal altijd in
             const quots = await quotationModel.find({},{version:1}).where({groupId:this.groupId}).exec()
+            // alle offertes met die groupId (= ook groupId van de nieuw aan te maken) zitten hierin
+
+            // todo aanpassen indien je een nieuwe versie aanmaakt gebaseerd op een willekeurig eerdere versie
+            let versionNumber = 0
             quots.forEach(quot=>{
-                if(quot.version > quotation.version) next(Error)
+                // hier wordt je error getriggered omdat er inderdaad zulke offertes nu kunnen bestaan
+                if(quot.version > versionNumber) versionNumber = quot.version
             })
-            const newVersion = quotation.version + 1
+            const newVersion = versionNumber + 1
             this.version = newVersion
         } else{
             next(Error)

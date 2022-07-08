@@ -56,6 +56,7 @@ router.put('/:groupId/:previous', check('customerInfo.email').isEmail() ,async (
         VAT: req.body.VAT,
         discount: req.body.discount
     })
+    console.log(newQuotation)
     newQuotation.save().then(result => {
         res.status(201).json(
             {quotation:result}
@@ -68,13 +69,14 @@ router.put('/:groupId/:previous', check('customerInfo.email').isEmail() ,async (
                 error: err.errors.customerInfo.message
             })
         } else{
+            console.log('error!!!',err,'error')
             res.status(500).json({
                 error: err.toString().substr(err.toString().lastIndexOf(':')+1)
             })
         }
-        res.status(500).json({
+/*        res.status(500).json({
             error: err
-        })
+        })*/
     })
 })
 

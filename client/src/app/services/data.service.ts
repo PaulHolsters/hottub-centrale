@@ -133,7 +133,6 @@ export class DataService {
 
     // dit is technisch gezien geen put maar een post echter van een nieuwe versie van dezelfde offerte
     editQuotation(quotation: QuotationGetModel): Observable<any> {
-        console.log('edit',quotation)
         return this.http.put('http://localhost:3000/quotations/' + quotation.groupId + '/' + quotation.previousVersionId, quotation)
             .pipe(map((err, res) => {
                 return res
@@ -160,15 +159,6 @@ export class DataService {
         return this.http.patch('http://localhost:3000/quotations/' + id, statusObj)
             .pipe(map((res, status) => {
                 return status
-            }, catchError(err => {
-                return new Observable(err)
-            })))
-    }
-
-    editActiveQuotation(id: string): Observable<any> {
-        return this.http.patch('http://localhost:3000/quotations/' + id + '/active', {})
-            .pipe(map((res) => {
-                return res
             }, catchError(err => {
                 return new Observable(err)
             })))
