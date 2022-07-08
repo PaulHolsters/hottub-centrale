@@ -55,6 +55,7 @@ import {InputNumberModule} from "primeng/inputnumber";
 import { QuotationDetailComponent } from './quotations/quotation-detail/quotation-detail.component';
 import {BreadcrumbModule} from "primeng/breadcrumb";
 import {BreadcrumbStorageService} from "./services/breadcrumb.storage.service";
+import {PaginatorModule} from "primeng/paginator";
 
 const appRoutes: Routes = [
   {path: 'producten', component: ProductsComponent},
@@ -121,6 +122,7 @@ const appRoutes: Routes = [
         BlockUIModule,
         InputNumberModule,
         BreadcrumbModule,
+        PaginatorModule
     ],
   exports: [BrowserAnimationsModule],
   providers: [DataService,ProductStorageService,QuotationStorageService,BrowserAnimationsModule,MessageService,ConfirmationService, BreadcrumbStorageService],

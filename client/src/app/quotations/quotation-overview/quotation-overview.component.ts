@@ -14,6 +14,7 @@ import {BreadcrumbStorageService} from "../../services/breadcrumb.storage.servic
   styleUrls: ['./quotation-overview.component.css']
 })
 export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
+  quotationsAll: QuotationGetModel[]
   quotations:QuotationGetModel[]
   quotationsMenuHandler:{id:string,items:any}[]
   activatedActionsMenu:string|undefined
@@ -26,6 +27,7 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
   blocked:boolean
   previousVersions:{id:string,versionString:string}[]|undefined
   selectedVersion:{id:string,versionString:string} | undefined
+  numberOfRows = 5
   constructor(private dataService:DataService,private storage:QuotationStorageService,
               private cd: ChangeDetectorRef, private router:Router,private messageService:MessageService,private sanitizer: DomSanitizer,
               private breadcrumbStorage:BreadcrumbStorageService,
@@ -33,20 +35,37 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
     this.displayDialog = false
     this.displayDialog2 = false
     this.quotations = []
+    this.quotationsAll = []
     this.quotationsMenuHandler = []
     this.blocked = false
     this.dataService.getQuotations().subscribe(res=>{
-      this.quotations = res
+      this.quotationsAll = res
+      this.quotations = this.quotationsAll.slice(0,this.numberOfRows)
       this.rerenderActionMenus()
     })
   }
 
   reloadPage(message:string){
     this.dataService.getQuotations().subscribe(results=>{
-      this.quotations = results
+      this.quotationsAll = results
+      this.quotations = this.quotationsAll.slice(0,this.numberOfRows)
       this.rerenderActionMenus()
       this.messageService.add({severity:'success', summary: message, life:3000})
     })
+  }
+
+  paginate(event:any){
+    // which page
+    // number of total records
+    // which records to show?
+    // todo splits quotations op in chunks
+    // de bedoeling is hier dat er geen call gedaan wordt
+    if(event.first+event.rows>=this.quotationsAll.length){
+      this.quotations = this.quotationsAll.slice(event.first)
+    } else{
+      this.quotations = this.quotationsAll.slice(event.first,event.rows)
+    }
+    this.rerenderActionMenus()
   }
 
   rerenderActionMenus(){

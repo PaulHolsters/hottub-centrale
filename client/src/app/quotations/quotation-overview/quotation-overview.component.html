@@ -1,7 +1,7 @@
 
 <p-toast></p-toast>
-<div style="border: 1px solid red; height:100%;">
-  <p-table [value]="quotations" [scrollable]="true" scrollHeight="85vh" sortMode="multiple">
+<div style="height:100%;">
+  <p-table [value]="quotations" [scrollable]="true" scrollHeight="70vh" sortMode="multiple">
     <ng-template pTemplate="header">
       <tr>
         <th pSortableColumn="customer">Klant <p-sortIcon field="customer"></p-sortIcon>
@@ -39,6 +39,9 @@
       </tr>
     </ng-template>
   </p-table>
+  <p-paginator [style]="{borderTop: '1px solid lightgrey',borderBottom: '1px solid lightgrey'}"
+               [rows]="numberOfRows" [totalRecords]="quotationsAll.length"
+               (onPageChange)="paginate($event)"></p-paginator>
 </div>
 
 <p-dialog header="Statuswijziging" [(visible)]="displayDialog" [dismissableMask]="true" [modal]="true" [style]="{width: '30vw'}" (onHide)="resetDialog()">
