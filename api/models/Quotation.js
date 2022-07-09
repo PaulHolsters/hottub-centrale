@@ -81,8 +81,10 @@ const quotationSchema = new mongoose.Schema({
     VAT: {type: Number, required: true, min: 0, default: 21},
     discount: {type: Number, required: true, min: 0, max:100, default: 0},
     creationDate: {type:Date},
-    sendDate: {type:[String]}
+    sendDate: {type:[String]},
+    quotationNumber: {type:Number,min:1}
 }, {})
+
 
 const quotationSpecificationSchema = new mongoose.Schema({
     name: {
@@ -214,6 +216,10 @@ quotationSchema.pre('save',async function (next) {
     if(!this.groupId){
         // this is a new quotation which needs a fresh groupId and a version number of 1 - which is the default
         this.groupId = new mongoose.Types.ObjectId()
+        const quotations = await quotationModel.find({}, {quotationNumber: 1}).exec()
+        this.quotationNumber = quotations.length === 0 ? 1 : quotations.map(q => {
+            return q.quotationNumber || 1
+        }).reduce((q, r) => (q > r) ? q : r) + 1
     } else{
         // the request concerns a new version of an existing quotation
         // which means a correct version number has to be set
@@ -225,12 +231,11 @@ quotationSchema.pre('save',async function (next) {
         // hier zoek je de eerste versie terug op in het speciale geval
         const quotation = await quotationModel.findById({_id:prevId.toString()}, {__v: 0}).exec()
 
-        if(quotation && quotation.version!==undefined && quotation.groupId.toString()===this.groupId.toString()){
+        if(quotation && quotation.version!==undefined && quotation.groupId.toString()===this.groupId.toString() && quotation.quotationNumber !== undefined){
             // hier geraak je normaal altijd in
+            this.quotationNumber = quotation.quotationNumber + 1
             const quots = await quotationModel.find({},{version:1}).where({groupId:this.groupId}).exec()
             // alle offertes met die groupId (= ook groupId van de nieuw aan te maken) zitten hierin
-
-            // todo aanpassen indien je een nieuwe versie aanmaakt gebaseerd op een willekeurig eerdere versie
             let versionNumber = 0
             quots.forEach(quot=>{
                 // hier wordt je error getriggered omdat er inderdaad zulke offertes nu kunnen bestaan

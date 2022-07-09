@@ -56,6 +56,7 @@ import { QuotationDetailComponent } from './quotations/quotation-detail/quotatio
 import {BreadcrumbModule} from "primeng/breadcrumb";
 import {BreadcrumbStorageService} from "./services/breadcrumb.storage.service";
 import {PaginatorModule} from "primeng/paginator";
+import {SharedFunctionService} from "./services/shared-functions.service";
 
 const appRoutes: Routes = [
   {path: 'producten', component: ProductsComponent},
@@ -125,7 +126,8 @@ const appRoutes: Routes = [
         PaginatorModule
     ],
   exports: [BrowserAnimationsModule],
-  providers: [DataService,ProductStorageService,QuotationStorageService,BrowserAnimationsModule,MessageService,ConfirmationService, BreadcrumbStorageService],
+  providers: [DataService,ProductStorageService,QuotationStorageService,BrowserAnimationsModule,MessageService,
+      ConfirmationService, BreadcrumbStorageService,SharedFunctionService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

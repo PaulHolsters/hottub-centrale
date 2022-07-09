@@ -100,11 +100,24 @@ router.get('/action/:id', async (req, res, next) => {
             res.setHeader('Content-Disposition','attachment; filename = "offerte_"'+ doc?.quotationValues.productName +'"')
             const pdfDoc = new PDFDocument()
             pdfDoc.pipe(res)
-            // create pdf
-            pdfDoc.text(doc?.quotationValues.productName)
-            // todo finish the quotation pdf
-            pdfDoc.end()
+            // achtergrond
+            pdfDoc.lineWidth(1).lineCap('butt').fillColor('green').rect(23,23,569,745).stroke()
+            let grad = pdfDoc.linearGradient(20,751,575,20)
+            grad.stop(0, 'white').stop(1,'green')
+            pdfDoc.rect(20,20,575,751).lineWidth(2).fillOpacity(0.5).fillAndStroke(grad,"green")
+            // omkadering
 
+            // tekst
+            //pdfDoc.fillOpacity(1).fillColor('black').text(doc?.quotationValues.productName,100, 100)
+            pdfDoc.fontSize(9)
+            pdfDoc.fillOpacity(1).fillColor('black').text('ORDERDATUM',50,240,{width:170,align: 'left'})
+                .text('ORDERNUMMER',220,240,{width:170,align: 'left'})
+                .text('CONTACT',390,240,{width:170,align: 'left'})
+            const strDate = Intl.DateTimeFormat('en-GB').format(doc?.creationDate)
+            pdfDoc.text(strDate,50,260,{width:170,align: 'left'})
+                .text(doc?.quotationNumber,220,260,{width:170,align: 'left'})
+                .text('Tom Verheyden - 0470/41.11.07',390,260,{width:170,align: 'left'})
+            pdfDoc.end()
         })
     } else if(action==='mail'){
         const quotationId = req.params.id

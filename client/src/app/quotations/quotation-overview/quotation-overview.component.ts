@@ -55,11 +55,6 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
   }
 
   paginate(event:any){
-    // which page
-    // number of total records
-    // which records to show?
-    // todo splits quotations op in chunks
-    // de bedoeling is hier dat er geen call gedaan wordt
     if(event.first+event.rows>=this.quotationsAll.length){
       this.quotations = this.quotationsAll.slice(event.first)
     } else{

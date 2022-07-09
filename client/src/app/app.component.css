@@ -1,7 +1,13 @@
-#header img:hover{
+#header img:hover {
   cursor: pointer;
+  position: absolute;
+  top:-5px;
 }
 
+#header img {
+  position: absolute;
+  top:-5px;
+}
 
 
 
