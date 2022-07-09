@@ -116,7 +116,7 @@ router.get('/action/:id', async (req, res, next) => {
             const strDate = Intl.DateTimeFormat('en-GB').format(doc?.creationDate)
             pdfDoc.text(strDate,50,260,{width:170,align: 'left'})
                 .text(doc?.quotationNumber,220,260,{width:170,align: 'left'})
-                .text('Tom Verheyden - 0470/41.11.07',390,260,{width:170,align: 'left'})
+                .text(`${process.env.contact}`,390,260,{width:170,align: 'left'})
             pdfDoc.end()
         })
     } else if(action==='mail'){
