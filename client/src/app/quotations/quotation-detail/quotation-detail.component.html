@@ -1,10 +1,10 @@
 <div class="grid" style="overflow-y: auto; overflow-x:hidden; height: 100%;">
-    <div class="grid col-12 ml-0" style="height:90%; overflow:auto">
+    <div class="grid col-12 ml-0" style="height:88%; overflow:auto">
     <p-card class="col-12 ml-0 mb-1" header="Klantgegevens">
         <ul>
             <li>
                 <div class="grid">
-                    <div class="col-2">
+                    <div class="col-3">
                         <label class="label">Naam klant</label>
                     </div>
                     <div *ngIf="quotation.customerInfo.firstName||quotation.customerInfo.lastName" class="col">
@@ -18,7 +18,7 @@
             </li>
             <li>
                 <div class="grid">
-                    <div class="col-2">
+                    <div class="col-3">
                         <label class="label">E-mail klant</label>
                     </div>
                     <div *ngIf="quotation.customerInfo.email" class="col">
@@ -31,7 +31,7 @@
             </li>
             <li *ngIf="quotation.customerInfo.phoneNumber">
                 <div class="grid">
-                    <div class="col-2">
+                    <div class="col-3">
                         <label class="label">Telefoonnummer / GSM klant</label>
                     </div>
                     <div *ngIf="quotation.customerInfo.phoneNumber" class="col">
@@ -41,7 +41,7 @@
             </li>
             <li *ngIf="quotation.address">
                 <div class="grid">
-                    <div class="col-2">
+                    <div class="col-3">
                         <label class="label">Adres klant</label>
                     </div>
                     <div *ngIf="quotation.address" class="col">
@@ -57,7 +57,7 @@
         <ul>
             <li>
                 <div class="grid">
-                    <div class="col-2">
+                    <div class="col-3">
                         <label class="label">Aangemaakt op</label>
                     </div>
                     <div *ngIf="quotation.creationDateStr" class="col">
@@ -70,13 +70,16 @@
             </li>
             <li>
                 <div class="grid">
-                    <div class="col-2">
+                    <div class="col-3">
                         <label class="label">Verstuurd op</label>
                     </div>
-                    <div *ngIf="quotation.sendDateStr" class="col">
+                    <div *ngIf="quotation.sendDateStr && quotation.sendDateStr.length > 0" class="col">
                         <div class="mb-1" *ngFor="let date of quotation.sendDateStr">
                             {{date}}
                         </div>
+                    </div>
+                    <div *ngIf="quotation.sendDateStr && quotation.sendDateStr.length === 0" class="col">
+                        Nog niet verstuurd
                     </div>
                     <div *ngIf="!quotation.sendDate" class="col">
                         Offerte wordt geladen...
@@ -85,7 +88,7 @@
             </li>
             <li>
                 <div class="grid">
-                    <div class="col-4">
+                    <div class="col-3">
                         <label class="label">Product</label>
                     </div>
                     <div *ngIf="quotation.product" class="col">
@@ -93,10 +96,29 @@
                     </div>
                 </div>
             </li>
-            todo LT + voorschot
             <li>
                 <div class="grid">
-                    <div class="col-4">
+                    <div class="col-3">
+                        <label class="label">Leveringstermijn</label>
+                    </div>
+                    <div *ngIf="quotation.deliveryTime" class="col">
+                        {{quotation.deliveryTime}}
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="grid">
+                    <div class="col-3">
+                        <label class="label">Voorschot</label>
+                    </div>
+                    <div class="col">
+                        {{quotation.deposit}}%
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="grid">
+                    <div class="col-3">
                         <label class="label">Korting</label>
                     </div>
                     <div class="col">
@@ -106,7 +128,7 @@
             </li>
             <li>
                 <div class="grid">
-                    <div class="col-4">
+                    <div class="col-3">
                         <label class="label">BTW</label>
                     </div>
                     <div class="col">
@@ -116,7 +138,7 @@
             </li>
             <li>
                 <div class="grid">
-                    <div class="col-4">
+                    <div class="col-3">
                         <label class="label">Totaal zonder opties excl.BTW</label>
                     </div>
                     <div class="col">
@@ -126,7 +148,7 @@
             </li>
             <li>
                 <div class="grid">
-                    <div class="col-4">
+                    <div class="col-3">
                         <label class="label">Totaal mét opties excl.BTW</label>
                     </div>
                     <div class="col">
@@ -136,7 +158,7 @@
             </li>
             <li>
                 <div class="grid">
-                    <div class="col-4">
+                    <div class="col-3">
                         <label class="label">Totaal mét opties incl.BTW</label>
                     </div>
                     <div class="col">
@@ -192,8 +214,8 @@
         <p-divider class="col-12 grid p-0 mt-0 mb-2 ml-0"></p-divider>
         <div class="col-12 ml-1 grid p-0 mt-2 mb-2">
             <div class="grid ml-0 col-12 p-0 d-flex justify-content-end">
-    <span class="p-buttonset m-0 mr-1">
-                <button (click)="previous()" pButton type="button" label="Vorige" class="p-button-outlined"
+    <span class="p-buttonset m-0 mr-3">
+                <button (click)="close()" pButton type="button" label="Sluiten" class="p-button-outlined"
                         icon="pi pi-times"></button>
     </span>
             </div>

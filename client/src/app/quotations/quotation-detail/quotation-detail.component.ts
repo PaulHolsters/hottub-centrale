@@ -34,7 +34,7 @@ export class QuotationDetailComponent implements OnInit {
       const product = new ProductModel(res.quotationValues.productName,res.quotationValues.productCat,res.quotationValues.productPrice,
           res.quotationValues.productSpecifications,res.quotationValues.optionValues,res.productId)
       this.quotation = new QuotationModel(res.version,product,res.selectedOptions,res.quotationValues.quotationSpecificationValues,
-          res.customerInfo,res.VAT,res.discount,res.sendDate,res.sendDateStr,res.creationDate,res.creationDateStr,res.address,res.deposit,res._id)
+          res.customerInfo,res.VAT,res.discount,res.sendDate,res.sendDateStr,res.creationDate,res.creationDateStr,res.address,res.deposit,res.deliveryTime,res._id)
       this.dataService.getOptions().subscribe(options=>{
         this.selectedOptions = options.filter(opt=>{
           return this.quotation.options.includes(opt._id||'')
@@ -52,28 +52,37 @@ export class QuotationDetailComponent implements OnInit {
   }
 
   totalPrice(options:boolean,vat:boolean):number{
+    // todo fix want korting zit er nog niet in
     if(options && vat){
       let optionsPrice = 0
       if(this.selectedOptions){
         optionsPrice = this.selectedOptions.map(opt=>opt.price||0).reduce((x,y)=>( x + y),0)
       }
-      return ((this.quotation.product?.price || 0) + optionsPrice) + ((this.quotation.product?.price || 0) + optionsPrice)
+      const basePrice = (this.quotation.product?.price || 0) + optionsPrice
+      const discount = (this.quotation.discount/100)*basePrice
+      return (basePrice-discount) + (basePrice-discount)
           * (this.quotation.VAT/100)
     } else if(vat){
-      return ((this.quotation.product?.price || 0)) + ((this.quotation.product?.price || 0))
+      const basePrice = (this.quotation.product?.price || 0)
+      const discount = (this.quotation.discount/100)*basePrice
+      return (basePrice-discount) + (basePrice-discount)
           * (this.quotation.VAT/100)
     } else if(options){
       let optionsPrice = 0
       if(this.selectedOptions){
         optionsPrice = this.selectedOptions.map(opt=>opt.price||0).reduce((x,y)=>(x+y),0)
       }
-      return ((this.quotation.product?.price || 0) + optionsPrice)
+      const basePrice = (this.quotation.product?.price || 0) + optionsPrice
+      const discount = (this.quotation.discount/100)*basePrice
+      return (basePrice-discount)
     } else{
-      return (this.quotation.product?.price || 0)
+      const basePrice = (this.quotation.product?.price || 0)
+      const discount = (this.quotation.discount/100)*basePrice
+      return (basePrice-discount)
     }
   }
 
-  previous(){
+  close(){
     this.router.navigate(['offertes/overzicht'])
   }
 
