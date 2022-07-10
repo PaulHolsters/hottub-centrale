@@ -10,12 +10,33 @@
   </div>
   <div class="formField col-10 grid  col-offset-1 ">
     <div class="col-fixed" style="width: 10rem;">
+      <label class="label">Leveringstermijn</label>
+    </div>
+    <div class="col">
+        <input pInputText id="deliveryTime" type="text" value="8 à 10 weken"
+               [(ngModel)]="quotation.deliveryTime" name="deliveryTime">
+      </div>
+  </div>
+  <div class="formField col-10 grid  col-offset-1 ">
+    <div class="col-fixed" style="width: 10rem;">
       <label class="label">Korting</label>
     </div>
     <div>
       <div class="p-inputgroup col">
         <input pInputText id="discount" type="number" min="0" max="100"
-               [(ngModel)]="quotation.discount" name="discount" #discount>
+               [(ngModel)]="quotation.discount" name="discount">
+        <span class="p-inputgroup-addon">%</span>
+      </div>
+    </div>
+  </div>
+  <div class="formField col-10 grid  col-offset-1 ">
+    <div class="col-fixed" style="width: 10rem;">
+      <label class="label">Voorschot</label>
+    </div>
+    <div>
+      <div class="p-inputgroup col">
+        <input pInputText id="deposit" type="number" min="0" max="100" value="50"
+               [(ngModel)]="quotation.deposit" name="deposit">
         <span class="p-inputgroup-addon">%</span>
       </div>
     </div>

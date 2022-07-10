@@ -4,7 +4,7 @@
       <label for="firstName" class="label">Voornaam</label>
     </div>
     <div class="col">
-      <input id="firstName" name="firstName" type="text" pInputText [(ngModel)]="quotation.customerInfo.firstName" #name>
+      <input id="firstName" name="firstName" type="text" pInputText [(ngModel)]="quotation.customerInfo.firstName">
     </div>
   </div>
   <div class="formField col-10 col-offset-1 grid">
@@ -12,7 +12,7 @@
       <label for="lastName" class="label">Achternaam</label>
     </div>
     <div class="col">
-      <input id="lastName" name="lastName" type="text" pInputText [(ngModel)]="quotation.customerInfo.lastName" #name>
+      <input id="lastName" name="lastName" type="text" pInputText [(ngModel)]="quotation.customerInfo.lastName">
     </div>
   </div>
   <div class="formField col-10 col-offset-1 grid">
@@ -20,7 +20,56 @@
       <label for="email" class="label">E-mail</label>
     </div>
     <div class="col">
-      <input id="email" name="email" type="email" pInputText [(ngModel)]="quotation.customerInfo.email" #name>
+      <input id="email" name="email" type="email" pInputText [(ngModel)]="quotation.customerInfo.email">
+    </div>
+  </div>
+  <div class="formField col-10 col-offset-1 grid">
+    <div class="col-fixed" style="width: 10rem;">
+      <label for="phoneNumber" class="label">Telefoonnummer/GSM</label>
+    </div>
+    <div class="col">
+      <input id="phoneNumber" name="phoneNumber" type="text" pInputText [(ngModel)]="quotation.customerInfo.phoneNumber">
+    </div>
+  </div>
+  <div class="formField col-10 col-offset-1 grid">
+    <div class="col-fixed" style="width: 10rem;">
+      <label for="street" class="label">Straat</label>
+    </div>
+    <div class="col">
+      <input id="street" name="street" type="text" pInputText [(ngModel)]="quotation.customerInfo.street">
+    </div>
+  </div>
+  <div class="formField col-10 col-offset-1 grid">
+    <div class="col-fixed" style="width: 10rem;">
+      <label for="houseNumber" class="label">Huisnummer</label>
+    </div>
+    <div class="col">
+      <input id="houseNumber" name="houseNumber" type="text" pInputText [(ngModel)]="quotation.customerInfo.houseNumber">
+    </div>
+  </div>
+  <div class="formField col-10 col-offset-1 grid">
+    <div class="col-fixed" style="width: 10rem;">
+      <label for="postalCode" class="label">Postcode</label>
+    </div>
+    <div class="col">
+      <input id="postalCode" name="postalCode" type="text" pInputText [(ngModel)]="quotation.customerInfo.postalCode">
+    </div>
+  </div>
+  <div class="formField col-10 col-offset-1 grid">
+    <div class="col-fixed" style="width: 10rem;">
+      <label for="city" class="label">Gemeente</label>
+    </div>
+    <div class="col">
+      <input id="city" name="city" type="text" pInputText [(ngModel)]="quotation.customerInfo.city">
+    </div>
+  </div>
+  <div class="formField col-10 col-offset-1 grid">
+    <div class="col-fixed" style="width: 10rem;">
+      <label for="country" class="label">Land</label>
+    </div>
+    <div class="col">
+      <input id="country" name="country" type="text" pInputText [(ngModel)]="quotation.customerInfo.country">
     </div>
   </div>
 </form>
+

@@ -7,11 +7,17 @@ export class QuotationModel {
               public product: ProductModel | undefined,
               public options: string[],
               public quotationSpecifications: QuotationSpecificationModel[],
-              public customerInfo: { firstName: string | undefined; lastName: string | undefined; email: string | undefined },
+              public customerInfo: { firstName: string | undefined; lastName: string | undefined; email: string | undefined; phoneNumber: string | undefined;
+    street: string | undefined; houseNumber: string|undefined; postalCode: string | undefined; city: string | undefined; country: string | undefined},
               public VAT: number,
               public discount: number,
-              public sendDate:string[] | undefined,
+              public sendDate:Date[] | undefined,
+              public sendDateStr: string[]|undefined,
               public creationDate: Date | undefined,
+              public creationDateStr: string |undefined,
+              public address: string | undefined,
+              public deposit: number | undefined,
+              public deliveryTime: string | undefined,
               public status?:string,
               public _id?: string) {
   }

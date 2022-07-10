@@ -8,11 +8,12 @@ import {OptionModel} from "../models/product/option.model";
 import {QuotationSpecificationModel} from "../models/quotation/quotation-specification.model";
 import {QuotationModel} from "../models/quotation/quotation.model";
 import {QuotationGetModel} from "../models/quotation/quotation.get.model";
+import {SharedFunctionService} from "./shared-functions.service";
 
 @Injectable()
 export class DataService {
 
-    constructor(private http: HttpClient) {
+    constructor(private http: HttpClient,private sharedFunctions: SharedFunctionService) {
     }
 
     getProducts(): Observable<ProductModel[]> {
@@ -36,11 +37,18 @@ export class DataService {
             })
             latestVersionQuotations.forEach(q => {
                 q.customer = q.customerInfo.firstName + ' ' + q.customerInfo.lastName
+                q.address = q.customerInfo.street + ' ' + q.customerInfo.houseNumber + '\n'
+                    + q.customerInfo.postalCode + ' ' + q.customerInfo.city + '\n' + q.customerInfo.country
                 q.totalPrice = this.totalPrice(q._id, result.quotations)
                 q.previousVersions = result.quotations.filter(quot => {
                     return (quot.groupId === q.groupId && q._id !== quot._id)
                 }).map(filteredQuot => {
-                    return {id:filteredQuot._id,versionString: 'Aangemaakt op ' + filteredQuot.creationDate + ' - versienummer: ' + filteredQuot.version}
+                    return {id:filteredQuot._id,versionString: 'Aangemaakt op ' +
+                            this.sharedFunctions.dateToString(new Date(filteredQuot.creationDate)) + ' - versienummer: ' + filteredQuot.version}
+                })
+                q.creationDateStr = this.sharedFunctions.dateToString(new Date(q.creationDate))
+                q.sendDateStr = q.sendDate?.map(date=>{
+                    return this.sharedFunctions.dateToString(new Date(date))
                 })
             })
             return latestVersionQuotations
@@ -81,6 +89,12 @@ export class DataService {
 
     getQuotation(id: string): Observable<QuotationGetModel> {
         return this.http.get<{ quotation: QuotationGetModel }>('http://localhost:3000/quotations/' + id).pipe(map(result => {
+            result.quotation.address = result.quotation.customerInfo.street + " " + result.quotation.customerInfo.houseNumber + "\n"
+                + result.quotation.customerInfo.postalCode + " " + result.quotation.customerInfo.city + "\n" + result.quotation.customerInfo.country
+            result.quotation.creationDateStr = this.sharedFunctions.dateToString(new Date(result.quotation.creationDate))
+            result.quotation.sendDateStr = result.quotation.sendDate?.map(date=>{
+                return this.sharedFunctions.dateToString(new Date(date))
+            })
             return result.quotation
         }))
     }
@@ -168,7 +182,6 @@ export class DataService {
         return this.http.get('http://localhost:3000/quotations/action/' + id + '?action=pdf', {
             responseType: "blob"
         }).pipe(map((res) => {
-            console.log(res)
             return res
         }), catchError(err => {
             return throwError(err)

@@ -37,13 +37,25 @@ export class QuotationStorageService implements OnDestroy{
     this.quotation = new QuotationModel(1, undefined, [], [], {
       firstName: undefined,
       lastName: undefined,
-      email: undefined
-    }, 21, 0, undefined,undefined,undefined)
+      email: undefined,
+      phoneNumber: undefined,
+      street: undefined,
+      houseNumber: undefined,
+      postalCode: undefined,
+      city: undefined,
+      country: undefined
+    }, 21, 0, undefined,undefined,undefined,undefined,undefined,undefined,undefined)
     this.initialQuotation = new QuotationModel(1, undefined, [], [], {
       firstName: undefined,
       lastName: undefined,
-      email: undefined
-    }, 21, 0, undefined,undefined,undefined)
+      email: undefined,
+      phoneNumber: undefined,
+      street: undefined,
+        houseNumber: undefined,
+        postalCode: undefined,
+        city: undefined,
+        country: undefined
+    }, 21, 0, undefined,undefined,undefined,undefined,undefined,undefined,undefined)
   }
 
   ngOnDestroy(): void {
@@ -54,8 +66,14 @@ export class QuotationStorageService implements OnDestroy{
     this.initialQuotation = new QuotationModel(1, undefined, [], [], {
       firstName: undefined,
       lastName: undefined,
-      email: undefined
-    }, 21, 0, undefined,undefined,undefined)
+      email: undefined,
+      phoneNumber: undefined,
+      street: undefined,
+      houseNumber: undefined,
+      postalCode: undefined,
+      city: undefined,
+      country: undefined
+    }, 21, 0, undefined,undefined,undefined,undefined,undefined,undefined,undefined)
   }
 
   setNewStep(newStep: string){
@@ -135,8 +153,7 @@ export class QuotationStorageService implements OnDestroy{
   }
 
   getQuotation():QuotationModel{
-    const quotationCopy = {...this.quotation}
-    return quotationCopy
+    return {...this.quotation}
   }
 
   getQuotationGet():QuotationGetModel|undefined{
@@ -159,8 +176,14 @@ export class QuotationStorageService implements OnDestroy{
     this.quotation = new QuotationModel(1, undefined, [], [], {
       firstName: undefined,
       lastName: undefined,
-      email: undefined
-    }, 21, 0, undefined,undefined,undefined)
+      email: undefined,
+      phoneNumber: undefined,
+      street: undefined,
+      houseNumber: undefined,
+      postalCode: undefined,
+      city: undefined,
+      country: undefined
+    }, 21, 0, undefined,undefined,undefined,undefined,undefined,undefined,undefined)
   }
 
   resetQuotationGet(){

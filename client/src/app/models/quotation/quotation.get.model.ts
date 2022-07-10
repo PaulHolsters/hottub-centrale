@@ -10,7 +10,8 @@ export class QuotationGetModel {
         public version: number,
         public VAT: number,
         public discount: number,
-        public customerInfo: { firstName: string; lastName: string; email: string },
+        public customerInfo: { firstName: string; lastName: string; email: string; phoneNumber: string | undefined;
+            street: string | undefined; houseNumber: string|undefined; postalCode: string | undefined; city: string | undefined; country: string | undefined},
         public productId: string,
         public selectedOptions: string[],
         public selectedQuotationSpecifications: string[],
@@ -25,8 +26,13 @@ export class QuotationGetModel {
         },
         public _id: string,
         public creationDate: Date,
-        public sendDate: string[]|undefined,
+        public creationDateStr: string,
+        public sendDate: Date[]|undefined,
+        public sendDateStr: string[]|undefined,
         public customer: string,
+        public address:string,
+        public deposit: number | undefined,
+        public deliveryTime: string | undefined,
         public totalPrice: number | undefined
     ) {
     }

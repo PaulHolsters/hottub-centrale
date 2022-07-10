@@ -12,6 +12,10 @@ const quotationSchema = new mongoose.Schema({
     selectedOptions: {type: [{type: mongoose.Schema.Types.ObjectId, ref: 'Option'}]},
     selectedQuotationSpecifications: {type: [{type: mongoose.Schema.Types.ObjectId, ref: 'QuotationSpecification'}]},
     status: {type: String,enum:['aangemaakt','aangepast','verstuurd','goedgekeurd','aan te passen','geannuleerd']},
+    deliveryTime: {
+        type:String,required:true,default:'8 à 10 weken',minlength:6
+    },
+    deposit:{type:Number,required:true,min:0,max:100,default:50},
     customerInfo: {type:new mongoose.Schema({
             email:String,
             firstName:{
@@ -25,7 +29,40 @@ const quotationSchema = new mongoose.Schema({
                 required: true,
                 minLength: [2, 'Een achternaam moet minimaal 2 letters hebben.'],
                 trim: true
-            }}),required:true},
+            },
+            phoneNumber:{
+                type: String,
+                minLength: [2, 'Een telefoonnummer/GSM moet minimaal 9 karakters bevatten.'],
+                trim: true
+            },
+            street:{
+                type: String,
+                minLength: [2, 'Een straat moet minimaal 2 letters hebben.'],
+                trim: true
+            },
+            houseNumber:{
+                type: String,
+                minLength: [1, 'Een huisnummer moet minimaal 1 letter hebben.'],
+                trim: true
+            },
+            postalCode:{
+                type: String,
+                minLength: [2, 'Een postcode moet minimaal 2 letters hebben.'],
+                trim: true
+            },
+            city:{
+                type: String,
+                minLength: [2, 'Een gemeente moet minimaal 2 letters hebben.'],
+                trim: true
+            },
+            country:{
+                type: String,
+                required: true,
+                minLength: [2, 'Een land moet minimaal 2 letters hebben.'],
+                trim: true,
+                default: 'België'
+            },
+        }),required:true},
     quotationValues: {
         type: {
             productName: {
@@ -81,7 +118,7 @@ const quotationSchema = new mongoose.Schema({
     VAT: {type: Number, required: true, min: 0, default: 21},
     discount: {type: Number, required: true, min: 0, max:100, default: 0},
     creationDate: {type:Date},
-    sendDate: {type:[String]},
+    sendDate: {type:[Date]},
     quotationNumber: {type:Number,min:1}
 }, {})
 
@@ -194,6 +231,12 @@ quotationSchema.path('quotationValues.quotationSpecificationsValues.price').vali
 quotationSpecificationSchema.path('price').validate(function (propValue) {
     return Math.trunc(propValue) === propValue
 })
+
+// natural numbers
+quotationSchema.path('deposit').validate(function(propValue){
+    return Math.trunc(propValue) === propValue
+})
+
 // name must be unique, you may assume propValue is different from its original value
 quotationSpecificationSchema.path('name').validate(async function (propValue) {
     const arr = await quotationSpecificationModel.find({}, {name: 1}).exec()

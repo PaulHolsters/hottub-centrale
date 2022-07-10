@@ -5,6 +5,7 @@ import {Injectable} from "@angular/core";
 export class SharedFunctionService{
 
     dateToString(date:Date):string{
+        console.log(date,typeof date)
         return Intl.DateTimeFormat('en-GB').format(date)
     }
 

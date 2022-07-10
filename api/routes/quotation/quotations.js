@@ -56,7 +56,6 @@ router.put('/:groupId/:previous', check('customerInfo.email').isEmail() ,async (
         VAT: req.body.VAT,
         discount: req.body.discount
     })
-    console.log(newQuotation)
     newQuotation.save().then(result => {
         res.status(201).json(
             {quotation:result}
