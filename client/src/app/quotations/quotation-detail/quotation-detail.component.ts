@@ -52,7 +52,6 @@ export class QuotationDetailComponent implements OnInit {
   }
 
   totalPrice(options:boolean,vat:boolean):number{
-    // todo fix want korting zit er nog niet in
     if(options && vat){
       let optionsPrice = 0
       if(this.selectedOptions){

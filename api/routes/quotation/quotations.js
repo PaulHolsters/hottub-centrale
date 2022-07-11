@@ -99,7 +99,50 @@ router.get('/action/:id', async (req, res, next) => {
             res.setHeader('Content-Disposition','attachment; filename = "offerte_"'+ doc?.quotationValues.productName +'"')
             const pdfDoc = new PDFDocument()
             pdfDoc.pipe(res)
-            // achtergrond
+            //pdfDoc.fillOpacity(1).fillColor('black').text(doc?.quotationValues.productName,100, 100)
+
+            // achtergrond + omkadering
+            pdfDoc.lineWidth(1).lineCap('butt').fillColor('green').rect(23,23,569,745).stroke()
+            let grad = pdfDoc.linearGradient(20,751,575,20)
+            grad.stop(0, 'white').stop(1,'green')
+            pdfDoc.rect(20,20,575,751).lineWidth(2).fillOpacity(0.5).fillAndStroke(grad,"green")
+
+            // header-tabel
+            pdfDoc.rect(40,230,180,26).lineWidth(1).fillOpacity(1).fillAndStroke('green','grey')
+                .rect(220,230,180,26).lineWidth(1).fillOpacity(1).fillAndStroke()
+                .rect(400,230,180,26).lineWidth(1).fillOpacity(1).fillAndStroke()
+            pdfDoc.rect(40,256,180,20).lineWidth(1).fillOpacity(1).stroke('grey')
+                .rect(220,256,180,20).lineWidth(1).fillOpacity(1).stroke()
+                .rect(400,256,180,20).lineWidth(1).fillOpacity(1).stroke()
+            pdfDoc.fontSize(9)
+            pdfDoc.fillOpacity(1).fillColor('black').text('ORDERDATUM',50,240,{width:170,align: 'left'})
+                .text('ORDERNUMMER',230,240,{width:170,align: 'left'})
+                .text('CONTACT',410,240,{width:170,align: 'left'})
+            const strDate = Intl.DateTimeFormat('en-GB').format(doc?.creationDate)
+            pdfDoc.text(strDate,50,264,{width:170,align: 'left'})
+                .text(doc?.quotationNumber,230,264,{width:170,align: 'left'})
+                .text(`${process.env.contact}`,410,264,{width:170,align: 'left'})
+
+            // content-tabel
+            //header
+            pdfDoc.rect(40,290,90,26).lineWidth(1).fillOpacity(1).fillAndStroke('green','grey')
+                .rect(130,290,360,26).lineWidth(1).fillOpacity(1).fillAndStroke()
+                .rect(490,290,90,26).lineWidth(1).fillOpacity(1).fillAndStroke()
+            pdfDoc.fillOpacity(1).fillColor('black').text('ARTIKELNR.',50,300,{width:80,align: 'left'})
+                .text('OMSCHRIJVING',140,300,{width:340,align: 'left'})
+                .text('PRIJS',500,300,{width:80,align: 'left'})
+            //content
+
+            pdfDoc.end()
+        })
+    } else if(action==='mail'){
+        const quotationId = req.params.id
+        Schema.quotationModel.findById({_id:quotationId},{__v:0}).exec().then(doc=>{
+            if(doc?.status!=='aangemaakt' && doc?.status!=='aangepast' && doc?.status!=='aan te passen' ){
+                throw new Error('Enkel offertes met status \'aangemaakt\', \'aangepast\' of \'aan te passen\' kunnen verstuurd worden.')
+            }
+            const pdfDoc = new PDFDocument()
+            // todo finish the quotation pdf
             pdfDoc.lineWidth(1).lineCap('butt').fillColor('green').rect(23,23,569,745).stroke()
             let grad = pdfDoc.linearGradient(20,751,575,20)
             grad.stop(0, 'white').stop(1,'green')
@@ -116,17 +159,6 @@ router.get('/action/:id', async (req, res, next) => {
             pdfDoc.text(strDate,50,260,{width:170,align: 'left'})
                 .text(doc?.quotationNumber,220,260,{width:170,align: 'left'})
                 .text(`${process.env.contact}`,390,260,{width:170,align: 'left'})
-            pdfDoc.end()
-        })
-    } else if(action==='mail'){
-        const quotationId = req.params.id
-        Schema.quotationModel.findById({_id:quotationId},{__v:0}).exec().then(doc=>{
-            if(doc?.status!=='aangemaakt' && doc?.status!=='aangepast' && doc?.status!=='aan te passen' ){
-                throw new Error('Enkel offertes met status \'aangemaakt\', \'aangepast\' of \'aan te passen\' kunnen verstuurd worden.')
-            }
-            const pdfDoc = new PDFDocument()
-            // todo finish the quotation pdf
-            pdfDoc.text(doc?.quotationValues.productName)
             pdfDoc.end()
             const sendEmail = async options =>{
 /*                const transporter = nodemailer.createTransport({
@@ -148,6 +180,7 @@ router.get('/action/:id', async (req, res, next) => {
                     text: options.message,
                     attachments: options.attachments
                 }
+                // todo fix bug: sendDate is onterecht gewijzigd (moet terug string worden in frontend
                 await transporter.sendMail(mailOptions).then(
                     ()=>{
                         Schema.quotationModel.findOne({_id:quotationId}).then(quot=>{
