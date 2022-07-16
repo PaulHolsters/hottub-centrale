@@ -118,43 +118,42 @@ router.get('/action/:id', async (req, res, next) => {
             let height = pdfDoc.currentLineHeight()
             pdfDoc.underline(25, 151, width, height, {color: '#85823a'})
             pdfDoc.link(25, 150, width, height,'mailto:info@hottub-centrale.be')
-            pdfDoc.fillOpacity(1).fillColor('black').text('FACTUUR NAAR:', 360, 90)
-                .text(doc?.customerInfo.firstName + ' ' + doc?.customerInfo.lastName,450,90)
-                .text(doc?.customerInfo.street + ' ' + doc?.customerInfo.houseNumber,450,105)
-                .text(doc?.customerInfo.postalCode + ' ' + doc?.customerInfo.city,450,120)
-                .text(doc?.customerInfo.phoneNumber,450,135)
-            pdfDoc.fillOpacity(1).fillColor('#85823a').text(doc?.customerInfo.email,450,150, {width: 200, align: 'left'})
+            pdfDoc.fillOpacity(1).fillColor('black').text('FACTUUR NAAR:', 310, 90)
+                .text(doc?.customerInfo.firstName + ' ' + doc?.customerInfo.lastName,400,90)
+                .text(doc?.customerInfo.street + ' ' + doc?.customerInfo.houseNumber,400,105)
+                .text(doc?.customerInfo.postalCode + ' ' + doc?.customerInfo.city,400,120)
+                .text(doc?.customerInfo.phoneNumber,400,135)
+            pdfDoc.fillOpacity(1).fillColor('#85823a').text(doc?.customerInfo.email,400,150, {width: 200, align: 'left'})
             width = pdfDoc.widthOfString(doc?.customerInfo.email)
             height = pdfDoc.currentLineHeight()
-            pdfDoc.underline(450,151, width, height, {color: '#85823a'})
-            pdfDoc.link(450,150, width, height,'mailto:'+doc?.customerInfo.email)
+            pdfDoc.underline(400,151, width, height, {color: '#85823a'})
+            pdfDoc.link(400,150, width, height,'mailto:'+doc?.customerInfo.email)
             // eerste kadertje
-
+            pdfDoc.rect(25, 190, 180, 26).lineWidth(1).fillOpacity(1).fillAndStroke('#4c8145', 'grey')
+                .rect(205, 190, 180, 26).lineWidth(1).fillOpacity(1).fillAndStroke()
+                .rect(385, 190, 180, 26).lineWidth(1).fillOpacity(1).fillAndStroke()
+            pdfDoc.rect(25, 216, 180, 20).lineWidth(1).fillOpacity(1).stroke('grey')
+                .rect(205, 216, 180, 20).lineWidth(1).fillOpacity(1).stroke()
+                .rect(385, 216, 180, 20).lineWidth(1).fillOpacity(1).stroke()
+            pdfDoc.fontSize(9)
+            pdfDoc.fillOpacity(1).fillColor('black').text('ORDERDATUM', 35, 200, {width: 170, align: 'left'})
+                .text('ORDERNUMMER', 215, 200, {width: 170, align: 'left'})
+                .text('CONTACT', 395, 200, {width: 170, align: 'left'})
+            const strDate = Intl.DateTimeFormat('en-GB').format(doc?.creationDate)
+            pdfDoc.text(strDate, 35, 224, {width: 170, align: 'left'})
+                .text(doc?.quotationNumber, 215, 224, {width: 170, align: 'left'})
+                .text(`${process.env.contact}`, 395, 224, {width: 170, align: 'left'})
             // per pagina:
+
             // header content
 
             // footer
 
-            let linecount = 0
+/*            let linecount = 0
             // achtergrond + omkadering
 
             const moveUp = 10
             // header-tabel
-            pdfDoc.rect(40, 230-moveUp, 180, 26).lineWidth(1).fillOpacity(1).fillAndStroke('#4c8145', 'grey')
-                .rect(220, 230-moveUp, 180, 26).lineWidth(1).fillOpacity(1).fillAndStroke()
-                .rect(400, 230-moveUp, 180, 26).lineWidth(1).fillOpacity(1).fillAndStroke()
-            pdfDoc.rect(40, 256-moveUp, 180, 20).lineWidth(1).fillOpacity(1).stroke('grey')
-                .rect(220, 256-moveUp, 180, 20).lineWidth(1).fillOpacity(1).stroke()
-                .rect(400, 256-moveUp, 180, 20).lineWidth(1).fillOpacity(1).stroke()
-            pdfDoc.fontSize(9)
-            pdfDoc.fillOpacity(1).fillColor('black').text('ORDERDATUM', 50, 240-moveUp, {width: 170, align: 'left'})
-                .text('ORDERNUMMER', 230, 240-moveUp, {width: 170, align: 'left'})
-                .text('CONTACT', 410, 240-moveUp, {width: 170, align: 'left'})
-            const strDate = Intl.DateTimeFormat('en-GB').format(doc?.creationDate)
-            pdfDoc.text(strDate, 50, 264-moveUp, {width: 170, align: 'left'})
-                .text(doc?.quotationNumber, 230, 264-moveUp, {width: 170, align: 'left'})
-                .text(`${process.env.contact}`, 410, 264-moveUp, {width: 170, align: 'left'})
-
             // content-tabel
             //header
             pdfDoc.rect(40, 290-moveUp, 90, 26).lineWidth(1).fillOpacity(1).fillAndStroke('#4c8145', 'grey')
@@ -261,7 +260,7 @@ router.get('/action/:id', async (req, res, next) => {
                     .rect(130, 336-moveUp + (p + n + 1) * 20, 360, 20).lineWidth(1).fillOpacity(1).stroke()
                     .rect(490, 336-moveUp + (p + n + 1) * 20, 90, 20).lineWidth(1).fillOpacity(1).stroke()
                 linecount++
-            }
+            }*/
             // leveringstermijn
 
             pdfDoc.end()
