@@ -128,7 +128,7 @@ router.get('/action/:id', async (req, res, next) => {
             height = pdfDoc.currentLineHeight()
             pdfDoc.underline(400,151, width, height, {color: '#85823a'})
             pdfDoc.link(400,150, width, height,'mailto:'+doc?.customerInfo.email)
-            // eerste kadertje
+            // eerste header
             pdfDoc.rect(25, 190, 180, 26).lineWidth(1).fillOpacity(1).fillAndStroke('#4c8145', 'grey')
                 .rect(205, 190, 180, 26).lineWidth(1).fillOpacity(1).fillAndStroke()
                 .rect(385, 190, 180, 26).lineWidth(1).fillOpacity(1).fillAndStroke()
@@ -143,11 +143,83 @@ router.get('/action/:id', async (req, res, next) => {
             pdfDoc.text(strDate, 35, 224, {width: 170, align: 'left'})
                 .text(doc?.quotationNumber, 215, 224, {width: 170, align: 'left'})
                 .text(`${process.env.contact}`, 395, 224, {width: 170, align: 'left'})
-            // per pagina:
+            // berekening van het aantal benodigde pagina's
+            let numberOfLines = (doc?.quotationValues.productSpecifications.length + 1 + doc?.quotationValues.optionValues.length
+                + doc?.quotationValues.quotationSpecificationValues.length + 1 + (doc?.discount>0 ? 5 : 4))
+            numberOfLines += (Math.ceil(numberOfLines/20)>1 ? ((Math.ceil(numberOfLines/20)-1)*2)+2:0)
+            const numberOfExtraPages = Math.ceil(numberOfLines/20)-1
+            // content header pagina 1
+            pdfDoc.rect(25, 255, 90, 26).lineWidth(1).fillOpacity(1).fillAndStroke('#4c8145', 'grey')
+                .rect(115, 255, 360, 26).lineWidth(1).fillOpacity(1).fillAndStroke()
+                .rect(475, 255, 90, 26).lineWidth(1).fillOpacity(1).fillAndStroke()
+            pdfDoc.fillOpacity(1).fillColor('black').text('ARTIKELNR.', 35, 265, {width: 80, align: 'left'})
+                .text('OMSCHRIJVING', 125, 265, {width: 340, align: 'left'})
+                .text('PRIJS', 485, 265, {width: 80, align: 'left'})
+            if(numberOfExtraPages===0){
+                for (let i = 0;i<numberOfLines;i++){
+                    pdfDoc.rect(25, 281+i*20, 90, 20).lineWidth(1).fillOpacity(1).stroke('grey')
+                        .rect(115, 281+i*20, 360, 20).lineWidth(1).fillOpacity(1).stroke()
+                        .rect(475, 281+i*20, 90, 20).lineWidth(1).fillOpacity(1).stroke()
+                    if(i===0){
+                        pdfDoc.fillOpacity(1).fillColor('black').text(doc?.quotationValues.productName, 125, 286, {
+                            width: 340,
+                            align: 'left'
+                        })
+                    }
+                }
+            } else {
+                for (let i = 0;i<20;i++){
+                    pdfDoc.rect(25, 281+i*20, 90, 20).lineWidth(1).fillOpacity(1).stroke('grey')
+                        .rect(115, 281+i*20, 360, 20).lineWidth(1).fillOpacity(1).stroke()
+                        .rect(475, 281+i*20, 90, 20).lineWidth(1).fillOpacity(1).stroke()
+                    if(i===19){
+                        pdfDoc.fillOpacity(1).fillColor('black').text('Vervolg bestelling op de volgende pagina', 125, 288+i*20, {
+                            width: 340,
+                            align: 'left'
+                        })
+                    }
+                    else if(i===0){
+                        pdfDoc.fillOpacity(1).fillColor('black').text(doc?.quotationValues.productName, 125, 288, {
+                            width: 340,
+                            align: 'left'
+                        }).text(doc?.quotationValues.productPrice+' €', 485, 288, {
+                            width: 340,
+                            align: 'left'
+                        })
+                    } else if(i<=doc?.quotationValues.productSpecifications.length && i<19){
+                        pdfDoc.fillOpacity(1).fillColor('black').text(doc?.quotationValues.productSpecifications[i-1].name, 125, 288+i*20, {
+                            width: 340,
+                            align: 'left'
+                        })
+                    } else if(i<=doc?.quotationValues.optionValues.length+doc?.quotationValues.productSpecifications.length&& i<19){
+                        pdfDoc.fillOpacity(1).fillColor('black')
+                            .text(doc?.quotationValues.optionValues[i-(doc?.quotationValues.productSpecifications.length)-1].name, 125, 288+i*20, {
+                            width: 340,
+                            align: 'left'
+                        })
+                        const zero = doc?.quotationValues.optionValues[i-(doc?.quotationValues.productSpecifications.length)-1].price === 0
+                        pdfDoc.text(zero ? 'inbegrepen' : doc?.quotationValues.optionValues[i-(doc?.quotationValues.productSpecifications.length)-1].price+' €', 485, 288+i*20, {
+                            width: 340,
+                            align: 'left'
+                        })
+                    }
+                }
+            }
+            const createFooter = function(){
 
+            }
+            const createHeader = function(){
+
+            }
+            const createPageNumber = function (){
+
+            }
+
+            // per pagina:
+            // footer
             // header content
 
-            // footer
+
 
 /*            let linecount = 0
             // achtergrond + omkadering
