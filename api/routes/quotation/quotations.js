@@ -97,17 +97,50 @@ router.get('/action/:id', async (req, res, next) => {
         Schema.quotationModel.findById({_id:quotationId},{__v:0}).exec().then(async doc => {
             res.setHeader('Content-Type', 'application/pdf')
             res.setHeader('Content-Disposition', 'attachment; filename = "offerte_"' + doc?.quotationValues.productName + '"')
-            const pdfDoc = new PDFDocument()
+            const pdfDoc = new PDFDocument({size: 'A4'})
             pdfDoc.pipe(res)
+            // achtergrond + omkadering
+            let grad = pdfDoc.linearGradient(1, 840, 594, 1)
+            grad.stop(0, 'white').stop(1, '#4c8145')
+            pdfDoc.rect(1, 1, 594, 840).lineWidth(2).fillOpacity(0.5).fillAndStroke(grad, "#4c8145")
+            // hoofding
+            pdfDoc.fontSize(36)
+            pdfDoc.fillOpacity(1).fillColor('#3a5835').text('BESTELBON', 25, 25, {width: 400, align: 'left'})
+            pdfDoc.fontSize(9)
+            pdfDoc.fillOpacity(1).fillColor('black').text('Datum: '
+                +Intl.DateTimeFormat('en-GB').format(new Date()), 400, 25, {width: 150, align: 'left'})
+                .text('Vistaline BV',25,90, {width: 400, align: 'left'})
+                .text('Lozenhoek 8',25,105, {width: 400, align: 'left'})
+                .text('2860 Sint-Katelijne-Waver',25,120, {width: 400, align: 'left'})
+                .text('0470/41.11.07',25,135, {width: 400, align: 'left'})
+            pdfDoc.fillOpacity(1).fillColor('#85823a').text('info@hottub-centrale.be',25,150)
+            let width = pdfDoc.widthOfString('info@hottub-centrale.be')
+            let height = pdfDoc.currentLineHeight()
+            pdfDoc.underline(25, 151, width, height, {color: '#85823a'})
+            pdfDoc.link(25, 150, width, height,'mailto:info@hottub-centrale.be')
+            pdfDoc.fillOpacity(1).fillColor('black').text('FACTUUR NAAR:', 360, 90)
+                .text(doc?.customerInfo.firstName + ' ' + doc?.customerInfo.lastName,450,90)
+                .text(doc?.customerInfo.street + ' ' + doc?.customerInfo.houseNumber,450,105)
+                .text(doc?.customerInfo.postalCode + ' ' + doc?.customerInfo.city,450,120)
+                .text(doc?.customerInfo.phoneNumber,450,135)
+            pdfDoc.fillOpacity(1).fillColor('#85823a').text(doc?.customerInfo.email,450,150, {width: 200, align: 'left'})
+            width = pdfDoc.widthOfString(doc?.customerInfo.email)
+            height = pdfDoc.currentLineHeight()
+            pdfDoc.underline(450,151, width, height, {color: '#85823a'})
+            pdfDoc.link(450,150, width, height,'mailto:'+doc?.customerInfo.email)
+            // eerste kadertje
+
+            // per pagina:
+            // header content
+
+            // footer
+
             let linecount = 0
             // achtergrond + omkadering
-            pdfDoc.lineWidth(1).lineCap('butt').fillColor('green').rect(1, 1, (569+23+23-4-1), (745+46-1)).stroke()
-            let grad = pdfDoc.linearGradient(1, (745+46-1), (569+23+23-4-1), 1)
-            grad.stop(0, 'white').stop(1, 'green')
-            pdfDoc.rect(1, 1, (569+23+23-4-1), (745+46-1)).lineWidth(2).fillOpacity(0.5).fillAndStroke(grad, "green")
+
             const moveUp = 10
             // header-tabel
-            pdfDoc.rect(40, 230-moveUp, 180, 26).lineWidth(1).fillOpacity(1).fillAndStroke('green', 'grey')
+            pdfDoc.rect(40, 230-moveUp, 180, 26).lineWidth(1).fillOpacity(1).fillAndStroke('#4c8145', 'grey')
                 .rect(220, 230-moveUp, 180, 26).lineWidth(1).fillOpacity(1).fillAndStroke()
                 .rect(400, 230-moveUp, 180, 26).lineWidth(1).fillOpacity(1).fillAndStroke()
             pdfDoc.rect(40, 256-moveUp, 180, 20).lineWidth(1).fillOpacity(1).stroke('grey')
@@ -124,7 +157,7 @@ router.get('/action/:id', async (req, res, next) => {
 
             // content-tabel
             //header
-            pdfDoc.rect(40, 290-moveUp, 90, 26).lineWidth(1).fillOpacity(1).fillAndStroke('green', 'grey')
+            pdfDoc.rect(40, 290-moveUp, 90, 26).lineWidth(1).fillOpacity(1).fillAndStroke('#4c8145', 'grey')
                 .rect(130, 290-moveUp, 360, 26).lineWidth(1).fillOpacity(1).fillAndStroke()
                 .rect(490, 290-moveUp, 90, 26).lineWidth(1).fillOpacity(1).fillAndStroke()
             pdfDoc.fillOpacity(1).fillColor('black').text('ARTIKELNR.', 50, 300-moveUp, {width: 80, align: 'left'})
@@ -169,7 +202,7 @@ router.get('/action/:id', async (req, res, next) => {
                     align: 'left'
                 })
                 if (doc?.quotationValues.optionValues[j]?.price === 0) {
-                    pdfDoc.fillOpacity(1).fillColor('black').text('inbegrepen', 500, 343-moveUp + (j + k + 1) * 20, {
+                    pdfDoc.fillOpacity(1).fillColor('#799b73').text('inbegrepen', 500, 343-moveUp + (j + k + 1) * 20, {
                         width: 70,
                         align: 'left'
                     })
@@ -239,24 +272,27 @@ router.get('/action/:id', async (req, res, next) => {
             if(doc?.status!=='aangemaakt' && doc?.status!=='aangepast' && doc?.status!=='aan te passen' ){
                 throw new Error('Enkel offertes met status \'aangemaakt\', \'aangepast\' of \'aan te passen\' kunnen verstuurd worden.')
             }
-            const pdfDoc = new PDFDocument()
+            const pdfDoc = new PDFDocument({size: 'A4'})
             // todo finish the quotation pdf
-            pdfDoc.lineWidth(1).lineCap('butt').fillColor('green').rect(23,23,569,745).stroke()
-            let grad = pdfDoc.linearGradient(20,751,575,20)
-            grad.stop(0, 'white').stop(1,'green')
-            pdfDoc.rect(20,20,575,751).lineWidth(2).fillOpacity(0.5).fillAndStroke(grad,"green")
-            // omkadering
-
-            // tekst
-            //pdfDoc.fillOpacity(1).fillColor('black').text(doc?.quotationValues.productName,100, 100)
+            // achtergrond + omkadering
+            let grad = pdfDoc.linearGradient(1, 840, 594, 1)
+            grad.stop(0, 'white').stop(1, '#4c8145')
+            pdfDoc.rect(1, 1, 594, 840).lineWidth(2).fillOpacity(0.5).fillAndStroke(grad, "#4c8145")
+            // hoofding
+            pdfDoc.fontSize(36)
+            pdfDoc.fillOpacity(1).fillColor('#3a5835').text('BESTELBON', 25, 25, {width: 400, align: 'left'})
             pdfDoc.fontSize(9)
-            pdfDoc.fillOpacity(1).fillColor('black').text('ORDERDATUM',50,240,{width:170,align: 'left'})
-                .text('ORDERNUMMER',220,240,{width:170,align: 'left'})
-                .text('CONTACT',390,240,{width:170,align: 'left'})
-            const strDate = Intl.DateTimeFormat('en-GB').format(doc?.creationDate)
-            pdfDoc.text(strDate,50,260,{width:170,align: 'left'})
-                .text(doc?.quotationNumber,220,260,{width:170,align: 'left'})
-                .text(`${process.env.contact}`,390,260,{width:170,align: 'left'})
+            pdfDoc.fillOpacity(1).fillColor('black').text('Datum: '
+                +Intl.DateTimeFormat('en-GB').format(new Date()), 425, 25, {width: 150, align: 'left'})
+                .text('Vistaline BV',25,90, {width: 400, align: 'left'})
+                .text('Lozenhoek 8',25,105, {width: 400, align: 'left'})
+                .text('2860 Sint-Katelijne-Waver',25,120, {width: 400, align: 'left'})
+                .text('0470/41.11.07',25,135, {width: 400, align: 'left'})
+            pdfDoc.fillOpacity(1).fillColor('#85823a').text('tom.sempels@gmail.com',25,150)
+            const width = pdfDoc.widthOfString('tom.sempels@gmail.com')
+            const height = pdfDoc.currentLineHeight()
+            pdfDoc.underline(25, 150, width, height, {color: '#85823a'})
+            pdfDoc.link(25, 150, width, height,'mailto:tom.sempels@gmail.com')
             pdfDoc.end()
             const sendEmail = async options =>{
 /*                const transporter = nodemailer.createTransport({
