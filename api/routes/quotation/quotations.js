@@ -99,62 +99,85 @@ router.get('/action/:id', async (req, res, next) => {
             res.setHeader('Content-Disposition', 'attachment; filename = "offerte_"' + doc?.quotationValues.productName + '"')
             const pdfDoc = new PDFDocument({size: 'A4'})
             pdfDoc.pipe(res)
+            const background = function () {
+                let grad = pdfDoc.linearGradient(1, 840, 594, 1)
+                grad.stop(0, 'white').stop(1, '#4c8145')
+                pdfDoc.rect(1, 1, 594, 840).lineWidth(2).fillOpacity(0.5).fillAndStroke(grad, "#4c8145")
+            }
+            const heading = function(){
+                pdfDoc.fontSize(36)
+                pdfDoc.fillOpacity(1).fillColor('#3a5835').text('BESTELBON', 25, 25, {width: 400, align: 'left'})
+                pdfDoc.fontSize(9)
+                pdfDoc.fillOpacity(1).fillColor('black').text('Datum: '
+                    +Intl.DateTimeFormat('en-GB').format(new Date()), 400, 25, {width: 150, align: 'left'})
+                    .text('Vistaline BV',25,90, {width: 400, align: 'left'})
+                    .text('Lozenhoek 8',25,105, {width: 400, align: 'left'})
+                    .text('2860 Sint-Katelijne-Waver',25,120, {width: 400, align: 'left'})
+                    .text('0470/41.11.07',25,135, {width: 400, align: 'left'})
+                pdfDoc.fillOpacity(1).fillColor('#85823a').text('info@hottub-centrale.be',25,150)
+                let width = pdfDoc.widthOfString('info@hottub-centrale.be')
+                let height = pdfDoc.currentLineHeight()
+                pdfDoc.underline(25, 151, width, height, {color: '#85823a'})
+                pdfDoc.link(25, 150, width, height,'mailto:info@hottub-centrale.be')
+                pdfDoc.fillOpacity(1).fillColor('black').text('FACTUUR NAAR:', 310, 90)
+                    .text(doc?.customerInfo.firstName + ' ' + doc?.customerInfo.lastName,400,90)
+                    .text(doc?.customerInfo.street + ' ' + doc?.customerInfo.houseNumber,400,105)
+                    .text(doc?.customerInfo.postalCode + ' ' + doc?.customerInfo.city,400,120)
+                    .text(doc?.customerInfo.phoneNumber,400,135)
+                pdfDoc.fillOpacity(1).fillColor('#85823a').text(doc?.customerInfo.email,400,150, {width: 200, align: 'left'})
+                width = pdfDoc.widthOfString(doc?.customerInfo.email)
+                height = pdfDoc.currentLineHeight()
+                pdfDoc.underline(400,151, width, height, {color: '#85823a'})
+                pdfDoc.link(400,150, width, height,'mailto:'+doc?.customerInfo.email)
+            }
+            const header = function(){
+                pdfDoc.rect(25, 190, 180, 26).lineWidth(1).fillOpacity(1).fillAndStroke('#4c8145', 'grey')
+                    .rect(205, 190, 180, 26).lineWidth(1).fillOpacity(1).fillAndStroke()
+                    .rect(385, 190, 180, 26).lineWidth(1).fillOpacity(1).fillAndStroke()
+                pdfDoc.rect(25, 216, 180, 20).lineWidth(1).fillOpacity(1).stroke('grey')
+                    .rect(205, 216, 180, 20).lineWidth(1).fillOpacity(1).stroke()
+                    .rect(385, 216, 180, 20).lineWidth(1).fillOpacity(1).stroke()
+                pdfDoc.fontSize(9)
+                pdfDoc.fillOpacity(1).fillColor('black').text('ORDERDATUM', 35, 200, {width: 170, align: 'left'})
+                    .text('ORDERNUMMER', 215, 200, {width: 170, align: 'left'})
+                    .text('CONTACT', 395, 200, {width: 170, align: 'left'})
+                const strDate = Intl.DateTimeFormat('en-GB').format(doc?.creationDate)
+                pdfDoc.text(strDate, 35, 224, {width: 170, align: 'left'})
+                    .text(doc?.quotationNumber, 215, 224, {width: 170, align: 'left'})
+                    .text(`${process.env.contact}`, 395, 224, {width: 170, align: 'left'})
+            }
+            const footer = function(){
+                pdfDoc.image('./assets/logo_hottub_centrale.PNG',35, 720, {width: 120})
+                pdfDoc.lineGap(4)
+                    .text('Neem contact op met de klantenservice via telefoon als u vragen of opmerkingen heeft.', 300, 725,
+                        {width: 260, align: 'right'}).lineGap(0).moveDown(0.4)
+                    .text('BEDANKT VOOR UW BESTELLING.', {width: 260, align: 'right'})
+            }
+            const contentHeader = function(){
+                pdfDoc.rect(25, 255, 90, 26).lineWidth(1).fillOpacity(1).fillAndStroke('#4c8145', 'grey')
+                    .rect(115, 255, 360, 26).lineWidth(1).fillOpacity(1).fillAndStroke()
+                    .rect(475, 255, 90, 26).lineWidth(1).fillOpacity(1).fillAndStroke()
+                pdfDoc.fillOpacity(1).fillColor('black').text('ARTIKELNR.', 35, 265, {width: 80, align: 'left'})
+                    .text('OMSCHRIJVING', 125, 265, {width: 340, align: 'left'})
+                    .text('PRIJS', 485, 265, {width: 80, align: 'left'})
+            }
+            const createPageNumber = function (){
+
+            }
             // achtergrond + omkadering
-            let grad = pdfDoc.linearGradient(1, 840, 594, 1)
-            grad.stop(0, 'white').stop(1, '#4c8145')
-            pdfDoc.rect(1, 1, 594, 840).lineWidth(2).fillOpacity(0.5).fillAndStroke(grad, "#4c8145")
+            background()
             // hoofding
-            pdfDoc.fontSize(36)
-            pdfDoc.fillOpacity(1).fillColor('#3a5835').text('BESTELBON', 25, 25, {width: 400, align: 'left'})
-            pdfDoc.fontSize(9)
-            pdfDoc.fillOpacity(1).fillColor('black').text('Datum: '
-                +Intl.DateTimeFormat('en-GB').format(new Date()), 400, 25, {width: 150, align: 'left'})
-                .text('Vistaline BV',25,90, {width: 400, align: 'left'})
-                .text('Lozenhoek 8',25,105, {width: 400, align: 'left'})
-                .text('2860 Sint-Katelijne-Waver',25,120, {width: 400, align: 'left'})
-                .text('0470/41.11.07',25,135, {width: 400, align: 'left'})
-            pdfDoc.fillOpacity(1).fillColor('#85823a').text('info@hottub-centrale.be',25,150)
-            let width = pdfDoc.widthOfString('info@hottub-centrale.be')
-            let height = pdfDoc.currentLineHeight()
-            pdfDoc.underline(25, 151, width, height, {color: '#85823a'})
-            pdfDoc.link(25, 150, width, height,'mailto:info@hottub-centrale.be')
-            pdfDoc.fillOpacity(1).fillColor('black').text('FACTUUR NAAR:', 310, 90)
-                .text(doc?.customerInfo.firstName + ' ' + doc?.customerInfo.lastName,400,90)
-                .text(doc?.customerInfo.street + ' ' + doc?.customerInfo.houseNumber,400,105)
-                .text(doc?.customerInfo.postalCode + ' ' + doc?.customerInfo.city,400,120)
-                .text(doc?.customerInfo.phoneNumber,400,135)
-            pdfDoc.fillOpacity(1).fillColor('#85823a').text(doc?.customerInfo.email,400,150, {width: 200, align: 'left'})
-            width = pdfDoc.widthOfString(doc?.customerInfo.email)
-            height = pdfDoc.currentLineHeight()
-            pdfDoc.underline(400,151, width, height, {color: '#85823a'})
-            pdfDoc.link(400,150, width, height,'mailto:'+doc?.customerInfo.email)
+            heading()
             // eerste header
-            pdfDoc.rect(25, 190, 180, 26).lineWidth(1).fillOpacity(1).fillAndStroke('#4c8145', 'grey')
-                .rect(205, 190, 180, 26).lineWidth(1).fillOpacity(1).fillAndStroke()
-                .rect(385, 190, 180, 26).lineWidth(1).fillOpacity(1).fillAndStroke()
-            pdfDoc.rect(25, 216, 180, 20).lineWidth(1).fillOpacity(1).stroke('grey')
-                .rect(205, 216, 180, 20).lineWidth(1).fillOpacity(1).stroke()
-                .rect(385, 216, 180, 20).lineWidth(1).fillOpacity(1).stroke()
-            pdfDoc.fontSize(9)
-            pdfDoc.fillOpacity(1).fillColor('black').text('ORDERDATUM', 35, 200, {width: 170, align: 'left'})
-                .text('ORDERNUMMER', 215, 200, {width: 170, align: 'left'})
-                .text('CONTACT', 395, 200, {width: 170, align: 'left'})
-            const strDate = Intl.DateTimeFormat('en-GB').format(doc?.creationDate)
-            pdfDoc.text(strDate, 35, 224, {width: 170, align: 'left'})
-                .text(doc?.quotationNumber, 215, 224, {width: 170, align: 'left'})
-                .text(`${process.env.contact}`, 395, 224, {width: 170, align: 'left'})
+            header()
             // berekening van het aantal benodigde pagina's
             let numberOfLines = (doc?.quotationValues.productSpecifications.length + 1 + doc?.quotationValues.optionValues.length
                 + doc?.quotationValues.quotationSpecificationValues.length + 1 + (doc?.discount>0 ? 5 : 4))
             numberOfLines += (Math.ceil(numberOfLines/20)>1 ? ((Math.ceil(numberOfLines/20)-1)*2)+2:0)
             const numberOfExtraPages = Math.ceil(numberOfLines/20)-1
             // content header pagina 1
-            pdfDoc.rect(25, 255, 90, 26).lineWidth(1).fillOpacity(1).fillAndStroke('#4c8145', 'grey')
-                .rect(115, 255, 360, 26).lineWidth(1).fillOpacity(1).fillAndStroke()
-                .rect(475, 255, 90, 26).lineWidth(1).fillOpacity(1).fillAndStroke()
-            pdfDoc.fillOpacity(1).fillColor('black').text('ARTIKELNR.', 35, 265, {width: 80, align: 'left'})
-                .text('OMSCHRIJVING', 125, 265, {width: 340, align: 'left'})
-                .text('PRIJS', 485, 265, {width: 80, align: 'left'})
+            contentHeader()
+
             if(numberOfExtraPages===0){
                 for (let i = 0;i<numberOfLines;i++){
                     pdfDoc.rect(25, 281+i*20, 90, 20).lineWidth(1).fillOpacity(1).stroke('grey')
@@ -205,15 +228,8 @@ router.get('/action/:id', async (req, res, next) => {
                     }
                 }
             }
-            const createFooter = function(){
+            footer()
 
-            }
-            const createHeader = function(){
-
-            }
-            const createPageNumber = function (){
-
-            }
 
             // per pagina:
             // footer
