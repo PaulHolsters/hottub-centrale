@@ -97,7 +97,7 @@ router.get('/action/:id', async (req, res, next) => {
         Schema.quotationModel.findById({_id:quotationId},{__v:0}).exec().then(async doc => {
             res.setHeader('Content-Type', 'application/pdf')
             res.setHeader('Content-Disposition', 'attachment; filename = "offerte_"' + doc?.quotationValues.productName + '"')
-            const pdfDoc = new PDFDocument({size: 'A4'})
+            const pdfDoc = new PDFDocument({size: 'A4',autoFirstPage: false, bufferPages: true})
             pdfDoc.pipe(res)
             const background = function () {
                 let grad = pdfDoc.linearGradient(1, 840, 594, 1)
@@ -161,23 +161,21 @@ router.get('/action/:id', async (req, res, next) => {
                     .text('OMSCHRIJVING', 125, 265, {width: 340, align: 'left'})
                     .text('PRIJS', 485, 265, {width: 80, align: 'left'})
             }
-            const createPageNumber = function (){
-
-            }
-            // achtergrond + omkadering
-            background()
-            // hoofding
-            heading()
-            // eerste header
-            header()
-            // berekening van het aantal benodigde pagina's
+            // berekening van het aantal benodigde pagina's en records
             let numberOfLines = (doc?.quotationValues.productSpecifications.length + 1 + doc?.quotationValues.optionValues.length
-                + doc?.quotationValues.quotationSpecificationValues.length + 1 + (doc?.discount>0 ? 5 : 4))
-            numberOfLines += (Math.ceil(numberOfLines/20)>1 ? ((Math.ceil(numberOfLines/20)-1)*2)+2:0)
-            const numberOfExtraPages = Math.ceil(numberOfLines/20)-1
-            // content header pagina 1
-            contentHeader()
-
+                + doc?.quotationValues.quotationSpecificationValues.length + 1 + (doc?.discount>0 ? 6 : 5))
+            const numberOfPages = Math.ceil(numberOfLines/20)
+            numberOfLines += (numberOfPages>1 ? (numberOfPages-1)*2:0)
+            // aanmaken van de pagina's zonder records
+            for (let i=0;i<numberOfPages;i++){
+                pdfDoc.addPage()
+                background()
+                heading()
+                header()
+                contentHeader()
+                footer()
+            }
+    /*
             if(numberOfExtraPages===0){
                 for (let i = 0;i<numberOfLines;i++){
                     pdfDoc.rect(25, 281+i*20, 90, 20).lineWidth(1).fillOpacity(1).stroke('grey')
@@ -228,8 +226,8 @@ router.get('/action/:id', async (req, res, next) => {
                     }
                 }
             }
-            footer()
 
+*/
 
             // per pagina:
             // footer
