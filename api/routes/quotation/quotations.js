@@ -169,6 +169,8 @@ router.get('/action/:id', async (req, res, next) => {
                 + doc?.quotationValues.quotationSpecificationValues.length + 1 + (doc?.discount > 0 ? 6 : 5))
             const numberOfPages = Math.ceil(numberOfLines / 20)
             numberOfLines += (numberOfPages > 1 ? (numberOfPages - 1) * 2 : 0)
+            // berekenen of de lege lijn tussen opties en offspecs nodig is of niet
+            if(doc?.quotationValues.productSpecifications.length + 1 + doc?.quotationValues.optionValues.length===18) numberOfLines--
             // aanmaken van de pagina's zonder records
             for (let i = 0; i < numberOfPages; i++) {
                 pdfDoc.addPage()
@@ -183,11 +185,8 @@ router.get('/action/:id', async (req, res, next) => {
             pdfDoc.switchToPage(0)
             // kostprijsberekening
             let priceVATexcl = doc?.quotationValues.productPrice
-            priceVATexcl += doc?.quotationValues.optionValues.reduce((val1, val2) => val1.price + val2.price)
-            // todo deze lijn maakt er onterecht een string van
-            priceVATexcl += doc?.quotationValues.quotationSpecificationValues.reduce((val1, val2) => val1.price + val2.price)
-            console.log(typeof priceVATexcl,'hier al?')
-            console.log(typeof priceVATexcl,priceVATexcl,'ok?')
+            priceVATexcl += doc?.quotationValues.optionValues.map(option=>option.price).reduce((val1, val2) => val1 + val2)
+            priceVATexcl += doc?.quotationValues.quotationSpecificationValues.map(spec=>spec.price).reduce((val1, val2) => val1 + val2)
             const discount = (doc?.discount / 100) * priceVATexcl
             const tax = (priceVATexcl - discount) * (doc?.VAT / 100)
             const totalPrice = (priceVATexcl - discount) + tax
@@ -226,8 +225,6 @@ router.get('/action/:id', async (req, res, next) => {
                         })
                 } else if (i <= doc?.quotationValues.optionValues.length +
                     doc?.quotationValues.productSpecifications.length + 2 + doc?.quotationValues.quotationSpecificationValues.length) {
-                    console.log('i=', i, doc?.quotationValues.optionValues.length +
-                        doc?.quotationValues.productSpecifications.length + 2 + doc?.quotationValues.quotationSpecificationValues.length)
                     if (i % 19 === 0) {
                         pdfDoc.fillOpacity(1).fillColor('black')
                             .text('Het vervolg van deze bestelling vindt u op de volgende pagina.', 125, 288 + (i - reset) * 20, {
@@ -268,9 +265,9 @@ router.get('/action/:id', async (req, res, next) => {
                     // of als er geen offerte specs tenminste een lijn voorzien
                     let name = ''
                     let price = ''
-                    const deliveryTime = 'Leveringstermijn'
+                    let deliveryTime = ''
                     if (discount > 0) {
-                        switch (minimalI - i) {
+                        switch (i-minimalI) {
                             case 0:
                                 name = 'Totaal excl. BTW'
                                 price = priceVATexcl
@@ -293,14 +290,15 @@ router.get('/action/:id', async (req, res, next) => {
                                 break
                             case 5:
                                 name = doc?.deliveryTime + 'na bestelling'
+                                deliveryTime = 'Leveringstermijn'
                                 break
                         }
                     } else {
-                        switch (minimalI - i) {
+                        switch (i-minimalI) {
                             case 0:
+                                console.log('i=',i,'numberoflines',numberOfLines)
                                 name = 'Totaal excl. BTW'
                                 price = priceVATexcl
-                                console.log(name,price,'1')
                                 break
                             case 1:
                                 name = 'BTW (' + doc?.VAT + '%)'
@@ -318,7 +316,8 @@ router.get('/action/:id', async (req, res, next) => {
                                 console.log(name,price,'4')
                                 break
                             case 4:
-                                name = doc?.deliveryTime + 'na bestelling'
+                                name = doc?.deliveryTime + ' na bestelling'
+                                deliveryTime = 'Leveringstermijn'
                                 break
                         }
                     }
@@ -334,18 +333,24 @@ router.get('/action/:id', async (req, res, next) => {
                                 align: 'left'
                             })
                     }
+                    if(deliveryTime.length!==0){
+                        pdfDoc.text(deliveryTime,
+                            35, 288 + (i - reset) * 20, {
+                                width: 340,
+                                align: 'left'
+                            })
+                    }
                 }
                 // todo header met pagina hoofding voorzien
                 // todo paginanummers onderaan vermelden
+                // todo rekening houden met de mogelijkheid dat kostprijs er maar half opkan zodat die op het volgend blad
+                //  moet komen in zijn geheel
                 if ((i + 1) % 20 === 0 && currentPage + 1 < numberOfPages) {
                     pdfDoc.switchToPage((i + 1) / 20)
                     reset += 20
                     currentPage++
                 }
             }
-
-            // leveringstermijn
-
             pdfDoc.end()
         })
     } else if (action === 'mail') {
