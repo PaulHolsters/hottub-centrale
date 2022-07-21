@@ -56,6 +56,8 @@ const productsRoutes = require('./routes/product/products')
 const quotationSpecificationsRoutes = require('./routes/quotation/quotationSpecifications')
 const quotationsRoutes = require('./routes/quotation/quotations')
 
+const invoicesRoutes = require('./routes/invoice/invoices')
+
 app.use(((req, res, next) => {
     res.header('Access-Control-Allow-Origin','*')
     res.header('Access-Control-Allow-Headers','Origin, X-Requested-With, Content-Type, Accept, Authorization')
@@ -73,6 +75,8 @@ app.use('/products',productsRoutes)
 
 app.use('/quotation-specifications',quotationSpecificationsRoutes)
 app.use('/quotations',quotationsRoutes)
+
+app.use('/invoices', invoicesRoutes)
 
 // handle all non-defined requests
 app.use((req,res,next)=>{
