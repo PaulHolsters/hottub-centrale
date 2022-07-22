@@ -128,6 +128,27 @@
   </form>
 </p-dialog>
 
+<p-dialog header="Factureren" [(visible)]="displayDialog3" [dismissableMask]="true" [modal]="true"
+          [style]="{width: '60vw',position:'relative'}" (onHide)="resetDialog()">
+  <form class="grid">
+    <div class="formField col-12">
+      <p-checkbox label="Factuur doormailen naar klant" name="sendInvoice" [(ngModel)]="sendInvoice" [binary]="true"></p-checkbox>
+    </div>
+    <p-divider class="col-12 grid p-0 mt-4 mb-2"></p-divider>
+    <div class="col-12 grid p-0 d-flex justify-content-end">
+    <span class="p-buttonset m-0">
+        <button (click)="cancel()" pButton type="button" label="Annuleren" class="p-button-outlined"
+                icon="pi pi-times"></button>
+                      <button
+                              (click)="invoice()" iconPos="left" icon="pi pi-money-bill" label="Factureer" pButton type="button"
+                              class="p-button-warning"
+                      ></button>
+
+    </span>
+    </div>
+  </form>
+</p-dialog>
+
 <p-confirmDialog header="Verwijderen offerte" icon="pi pi-exclamation-triangle"
                  acceptLabel="Ja" rejectLabel="Nee"></p-confirmDialog>
 

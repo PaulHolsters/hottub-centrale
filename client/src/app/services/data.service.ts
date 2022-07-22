@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import {Observable, throwError} from "rxjs";
 import {catchError, map} from "rxjs/operators";
 import {ProductModel} from "../models/product/product.model";
@@ -9,12 +9,32 @@ import {QuotationSpecificationModel} from "../models/quotation/quotation-specifi
 import {QuotationModel} from "../models/quotation/quotation.model";
 import {QuotationGetModel} from "../models/quotation/quotation.get.model";
 import {SharedFunctionService} from "./shared-functions.service";
+import {InvoiceModel} from "../models/invoice/invoice.model";
 
 @Injectable()
 export class DataService {
 
     constructor(private http: HttpClient,private sharedFunctions: SharedFunctionService) {
     }
+
+    createInvoice(invoice:InvoiceModel): Observable<any>{
+        const invoicePost = {quotation:invoice.quotation}
+        if(invoice.invoiceType){
+            Object.assign(invoicePost,{invoiceType:invoice.invoiceType})
+        }
+        return this.http.post('http://localhost:3000/invoices', invoicePost).pipe(map((err, res) => {
+            return res
+        }))
+    }
+
+    getInvoices(): Observable<InvoiceModel[]> {
+        return this.http.get<{ invoices: InvoiceModel[] }>('http://localhost:3000/products').pipe(map(result => {
+            return result.invoices
+        }))
+    }
+
+
+
 
     getProducts(): Observable<ProductModel[]> {
         return this.http.get<{ products: ProductModel[] }>('http://localhost:3000/products').pipe(map(result => {

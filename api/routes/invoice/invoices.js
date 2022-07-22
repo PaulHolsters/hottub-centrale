@@ -10,7 +10,7 @@ const mongoose = require("mongoose");
 
 router.post('/', async (req, res, next) => {
     const invoice = new Schema.invoiceModel({
-        quotationId: req.body.quotationId,
+        quotation: req.body.quotation,
         invoiceNumber: req.body.invoiceNumber
     })
     invoice.save().then(result => {
@@ -18,6 +18,20 @@ router.post('/', async (req, res, next) => {
     }).catch(err => {
         res.status(500).json({
             error: err.toString().substr(err.toString().lastIndexOf(':') + 2)
+        })
+    })
+})
+
+router.get('/', (req, res, next) => {
+    Schema.invoiceModel.find({}, {__v: 0}).populate('quotation', {__v: 0}).then(result => {
+        res.status(200).json(
+            {
+                invoices: result
+            }
+        )
+    }).catch(err => {
+        res.status(500).json({
+            error: 'something went wrong'
         })
     })
 })

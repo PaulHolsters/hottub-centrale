@@ -7,6 +7,7 @@ import {QuotationGetModel} from "../../models/quotation/quotation.get.model";
 import {DomSanitizer} from '@angular/platform-browser';
 import {QuotationStorageService} from "../../services/quotation.storage.service";
 import {BreadcrumbStorageService} from "../../services/breadcrumb.storage.service";
+import {InvoiceModel} from "../../models/invoice/invoice.model";
 
 @Component({
   selector: 'app-quotation-overview',
@@ -21,6 +22,9 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
   selectedFileBLOB:any|undefined
   displayDialog:boolean
   displayDialog2:boolean
+  displayDialog3:boolean
+  sendInvoice: boolean
+  quotation: QuotationGetModel | undefined
   idOfStatusChanged:string|undefined
   selectedStatus:string|undefined
   initialStatus:string|undefined
@@ -34,6 +38,8 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
               private confirmationService: ConfirmationService) {
     this.displayDialog = false
     this.displayDialog2 = false
+    this.displayDialog3 = false
+    this.sendInvoice = false
     this.quotations = []
     this.quotationsAll = []
     this.quotationsMenuHandler = []
@@ -109,6 +115,12 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
                 this.showDialog(this.activatedActionsMenu)
                 this.hideMenu()
               }},
+            {label: 'Factureren',icon: 'pi pi-money-bill',
+              command:()=>{
+                this.displayDialog3 = true
+                this.quotation = quot
+                this.hideMenu()
+              }},
             {label: 'Verwijderen',icon: 'pi pi-fw pi-trash',
               command:()=>{
                 this.confirmationService.confirm({
@@ -161,6 +173,12 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
             {label: 'Statuswijziging',icon: 'pi pi-info-circle',
               command:()=>{
                 this.showDialog(this.activatedActionsMenu)
+                this.hideMenu()
+              }},
+            {label: 'Factureren',icon: 'pi pi-money-bill',
+              command:()=>{
+                this.displayDialog3 = true
+                this.quotation = quot
                 this.hideMenu()
               }},
             {label: 'Verwijderen',icon: 'pi pi-fw pi-trash',
@@ -217,6 +235,12 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
                 this.showDialog(this.activatedActionsMenu)
                 this.hideMenu()
               }},
+            {label: 'Factureren',icon: 'pi pi-money-bill',
+              command:()=>{
+                this.displayDialog3 = true
+                this.quotation = quot
+                this.hideMenu()
+              }},
             {label: 'Verwijderen',icon: 'pi pi-fw pi-trash',disabled:true,iconStyle:{'cursor':'not-allowed'}, style:{'cursor':'not-allowed'}}
           ]}
       } else{
@@ -263,6 +287,12 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
                 this.showDialog(this.activatedActionsMenu)
                 this.hideMenu()
               }},
+            {label: 'Factureren',icon: 'pi pi-money-bill',
+              command:()=>{
+                this.displayDialog3 = true
+                this.quotation = quot
+                this.hideMenu()
+              }},
             {label: 'Verwijderen',icon: 'pi pi-fw pi-trash',disabled:true,iconStyle:{'cursor':'not-allowed'}, style:{'cursor':'not-allowed'}}
           ]}
       }
@@ -279,6 +309,20 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
         },err=>{
           this.messageService.add({severity:'error', summary: err.error.error, life:3000})
         })
+      })
+    }
+  }
+
+  invoice(){
+    // gegevens nodig: versturen ja nee en quotattion id
+    if(this.sendInvoice && this.quotation){
+
+    } else if(this.quotation) {
+      const invoice = new InvoiceModel(this.quotation)
+      this.dataService.createInvoice(invoice).subscribe(res=>{
+        this.quotation = undefined
+        this.displayDialog3 = false
+        this.messageService.add({severity:'success', summary: 'Factuur aangemaakt', life:3000})
       })
     }
   }
@@ -351,6 +395,7 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
     this.selectedStatus = undefined
     this.initialStatus = undefined
     this.selectedVersion = undefined
+    this.sendInvoice = false
   }
 
   onStatusChanged(newStatus:string){

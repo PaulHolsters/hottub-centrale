@@ -57,6 +57,7 @@ import {BreadcrumbModule} from "primeng/breadcrumb";
 import {BreadcrumbStorageService} from "./services/breadcrumb.storage.service";
 import {PaginatorModule} from "primeng/paginator";
 import {SharedFunctionService} from "./services/shared-functions.service";
+import { InvoiceOverviewComponent } from './invoice-overview/invoice-overview.component';
 
 const appRoutes: Routes = [
   {path: 'producten', component: ProductsComponent},
@@ -69,6 +70,7 @@ const appRoutes: Routes = [
   {path: 'offertes/overzicht', component: QuotationOverviewComponent},
   {path: 'offertes/nieuwe-versie/:id', component: QuotationFlowComponent},
   {path: 'offertes/details/:id', component: QuotationDetailComponent},
+  {path: 'facturen', component: InvoiceOverviewComponent},
 ]
 
 @NgModule({
@@ -94,7 +96,8 @@ const appRoutes: Routes = [
     QuotationSummaryComponent,
     QuotationSpecificationsComponent,
     QuotationSpecificationPicklistComponent,
-    QuotationDetailComponent
+    QuotationDetailComponent,
+    InvoiceOverviewComponent
   ],
     imports: [
         BrowserModule,
