@@ -58,6 +58,7 @@ import {BreadcrumbStorageService} from "./services/breadcrumb.storage.service";
 import {PaginatorModule} from "primeng/paginator";
 import {SharedFunctionService} from "./services/shared-functions.service";
 import { InvoiceOverviewComponent } from './invoice-overview/invoice-overview.component';
+import {InvoiceStorageService} from "./services/invoice.storage.service";
 
 const appRoutes: Routes = [
   {path: 'producten', component: ProductsComponent},
@@ -129,7 +130,7 @@ const appRoutes: Routes = [
         PaginatorModule
     ],
   exports: [BrowserAnimationsModule],
-  providers: [DataService,ProductStorageService,QuotationStorageService,BrowserAnimationsModule,MessageService,
+  providers: [DataService,ProductStorageService,QuotationStorageService,InvoiceStorageService,BrowserAnimationsModule,MessageService,
       ConfirmationService, BreadcrumbStorageService,SharedFunctionService],
   bootstrap: [AppComponent]
 })

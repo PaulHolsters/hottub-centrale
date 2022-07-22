@@ -314,7 +314,6 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
   }
 
   invoice(){
-    // gegevens nodig: versturen ja nee en quotattion id
     if(this.sendInvoice && this.quotation){
 
     } else if(this.quotation) {

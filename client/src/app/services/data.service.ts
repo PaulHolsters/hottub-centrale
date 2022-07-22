@@ -33,9 +33,6 @@ export class DataService {
         }))
     }
 
-
-
-
     getProducts(): Observable<ProductModel[]> {
         return this.http.get<{ products: ProductModel[] }>('http://localhost:3000/products').pipe(map(result => {
             return result.products
@@ -208,7 +205,33 @@ export class DataService {
         }))
     }
 
-    sendQuotation(id: string): Observable<any> {
+    downloadInvoice(id: string | undefined): Observable<any> {
+        return this.http.get('http://localhost:3000/quotations/action/' + id + '?action=pdf', {
+            responseType: "blob"
+        }).pipe(map((res) => {
+            return res
+        }), catchError(err => {
+            return throwError(err)
+        }))
+    }
+
+    sendQuotation(id: string | undefined): Observable<any> {
+        return this.http.get('http://localhost:3000/quotations/action/' + id + '?action=mail').pipe(map((res) => {
+            return res
+        }), catchError(err => {
+            return throwError(err)
+        }))
+    }
+
+    sendInvoice(id: string |undefined): Observable<any> {
+        return this.http.get('http://localhost:3000/quotations/action/' + id + '?action=mail').pipe(map((res) => {
+            return res
+        }), catchError(err => {
+            return throwError(err)
+        }))
+    }
+
+    sendAndCreateInvoice(id: string|undefined): Observable<any> {
         return this.http.get('http://localhost:3000/quotations/action/' + id + '?action=mail').pipe(map((res) => {
             return res
         }), catchError(err => {

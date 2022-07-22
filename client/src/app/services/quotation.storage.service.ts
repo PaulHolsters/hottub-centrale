@@ -1,7 +1,4 @@
 import {EventEmitter, Injectable, OnDestroy} from "@angular/core";
-import {ProductModel} from "../models/product/product.model";
-import {SpecificationModel} from "../models/product/specification.model";
-import {OptionModel} from "../models/product/option.model";
 import {DataService} from "./data.service";
 import {Observable} from "rxjs";
 import {QuotationModel} from "../models/quotation/quotation.model";

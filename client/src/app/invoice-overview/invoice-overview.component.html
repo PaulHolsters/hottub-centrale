@@ -1,1 +1,37 @@
-<p>invoice-overview works!</p>
+<p-toast></p-toast>
+<div style="height:100%;">
+    <p-table [value]="invoices" [scrollable]="true" scrollHeight="70vh" sortMode="multiple">
+        <ng-template pTemplate="header">
+            <tr>
+                <!-- todo gebruik mongoose om een virtual property aan te maken-->
+                <th pSortableColumn="customer">Klant <p-sortIcon field="customer"></p-sortIcon>
+                    <p-columnFilter type="text" field="customer" display="menu"></p-columnFilter>
+                </th>
+                <th pSortableColumn="invoiceNumber">Factuurnummer <p-sortIcon field="invoiceNumber"></p-sortIcon>
+                    <p-columnFilter type="numeric" field="invoiceNumber" display="menu"></p-columnFilter>
+                </th>
+                <th pSortableColumn="quotation.quotationNumber">Offertenummer <p-sortIcon field="quotation.quotationNumber"></p-sortIcon>
+                    <p-columnFilter type="numeric" field="quotation.quotationNumber" display="menu"></p-columnFilter>
+                </th>
+                <th>Acties</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-invoice>
+            <tr>
+                <td>{{invoice['customer']}} </td>
+                <td>{{invoice['invoiceNumber']}}</td>
+                <td>{{invoice.quotation.quotationNumber}}</td>
+                <td (mouseleave)="hideMenu()" >
+                    <i *ngIf="isIcon(invoice._id)" style="cursor:pointer" class="pi pi-ellipsis-h" (click)="showMenu(invoice._id)"></i>
+                    <p-menu [style]="{'position':'absolute','z-index': '50','right':'4rem' }"
+                            *ngIf="isMenu(invoice._id)" [model]="getItems(invoice._id)" (mouseleave)="hideMenu()"
+                            #menu>
+                    </p-menu>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <p-paginator [style]="{borderTop: '1px solid lightgrey',borderBottom: '1px solid lightgrey'}"
+                 [rows]="numberOfRows" [totalRecords]="invoicesAll.length"
+                 (onPageChange)="paginate($event)"></p-paginator>
+</div>
