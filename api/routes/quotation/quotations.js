@@ -185,8 +185,8 @@ router.get('/action/:id', async (req, res, next) => {
             pdfDoc.switchToPage(0)
             // kostprijsberekening
             let priceVATexcl = doc?.quotationValues.productPrice
-            priceVATexcl += doc?.quotationValues.optionValues.map(option=>option.price).reduce((val1, val2) => val1 + val2)
-            priceVATexcl += doc?.quotationValues.quotationSpecificationValues.map(spec=>spec.price).reduce((val1, val2) => val1 + val2)
+            priceVATexcl += doc?.quotationValues.optionValues.map(option=>option.price).reduce((val1, val2) => val1 + val2,0)
+            priceVATexcl += doc?.quotationValues.quotationSpecificationValues.map(spec=>spec.price).reduce((val1, val2) => val1 + val2,0)
             const discount = (doc?.discount / 100) * priceVATexcl
             const tax = (priceVATexcl - discount) * (doc?.VAT / 100)
             const totalPrice = (priceVATexcl - discount) + tax
@@ -231,7 +231,7 @@ router.get('/action/:id', async (req, res, next) => {
                                 width: 340,
                                 align: 'left'
                             })
-                    } else if (i % 18 > 0) {
+                    } else if (i % 18 > 0 && doc?.quotationValues.quotationSpecificationValues.length>0) {
                         const index = i - (doc?.quotationValues.productSpecifications.length) - 1 - doc?.quotationValues.optionValues.length
                         if (index !== 0) {
                             pdfDoc.fillOpacity(1).fillColor('black')
