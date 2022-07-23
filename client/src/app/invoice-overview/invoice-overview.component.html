@@ -4,9 +4,9 @@
         <ng-template pTemplate="header">
             <tr>
                 <!-- todo gebruik mongoose om een virtual property aan te maken-->
-                <th pSortableColumn="customer">Klant <p-sortIcon field="customer"></p-sortIcon>
+<!--                <th pSortableColumn="customer">Klant <p-sortIcon field="customer"></p-sortIcon>
                     <p-columnFilter type="text" field="customer" display="menu"></p-columnFilter>
-                </th>
+                </th>-->
                 <th pSortableColumn="invoiceNumber">Factuurnummer <p-sortIcon field="invoiceNumber"></p-sortIcon>
                     <p-columnFilter type="numeric" field="invoiceNumber" display="menu"></p-columnFilter>
                 </th>
@@ -18,7 +18,7 @@
         </ng-template>
         <ng-template pTemplate="body" let-invoice>
             <tr>
-                <td>{{invoice['customer']}} </td>
+<!--                <td>{{invoice['customer']}} </td>-->
                 <td>{{invoice['invoiceNumber']}}</td>
                 <td>{{invoice.quotation.quotationNumber}}</td>
                 <td (mouseleave)="hideMenu()" >

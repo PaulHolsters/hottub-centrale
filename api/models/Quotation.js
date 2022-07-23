@@ -122,6 +122,12 @@ const quotationSchema = new mongoose.Schema({
     quotationNumber: {type:Number,min:1}
 }, {})
 
+// virtual properties
+quotationSchema.virtual('customer').get(function () {
+    return this.customerInfo.firstName + ' ' + this.customerInfo.lastName
+}).set(function (v) {
+    this.customer = v
+})
 
 const quotationSpecificationSchema = new mongoose.Schema({
     name: {

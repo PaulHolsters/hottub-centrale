@@ -45,6 +45,7 @@ export class QuotationOverviewComponent implements OnInit,AfterViewChecked {
     this.quotationsMenuHandler = []
     this.blocked = false
     this.dataService.getQuotations().subscribe(res=>{
+
       this.quotationsAll = res
       this.quotations = this.quotationsAll.slice(0,this.numberOfRows)
       this.rerenderActionMenus()

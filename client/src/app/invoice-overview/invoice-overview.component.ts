@@ -29,10 +29,10 @@ export class InvoiceOverviewComponent implements OnInit,AfterViewChecked {
     this.invoicesMenuHandler = []
     this.invoicesAll = []
     this.dataService.getInvoices().subscribe(invoices=>{
+      console.log('invoice has customer?',invoices)
       this.invoicesAll = invoices
       this.invoices = this.invoicesAll.slice(0,this.numberOfRows)
       this.rerenderActionMenus()
-      this.invoices = invoices
 
     })
   }

@@ -24,9 +24,14 @@ router.post('/', async (req, res, next) => {
 
 router.get('/', (req, res, next) => {
     Schema.invoiceModel.find({}, {__v: 0}).populate('quotation', {__v: 0}).then(result => {
+        const invoices = result.map(res=>{
+            const invoice = Object.assign({},res._doc)
+            invoice['customer'] = res.customer
+            return invoice
+        })
         res.status(200).json(
             {
-                invoices: result
+                invoices: invoices
             }
         )
     }).catch(err => {

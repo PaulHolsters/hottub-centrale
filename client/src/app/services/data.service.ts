@@ -28,7 +28,8 @@ export class DataService {
     }
 
     getInvoices(): Observable<InvoiceModel[]> {
-        return this.http.get<{ invoices: InvoiceModel[] }>('http://localhost:3000/products').pipe(map(result => {
+        return this.http.get<{ invoices: InvoiceModel[] }>('http://localhost:3000/invoices').pipe(map(result => {
+            console.log('and now?',result.invoices[0].customer)
             return result.invoices
         }))
     }
@@ -41,6 +42,7 @@ export class DataService {
 
     getQuotations(): Observable<QuotationGetModel[]> {
         return this.http.get<{ quotations: QuotationGetModel[] }>('http://localhost:3000/quotations').pipe(map(result => {
+            console.log('result',result)
             const latestVersionQuotations = result.quotations.filter(quotGet => {
                 const filteredQuotGets = result.quotations.filter(quotGetGroupId=>{
                     return quotGetGroupId.groupId === quotGet.groupId})
@@ -206,13 +208,18 @@ export class DataService {
     }
 
     downloadInvoice(id: string | undefined): Observable<any> {
-        return this.http.get('http://localhost:3000/quotations/action/' + id + '?action=pdf', {
-            responseType: "blob"
-        }).pipe(map((res) => {
-            return res
-        }), catchError(err => {
-            return throwError(err)
-        }))
+        if(id){
+            return this.http.get('http://localhost:3000/invoices/action/' + id + '?action=pdf', {
+                responseType: "blob"
+            }).pipe(map((res) => {
+                return res
+            }), catchError(err => {
+                return throwError(err)
+            }))
+        } else{
+            return new Observable(()=>{throwError('Geen id')})
+        }
+
     }
 
     sendQuotation(id: string | undefined): Observable<any> {
@@ -224,15 +231,20 @@ export class DataService {
     }
 
     sendInvoice(id: string |undefined): Observable<any> {
-        return this.http.get('http://localhost:3000/quotations/action/' + id + '?action=mail').pipe(map((res) => {
-            return res
-        }), catchError(err => {
-            return throwError(err)
-        }))
+        if(id){
+            return this.http.get('http://localhost:3000/invoices/action/' + id + '?action=mail').pipe(map((res) => {
+                return res
+            }), catchError(err => {
+                return throwError(err)
+            }))
+        } else{
+            return new Observable(()=>{throwError('Geen id')})
+        }
     }
 
+
     sendAndCreateInvoice(id: string|undefined): Observable<any> {
-        return this.http.get('http://localhost:3000/quotations/action/' + id + '?action=mail').pipe(map((res) => {
+        return this.http.get('http://localhost:3000/invoices/action/' + id + '?action=create+mail').pipe(map((res) => {
             return res
         }), catchError(err => {
             return throwError(err)

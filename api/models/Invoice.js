@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-
+// todo mongoose virtual model
 const invoiceSchema = new mongoose.Schema({
     // dit moet overschrijfbaar zijn
     invoiceNumber: {
@@ -21,6 +21,15 @@ const invoiceSchema = new mongoose.Schema({
         ]
     }
 }, {})
+
+// virtual properties
+invoiceSchema.virtual('customer').get(function () {
+    console.log('virtual : whatss iside quotattion?' +this.quotation)
+    return this.quotation.customerInfo.firstName + ' ' + this.quotation.customerInfo.lastName
+}).set(function (v) {
+    console.log(this.customer,'customer for invoice')
+    this.customer = v
+})
 
 // natural numbers
 invoiceSchema.path('invoiceNumber').validate(function (propValue) {
