@@ -29,7 +29,6 @@ export class DataService {
 
     getInvoices(): Observable<InvoiceModel[]> {
         return this.http.get<{ invoices: InvoiceModel[] }>('http://localhost:3000/invoices').pipe(map(result => {
-            console.log('and now?',result.invoices[0].customer)
             return result.invoices
         }))
     }

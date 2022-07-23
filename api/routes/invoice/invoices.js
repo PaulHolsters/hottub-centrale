@@ -11,7 +11,8 @@ const mongoose = require("mongoose");
 router.post('/', async (req, res, next) => {
     const invoice = new Schema.invoiceModel({
         quotation: req.body.quotation,
-        invoiceNumber: req.body.invoiceNumber
+        invoiceNumber: req.body.invoiceNumber,
+        history: [{status:'aangemaakt op',timestamp:new Date()}]
     })
     invoice.save().then(result => {
         res.status(201).json()
@@ -21,6 +22,20 @@ router.post('/', async (req, res, next) => {
         })
     })
 })
+
+router.patch('/:id', async (req, res, next) => {
+    Schema.invoiceModel.updateOne({_id: req.params.id}, {$push:{history:{status: req.body.status, timestamp:new Date()}}},
+        {runValidators: true}).exec().then(result => {
+        res.status(201).json(
+        )
+    }).catch(err => {
+        res.status(500).json({
+            error: err.errors
+        })
+    })
+})
+
+
 
 router.get('/action/:id', async (req, res, next) => {
     const action = req.query.action
