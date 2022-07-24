@@ -5,7 +5,7 @@ export class InvoiceModel {
         public quotation: QuotationGetModel,
         public customer?: string,
         public invoiceType?: string,
-        public statusHistory?: string[],
+        public history?: string[],
         public _id?: string,
         public invoiceNumber?: string ) {
     }

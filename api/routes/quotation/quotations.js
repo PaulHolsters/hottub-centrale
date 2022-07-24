@@ -81,6 +81,7 @@ router.put('/:groupId/:previous', check('customerInfo.email').isEmail(), async (
 
 router.patch('/:id', async (req, res, next) => {
     Schema.quotationModel.updateOne({_id: req.params.id}, {status: req.body.status}, {runValidators: true}).exec().then(result => {
+        console.log(result)
         res.status(201).json(
         )
     }).catch(err => {

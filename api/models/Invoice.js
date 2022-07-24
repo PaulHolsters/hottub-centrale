@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
-// todo mongoose virtual model
+
 const invoiceSchema = new mongoose.Schema({
-    // dit moet overschrijfbaar zijn
+    // todo dit moet overschrijfbaar zijn
     invoiceNumber: {
         type: Number
     },
@@ -9,25 +9,19 @@ const invoiceSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Quotation'
     },
     invoiceType: {type: String, enum: ['factuur', 'creditnota'], required: true, default: 'factuur'},
-    history: {
-        type: [{
-            status: {
-                type: String,
-                enum: ['verstuurd op', 'aangemaakt op', 'creditnota aangemaakt op', 'voorschot betaald op', 'voldaan op'],
-                required: true
-            },
-            timestamp: {type: Date, required: true}
+    history: [
+        {
+            name: {type: String, required: true},
+            status: {type: Boolean, required: true},
+            time: {type: Date}
         }
         ]
-    }
 }, {})
 
 // virtual properties
 invoiceSchema.virtual('customer').get(function () {
-    console.log('virtual : whatss iside quotattion?' +this.quotation)
     return this.quotation.customerInfo.firstName + ' ' + this.quotation.customerInfo.lastName
 }).set(function (v) {
-    console.log(this.customer,'customer for invoice')
     this.customer = v
 })
 

@@ -12,7 +12,12 @@ router.post('/', async (req, res, next) => {
     const invoice = new Schema.invoiceModel({
         quotation: req.body.quotation,
         invoiceNumber: req.body.invoiceNumber,
-        history: [{status:'aangemaakt op',timestamp:new Date()}]
+        history: [
+            {name: 'aangemaakt op', status: true},
+            {name: 'voorschot betaald op', status: false},
+            {name: 'voldaan op', status: false},
+            {name: 'verstuurd op', status: false},
+        ]
     })
     invoice.save().then(result => {
         res.status(201).json()
@@ -24,25 +29,38 @@ router.post('/', async (req, res, next) => {
 })
 
 router.patch('/:id', async (req, res, next) => {
-    Schema.invoiceModel.updateOne({_id: req.params.id}, {$push:{history:{status: req.body.status, timestamp:new Date()}}},
-        {runValidators: true}).exec().then(result => {
+    Schema.invoiceModel.updateOne({_id: req.params.id},
+        {
+            $set: {
+                'history.$[deposit].status': req.body.status.deposit,
+                'history.$[deposit].time': new Date(),
+                'history.$[met].status': req.body.status.met,
+                'history.$[met].time': new Date(),
+            }
+        }
+        , {
+            arrayFilters: [{'deposit.name': 'voorschot betaald op', 'deposit.status': !req.body.status.deposit},
+                {'met.name': 'voldaan op', 'met.status': !req.body.status.met}
+            ],
+            runValidators: true
+        }).exec().then(result => {
+        console.log(result)
         res.status(201).json(
         )
     }).catch(err => {
+        console.log(err)
         res.status(500).json({
             error: err.errors
         })
     })
 })
 
-
-
 router.get('/action/:id', async (req, res, next) => {
     const action = req.query.action
     if (action === 'pdf') {
         const invoiceId = req.params.id
         Schema.invoiceModel.findById({_id: invoiceId}, {__v: 0}).populate('quotation').exec().then(async doc => {
-            console.log('gevodnen factuur',doc)
+            console.log('gevodnen factuur', doc)
             res.setHeader('Content-Type', 'application/pdf')
             res.setHeader('Content-Disposition', 'attachment; filename = "factuur_"' + doc?.invoiceNumber + '"')
             const pdfDoc = new PDFDocument({size: 'A4', autoFirstPage: false, bufferPages: true})
@@ -54,7 +72,10 @@ router.get('/action/:id', async (req, res, next) => {
             }
             const heading = function () {
                 pdfDoc.fontSize(36)
-                pdfDoc.fillOpacity(1).fillColor('#3a5835').text('FACTUUR '+doc?.invoiceNumber, 25, 25, {width: 400, align: 'left'})
+                pdfDoc.fillOpacity(1).fillColor('#3a5835').text('FACTUUR ' + doc?.invoiceNumber, 25, 25, {
+                    width: 400,
+                    align: 'left'
+                })
                 pdfDoc.fontSize(9)
                 pdfDoc.fillOpacity(1).fillColor('black').text('Datum: '
                     + Intl.DateTimeFormat('en-GB').format(new Date()), 400, 25, {width: 150, align: 'left'})
@@ -118,7 +139,7 @@ router.get('/action/:id', async (req, res, next) => {
             const numberOfPages = Math.ceil(numberOfLines / 20)
             numberOfLines += (numberOfPages > 1 ? (numberOfPages - 1) * 2 : 0)
             // berekenen of de lege lijn tussen opties en offspecs nodig is of niet
-            if(doc?.quotation.quotationValues.productSpecifications.length + 1 + doc?.quotation.quotationValues.optionValues.length===18) numberOfLines--
+            if (doc?.quotation.quotationValues.productSpecifications.length + 1 + doc?.quotation.quotationValues.optionValues.length === 18) numberOfLines--
             // aanmaken van de pagina's zonder records
             for (let i = 0; i < numberOfPages; i++) {
                 pdfDoc.addPage()
@@ -133,8 +154,8 @@ router.get('/action/:id', async (req, res, next) => {
             pdfDoc.switchToPage(0)
             // kostprijsberekening
             let priceVATexcl = doc?.quotation.quotationValues.productPrice
-            priceVATexcl += doc?.quotation.quotationValues.optionValues.map(option=>option.price).reduce((val1, val2) => val1 + val2,0)
-            priceVATexcl += doc?.quotation.quotationValues.quotationSpecificationValues.map(spec=>spec.price).reduce((val1, val2) => val1 + val2,0)
+            priceVATexcl += doc?.quotation.quotationValues.optionValues.map(option => option.price).reduce((val1, val2) => val1 + val2, 0)
+            priceVATexcl += doc?.quotation.quotationValues.quotationSpecificationValues.map(spec => spec.price).reduce((val1, val2) => val1 + val2, 0)
             const discount = (doc?.quotation.discount / 100) * priceVATexcl
             const tax = (priceVATexcl - discount) * (doc?.quotation.VAT / 100)
             const totalPrice = (priceVATexcl - discount) + tax
@@ -179,7 +200,7 @@ router.get('/action/:id', async (req, res, next) => {
                                 width: 340,
                                 align: 'left'
                             })
-                    } else if (i % 18 > 0 && doc?.quotation.quotationValues.quotationSpecificationValues.length>0) {
+                    } else if (i % 18 > 0 && doc?.quotation.quotationValues.quotationSpecificationValues.length > 0) {
                         const index = i - (doc?.quotation.quotationValues.productSpecifications.length) - 1 - doc?.quotation.quotationValues.optionValues.length
                         if (index !== 0) {
                             pdfDoc.fillOpacity(1).fillColor('black')
@@ -215,7 +236,7 @@ router.get('/action/:id', async (req, res, next) => {
                     let price = ''
                     let deliveryTime = ''
                     if (discount > 0) {
-                        switch (i-minimalI) {
+                        switch (i - minimalI) {
                             case 0:
                                 name = 'Totaal excl. BTW'
                                 price = priceVATexcl
@@ -242,7 +263,7 @@ router.get('/action/:id', async (req, res, next) => {
                                 break
                         }
                     } else {
-                        switch (i-minimalI) {
+                        switch (i - minimalI) {
                             case 0:
                                 name = 'Totaal excl. BTW'
                                 price = priceVATexcl
@@ -270,14 +291,14 @@ router.get('/action/:id', async (req, res, next) => {
                             width: 340,
                             align: 'left'
                         })
-                    if(price.length!==0){
+                    if (price.length !== 0) {
                         pdfDoc.text(price + ' €',
                             485, 288 + (i - reset) * 20, {
                                 width: 340,
                                 align: 'left'
                             })
                     }
-                    if(deliveryTime.length!==0){
+                    if (deliveryTime.length !== 0) {
                         pdfDoc.text(deliveryTime,
                             35, 288 + (i - reset) * 20, {
                                 width: 340,
@@ -302,8 +323,8 @@ router.get('/action/:id', async (req, res, next) => {
 
 router.get('/', (req, res, next) => {
     Schema.invoiceModel.find({}, {__v: 0}).populate('quotation', {__v: 0}).then(result => {
-        const invoices = result.map(res=>{
-            const invoice = Object.assign({},res._doc)
+        const invoices = result.map(res => {
+            const invoice = Object.assign({}, res._doc)
             invoice['customer'] = res.customer
             return invoice
         })

@@ -34,3 +34,30 @@
                  [rows]="numberOfRows" [totalRecords]="invoicesAll.length"
                  (onPageChange)="paginate($event)"></p-paginator>
 </div>
+
+<p-dialog header="Statuswijziging" [(visible)]="displayDialog" [dismissableMask]="true" [modal]="true" [style]="{width: '30vw'}" (onHide)="resetDialog()">
+    <form class="grid">
+        <div class="formField col-12">
+            <p-checkbox label="voorschot betaald" name="status" value="voorschot betaald op" [(ngModel)]="deposit"></p-checkbox>
+        </div>
+        <div class="formField col-12">
+            <p-checkbox label="factuur voldaan" name="status" value="voldaan op" [(ngModel)]="met"></p-checkbox>
+        </div>
+        <p-divider class="col-12 grid p-0 mt-2 mb-2"></p-divider>
+        <div class="col-12 grid p-0 d-flex justify-content-end">
+    <span class="p-buttonset m-0">
+        <button (click)="cancel()" pButton type="button" label="Annuleren" class="p-button-outlined"
+                icon="pi pi-times"></button>
+                        <button *ngIf="isDisabled()" [style]="{'cursor':'not-allowed'}" [disabled]="true"
+                                iconPos="left" icon="pi pi-check" label="Bewaar" pButton type="button"
+                                class="p-button-success"
+                        ></button>
+                      <button *ngIf="!isDisabled()"
+                              (click)="addNewStatus()" iconPos="left" icon="pi pi-check" label="Bewaar" pButton type="button"
+                              class="p-button-success"
+                      ></button>
+
+    </span>
+        </div>
+    </form>
+</p-dialog>

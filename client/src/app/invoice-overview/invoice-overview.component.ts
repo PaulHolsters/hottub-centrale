@@ -21,6 +21,10 @@ export class InvoiceOverviewComponent implements OnInit,AfterViewChecked {
   blocked:boolean
   displayDialog:boolean
   idOfStatusChanged:string|undefined
+  deposit: string|undefined
+  met: string|undefined
+  depositInitial: string|undefined
+  metInitial: string|undefined
   constructor(private breadcrumbStorage:BreadcrumbStorageService,private cd: ChangeDetectorRef,
               private dataService:DataService,private messageService:MessageService,private storage:InvoiceStorageService,private sanitizer: DomSanitizer) {
     this.displayDialog = false
@@ -82,7 +86,7 @@ export class InvoiceOverviewComponent implements OnInit,AfterViewChecked {
       return {id:invoice._id, items: [
           {label: 'Historiek', icon: 'pi pi-fw pi-eye',
             command:()=>{
-              // todo maak dialoogvenster met historiek
+
               this.hideMenu()
             }
           },
@@ -117,8 +121,48 @@ export class InvoiceOverviewComponent implements OnInit,AfterViewChecked {
   }
 
   showDialog(id:string|undefined){
+    const selectedInvoice = this.invoices.find(inv=>{
+      return inv._id === id
+    })
+    // todo set initial + selected statusses
     this.idOfStatusChanged = id
     this.displayDialog = true
+  }
+
+  resetDialog(){
+    this.idOfStatusChanged = undefined
+    this.deposit = undefined
+    this.met = undefined
+    this.depositInitial = undefined
+    this.metInitial = undefined
+  }
+
+  isDisabled(){
+    // todo set disabled based on initial conditions
+    return true
+    //return !(this.selectedStatus)
+  }
+
+  cancel(){
+    this.displayDialog = false
+  }
+
+  addNewStatus(){
+    if(this.idOfStatusChanged){
+      const newStatus = []
+      if(this.deposit) newStatus.push(this.deposit)
+      if(this.met) newStatus.push(this.met)
+      this.dataService.editStatusInvoice(this.idOfStatusChanged,newStatus).subscribe(res=>{
+        this.dataService.getInvoices().subscribe(res=>{
+          this.invoices = res
+          this.rerenderActionMenus()
+        })
+        this.displayDialog = false
+        this.messageService.add({severity:'success', summary: 'Statuswijziging doorgevoerd', life:3000});
+      },err=>{
+        this.messageService.add({severity:'error', summary: err.error.error, life:3000});
+      })
+    }
   }
 
   ngAfterViewChecked(): void {

@@ -196,6 +196,16 @@ export class DataService {
             })))
     }
 
+    editStatusInvoice(id: string,status:string[]): Observable<any> {
+        const newStatus = {status:status}
+        return this.http.patch('http://localhost:3000/quotations/' + id, newStatus)
+            .pipe(map((res, status) => {
+                return status
+            }, catchError(err => {
+                return new Observable(err)
+            })))
+    }
+
     downloadQuotation(id: string): Observable<any> {
         return this.http.get('http://localhost:3000/quotations/action/' + id + '?action=pdf', {
             responseType: "blob"
